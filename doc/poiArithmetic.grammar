@@ -1,0 +1,41 @@
+%header%
+
+GRAMMARTYPE = "LL"
+
+DESCRIPTION = "Poi Arithmetic Language"
+VERSION     = "1.0"
+
+LICENSE     = "Permission is granted to copy this document verbatim in any
+               medium, provided that this copyright notice is left intact."
+
+
+%tokens%
+
+ADD                          = "+"
+SUB                          = "-"
+MUL                          = "*"
+DIV                          = "/"
+LEFT_PAREN                   = "("
+RIGHT_PAREN                  = ")"
+NUMBER                       = <<[0-9]+>>
+IDENTIFIER                   = <<[a-z]>>
+WHITESPACE                   = <<[ \t\n\r]+>> %ignore%
+
+
+%productions%
+
+Expression = Term [ExpressionTail] ;
+
+ExpressionTail = "+" Term [ExpressionTail]
+               | "-" Term [ExpressionTail] ;
+
+Term = Factor [TermTail] ;
+     
+TermTail = "*" Term
+         | "/" Term ;
+
+Factor = Atom
+       | "(" Expression ")" ;
+
+Atom = NUMBER
+     | IDENTIFIER ;

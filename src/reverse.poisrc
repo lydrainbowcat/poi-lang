@@ -1,0 +1,9 @@
+function main = @[] -> [int ret] {
+	int a: get, set;
+	int b = 3;
+	int c = a * b - a / b;
+	
+	double d = c * 1.0 / (a ^ b);
+    ret = int(d);
+    return;
+};

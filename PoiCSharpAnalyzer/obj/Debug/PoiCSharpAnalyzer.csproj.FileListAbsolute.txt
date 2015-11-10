@@ -1,0 +1,20 @@
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\bin\Debug\PoiCSharpAnalyzer.exe.config
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\bin\Debug\PoiCSharpAnalyzer.exe
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\bin\Debug\PoiCSharpAnalyzer.pdb
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.csprojResolveAssemblyReference.cache
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.Properties.Resources.resources
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.csproj.GenerateResource.Cache
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.exe
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.pdb
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.AnalyzerForm.resources
+C:\Users\Frank\Desktop\Poi Grammar\project\PoiCSharpAnalyzer\PoiCSharpAnalyzer\bin\Debug\grammatica-1.6.dll
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\bin\Debug\PoiCSharpAnalyzer.exe.config
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.exe
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.pdb
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\bin\Debug\PoiCSharpAnalyzer.exe
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\bin\Debug\PoiCSharpAnalyzer.pdb
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\bin\Debug\grammatica-1.6.dll
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.csprojResolveAssemblyReference.cache
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.AnalyzerForm.resources
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.Properties.Resources.resources
+D:\大学\计算机科学与技术\编译实习\poi-lang\PoiCSharpAnalyzer\obj\Debug\PoiCSharpAnalyzer.csproj.GenerateResource.Cache

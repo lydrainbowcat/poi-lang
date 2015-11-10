@@ -1,0 +1,385 @@
+%header%
+GRAMMARTYPE = "LL"
+
+DESCRIPTION = "Poi Language Grammar"
+CASESENSITIVE = "true"
+
+AUTHOR = "Yuanhao Li <1300012754@pku.edu.cn>"
+DATE = "09 October 2015"
+VERSION = "1.0"
+
+COPYRIGHT = ""
+
+
+%tokens%
+
+/* Primitive symbol */
+SYMBOL_LEFT_PAREN       = "("
+SYMBOL_RIGHT_PAREN      = ")"
+SYMBOL_LEFT_BRACE       = "{"
+SYMBOL_RIGHT_BRACE      = "}"
+SYMBOL_LEFT_BRACKET     = "["
+SYMBOL_RIGHT_BRACKET    = "]"
+SYMBOL_QUESTION_MARK    = "?"
+SYMBOL_COLON_MARK       = ":"
+SYMBOL_SEMICOLON        = ";"
+SYMBOL_COMMA            = ","
+SYMBOL_DOT              = "."
+SYMBOL_ARROW	        = "->"
+
+/* Primitive operator */
+OPERATOR_ASSIGN     		= "="
+OPERATOR_ADD_ASSIGN 		= "+="
+OPERATOR_SUB_ASSIGN			= "-="
+OPERATOR_MUL_ASSIGN			= "*="
+OPERATOR_DIV_ASSIGN			= "/="
+OPERATOR_MOD_ASSIGN			= "%="
+OPERATOR_SHIFT_LEFT_ASSIGN	= "<<="
+OPERATOR_SHIFT_RIGHT_ASSIGN	= ">>="
+OPERATOR_BIT_AND_ASSIGN		= "&="
+OPERATOR_BIT_OR_ASSIGN		= "^="
+OPERATOR_BIT_XOR_ASSIGN		= "|="
+
+OPERATOR_ADD        = "+"
+OPERATOR_SUB        = "-"
+OPERATOR_MUL        = "*"
+OPERATOR_DIV        = "/"
+OPERATOR_MODULAR    = "%"
+
+OPERATOR_LESS           = "<"
+OPERATOR_GREATER        = ">"
+OPERATOR_UNEQUAL        = "!="
+OPERATOR_EQUAL          = "=="
+OPERATOR_LESS_EQUAL     = "<="
+OPERATOR_GREATER_EQUAL  = ">="
+
+OPERATOR_LOGIC_AND  = "&&"
+OPERATOR_LOGIC_OR   = "||"
+OPERATOR_LOGIC_NOT  = "!"
+
+OPERATOR_BIT_AND    = "&"
+OPERATOR_BIT_OR     = "|"
+OPERATOR_BIT_NOT    = "~"
+OPERATOR_BIT_XOR    = "^"
+
+OPERATOR_INC    = "++"
+OPERATOR_DEC    = "--"
+
+OPERATOR_SHIFT_LEFT     = "<<"
+OPERATOR_SHIFT_RIGHT    = ">>"
+
+OPERATOR_CAST   = "cast"
+
+/* Primitive types */
+PRIMITIVE_INTEGER8          = "int8"
+PRIMITIVE_INTEGER8_ALIAS    = "byte"
+PRIMITIVE_INTEGER16         = "int16"
+PRIMITIVE_INTEGER16_ALIAS   = "short"
+PRIMITIVE_INTEGER32         = "int32"
+PRIMITIVE_INTEGER32_ALIAS   = "int"
+PRIMITIVE_INTEGER64         = "int64"
+PRIMITIVE_INTEGER64_ALIAS   = "long"
+
+PRIMITIVE_UINTEGER8         = "uint8"
+PRIMITIVE_UINTEGER8_ALIAS   = "ubyte"
+PRIMITIVE_UINTEGER16        = "uint16"
+PRIMITIVE_UINTEGER16_ALIAS  = "ushort"
+PRIMITIVE_UINTEGER32        = "uint32"
+PRIMITIVE_UINTEGER32_ALIAS  = "uint"
+PRIMITIVE_UINTEGER64        = "uint64"
+PRIMITIVE_UINTEGER64_ALIAS  = "ulong"
+
+PRIMITIVE_SINGLE            = "single"
+PRIMITIVE_SINGLE_ALIAS      = "float"
+PRIMITIVE_DOUBLE            = "double"
+PRIMITIVE_EXTENDED          = "extended"
+PRIMITIVE_BOOLEAN           = "boolean"
+PRIMITIVE_BOOLEAN_ALIAS     = "bool"
+PRIMITIVE_CHARACTER         = "char"
+
+/* Container type */
+CONTAINER_STRING    = "String"
+CONTAINER_ARRAY     = "Array"
+CONTAINER_MAP       = "Map"
+CONTAINER_EVENT     = "Event"
+
+/* Function */
+FUNCTION_TYPE   = "function"
+FUNCTION_SIGN   = "@"
+FUNCTION_RETURN = "return"
+
+/* Logic value */
+LOGIC_TRUE  = "true"
+LOGIC_FALSE = "false"
+
+/* Declaration */
+DECLARATION_GETTER  = "get"
+DECLARATION_SETTER  = "set"
+DECLARATION_ALLOC   = "new"
+
+/* Branch structure */
+BRANCH_CONDITION    = "if"
+BRANCH_ELSE         = "else"
+
+/* Loop structure */
+LOOP_START_CONDITION    = "for"
+LOOP_INITIAL            = "init"
+LOOP_STEP               = "step"
+LOOP_STOP_CONDITION     = "until"
+LOOP_BREAK              = "break"
+LOOP_CONTINUE           = "continue"
+
+/* Literal
+ * Type: Boolean, Numeric, String, etc.
+ */
+LITERAL_BOOLEAN_TRUE                = "true"
+LITERAL_BOOLEAN_FALSE               = "false"
+LITERAL_NUMERIC_INTEGER_DECIMAL      = <<-?(0|[1-9][0-9]*)>>
+LITERAL_NUMERIC_INTEGER_OCTAL        = <<-?0(0|[1-7][0-7]*)>>
+LITERAL_NUMERIC_INTEGER_HEXADECIMAL  = <<-?0x[0-9a-fA-F]+>>
+LITERAL_NUMERIC_REAL                 = <<-?(0|[1-9][0-9]*)\.[0-9]+>>
+LITERAL_STRING                      = <<"[^"]*">>
+LITERAL_CHARACTER                   = <<'[^']'>>
+
+/* Identifier */
+IDENTIFIER              = <<[a-zA-Z_][a-zA-Z0-9_]*>>
+
+/* Functional token */
+WHITESPACE          = <<[ \t\n\r]+>> %ignore%
+SINGLE_LINE_COMMENT = <<//.*>> %ignore%
+MULTI_LINE_COMMENT  = <</\*([^*]|\*+[^*/])*\*+/>> %ignore%
+ERRORTOKEN          = <<.>> %error unexpected token%
+
+%productions%
+
+/* Note:
+ * 1. Suffix for grammar target:
+ *     none: <target>
+ *     _T:   <target>'
+ */
+PoiSource = StatementList ;
+
+/* Statement */
+StatementList 	= ([Statement] SYMBOL_SEMICOLON)+ ;
+Statement		= Expression 
+                | Declaration
+                | ReturnStatement ;
+
+/* ReturnStatement */
+ReturnStatement = FUNCTION_RETURN ;
+
+/* DECLARATION */
+Declaration = VariableDeclaration
+			/*| ClassDeclaration*/ ;
+
+/* VariableDeclaration */			
+VariableDeclaration		= VariableType IDENTIFIER [VariableAccess] [VariableInitializer] ;
+VariableType			= PrimitiveType
+						| UserType ;
+PrimitiveType			= PRIMITIVE_INTEGER8
+						| PRIMITIVE_INTEGER8_ALIAS
+						| PRIMITIVE_INTEGER16
+						| PRIMITIVE_INTEGER16_ALIAS
+						| PRIMITIVE_INTEGER32
+						| PRIMITIVE_INTEGER32_ALIAS
+						| PRIMITIVE_INTEGER64
+						| PRIMITIVE_INTEGER64_ALIAS
+						| PRIMITIVE_UINTEGER8
+						| PRIMITIVE_UINTEGER8_ALIAS
+						| PRIMITIVE_UINTEGER16
+						| PRIMITIVE_UINTEGER16_ALIAS
+						| PRIMITIVE_UINTEGER32
+						| PRIMITIVE_UINTEGER32_ALIAS
+						| PRIMITIVE_UINTEGER64
+						| PRIMITIVE_UINTEGER64_ALIAS
+						| PRIMITIVE_SINGLE
+						| PRIMITIVE_SINGLE_ALIAS
+						| PRIMITIVE_DOUBLE
+						| PRIMITIVE_EXTENDED
+						| PRIMITIVE_BOOLEAN
+						| PRIMITIVE_BOOLEAN_ALIAS
+						| PRIMITIVE_CHARACTER
+						| CONTAINER_STRING
+						| CONTAINER_ARRAY
+						| CONTAINER_MAP
+						| CONTAINER_EVENT
+						| FUNCTION_TYPE ;
+UserType				= IDENTIFIER ;
+VariableAccess			= SYMBOL_COLON_MARK VariableGetterSetter ;
+VariableGetterSetter 	= VariableGetter [SYMBOL_COMMA VariableSetter]
+						| VariableSetter [SYMBOL_COMMA VariableGetter] ;
+VariableGetter			= DECLARATION_GETTER [StatementBlock] ;
+VariableSetter			= DECLARATION_SETTER [StatementBlock] ;
+VariableInitializer		= OPERATOR_ASSIGN Expression ;
+
+/* ClassDeclaration */
+//ClassDeclaration 	= IDENTIFIER ;
+//ClassType			= IDENTIFIER ;
+
+/* EXPRESSION */
+Expression 		= ArithmeticExpression
+				| FunctionExpression
+                | PairExpression ;
+
+/* FunctionExpression */
+FunctionExpression  = FUNCTION_SIGN FunctionParameter SYMBOL_ARROW FunctionReturnValue FunctionBody ;
+FunctionParameter   = PairDeclaration ;
+FunctionReturnValue = PairDeclaration ;
+FunctionBody        = StatementBlock ;
+
+/* PairExpression and PairDeclaration */
+PairDeclaration         = SYMBOL_LEFT_BRACKET [PairDeclarationContent] SYMBOL_RIGHT_BRACKET ;
+PairExpression          = SYMBOL_LEFT_BRACKET [PairExpressionContent] SYMBOL_RIGHT_BRACKET ;
+PairDeclarationContent  = Declaration {SYMBOL_COMMA Declaration} ;
+PairExpressionContent   = Expression {SYMBOL_COMMA Expression} ;
+
+/* StatementBlock */
+StatementBlock = SYMBOL_LEFT_BRACE StatementList SYMBOL_RIGHT_BRACE ;
+
+/* ArithmeticExpression
+ * Subexpression: Assign, Condition, Logical, Bit, Equality, Relational, Shift, Mathematic, Unary, etc.
+ */
+ArithmeticExpression = AssignExpression ;
+
+/* AssignExpression
+ * Operator: =, +=, -=, *=, %=, <<=, >>=, &=, |=, ^=
+ * Priority: 14
+ */
+AssignExpression    = ConditionExpression [AssignExpression_T] ;
+AssignExpression_T	= OPERATOR_ASSIGN AssignExpression
+					| OPERATOR_ADD_ASSIGN AssignExpression
+					| OPERATOR_SUB_ASSIGN AssignExpression
+					| OPERATOR_MUL_ASSIGN AssignExpression
+					| OPERATOR_DIV_ASSIGN AssignExpression
+					| OPERATOR_MOD_ASSIGN AssignExpression
+					| OPERATOR_SHIFT_LEFT_ASSIGN AssignExpression
+					| OPERATOR_SHIFT_RIGHT_ASSIGN AssignExpression
+					| OPERATOR_BIT_AND_ASSIGN AssignExpression
+					| OPERATOR_BIT_OR_ASSIGN AssignExpression
+					| OPERATOR_BIT_XOR_ASSIGN AssignExpression ;
+
+/* ConditionExpression
+ * Operator: ?:
+ * Priority: 13
+ */
+ConditionExpression 	= LogicalOrExpression [ConditionExpression_T] ;
+ConditionExpression_T	= SYMBOL_QUESTION_MARK ConditionExpression SYMBOL_COLON_MARK ConditionExpression [ConditionExpression_T] ; 
+
+/* LogicalOrExpression
+ * Operator: ||
+ * Priority: 12
+ */
+LogicalOrExpression    = LogicalAndExpression [LogicalOrExpression_T] ;
+LogicalOrExpression_T  = OPERATOR_LOGIC_OR LogicalOrExpression ;
+
+/* LogicalAndExpression
+ * Operator: &&
+ * Priority: 11
+ */
+LogicalAndExpression    = BitOrExpression [LogicalAndExpression_T] ;
+LogicalAndExpression_T  = OPERATOR_LOGIC_AND LogicalAndExpression ;
+
+/* BitOrExpression
+ * Operator: |
+ * Priority: 10
+ */
+BitOrExpression    = BitXorExpression [BitOrExpression_T] ;
+BitOrExpression_T  = OPERATOR_BIT_OR BitOrExpression ;
+
+/* BitXorExpression
+ * Operator: ^
+ * Priority: 9
+ */
+BitXorExpression    = BitAndExpression [BitXorExpression_T] ;
+BitXorExpression_T  = OPERATOR_BIT_XOR BitXorExpression ;
+
+/* BitAndExpression
+ * Operator: &
+ * Priority: 8
+ */
+BitAndExpression    = EqualityExpression [BitAndExpression_T] ;
+BitAndExpression_T  = OPERATOR_BIT_AND BitAndExpression ;
+
+
+/* EqualityExpression
+ * Operator: ==£¬!=
+ * Priority: 7
+ */
+EqualityExpression      = RelationalExpression [EqualityExpression_T] ;
+EqualityExpression_T    = OPERATOR_UNEQUAL RelationalExpression
+                        | OPERATOR_EQUAL RelationalExpression ;
+                        
+/* RelationalExpression
+ * Operator: <, >, <=, >=
+ * Priority: 6
+ */
+RelationalExpression    = ShiftExpression [RelationalExpression_T] ;
+RelationalExpression_T  = OPERATOR_LESS ShiftExpression
+                        | OPERATOR_GREATER ShiftExpression
+                        | OPERATOR_LESS_EQUAL ShiftExpression
+                        | OPERATOR_GREATER_EQUAL ShiftExpression ;
+
+/* ShiftExpression
+ * Operator: <<, >>
+ * Priority: 5
+ */
+ShiftExpression     = AddSubExpression [ShiftExpression_T] ;
+ShiftExpression_T   = OPERATOR_SHIFT_LEFT AddSubExpression
+                    | OPERATOR_SHIFT_RIGHT AddSubExpression ;
+
+/* AddSubExpression
+ * Operator: +, -
+ * Priority: 4
+ */
+AddSubExpression    = MulDivModExpression [AddSubExpression_T] ;
+AddSubExpression_T  = OPERATOR_ADD AddSubExpression
+                    | OPERATOR_SUB AddSubExpression ;
+
+/* MulDivModExpression
+ * Operator: *, /, %
+ * Priority: 3
+ */
+MulDivModExpression     = UnaryExpression [MulDivModExpression_T] ;
+MulDivModExpression_T   = OPERATOR_MUL MulDivModExpression
+                        | OPERATOR_DIV MulDivModExpression
+                        | OPERATOR_MODULAR MulDivModExpression ;
+
+/* UnaryExpression
+ * Operator: +, -, !, ~, ++, --
+ * Priority: 2
+ */
+UnaryExpression = BasicExpression
+                | OPERATOR_ADD UnaryExpression
+                | OPERATOR_SUB UnaryExpression
+                | OPERATOR_LOGIC_NOT UnaryExpression
+                | OPERATOR_BIT_NOT UnaryExpression
+                | OPERATOR_INC UnaryExpression
+                | OPERATOR_DEC UnaryExpression ;
+                
+/* BasicExpression
+ * Operator: (), ., f(), a[], ++, --
+ * Priority: 1
+ */
+BasicExpression     = PrimaryExpression [BasicExpression_T]
+                    | SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
+                    | FunctionVariable SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
+                    | ArrayVariable SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET [BasicExpression_T] ;
+BasicExpression_T   = OPERATOR_INC [BasicExpression_T]
+                    | OPERATOR_DEC [BasicExpression_T] ;
+FunctionVariable    = IDENTIFIER ;
+ArrayVariable       = IDENTIFIER ;
+ 
+/* PrimaryExpression
+ * Operator: none
+ * Priority: 0
+ */
+PrimaryExpression   = LITERAL
+                    | IDENTIFIER;
+                    
+/* Literal */
+LITERAL = LITERAL_NUMERIC_INTEGER_DECIMAL
+        | LITERAL_NUMERIC_INTEGER_OCTAL
+        | LITERAL_NUMERIC_INTEGER_HEXADECIMAL
+        | LITERAL_NUMERIC_REAL
+        | LITERAL_STRING
+        | LITERAL_CHARACTER ;
