@@ -1,23 +1,38 @@
 # poi-lang
 
-¡ªcmd
-¡ª¡ª´Ê·¨·ÖÎö¹¤¾ßÔËÐÐ»·¾³
+â€”cmd
 
-¡ªdoc
-¡ª¡ª¿ª·¢ÎÄµµ¡¢ÓïÑÔÊÖ²á
+â€”â€”è¯æ³•åˆ†æžå·¥å…·è¿è¡ŒçŽ¯å¢ƒ
 
-¡ªgrammatica-1.6
-¡ª¡ª´Ê·¨·ÖÎö¹¤¾ßÎÄµµ
 
-¡ªPoiCSharpAnalyzer
-¡ª¡ªPoi±àÒëÆ÷C#ÏîÄ¿Ö÷Ä¿Â¼
-¡ª¡ªAnalyzer
-¡ª¡ª¡ªºËÐÄ´úÂëÄ¿Â¼
-¡ª¡ªExample
-¡ª¡ª¡ªÊ¾ÀýÓïÒå·ÖÎöÆ÷Ä¿Â¼
+â€”doc
 
-¡ªsrc
-¡ª¡ªpoiÓïÑÔ±àÐ´µÄ´úÂë
+â€”â€”å¼€å‘æ–‡æ¡£ã€è¯­è¨€æ‰‹å†Œ
 
-¡ªPoiCSharpAnalyzer.sln
-¡ª¡ªPoi±àÒëÆ÷C#½â¾ö·½°¸ÎÄ¼þ
+
+â€”grammatica-1.6
+
+â€”â€”è¯æ³•åˆ†æžå·¥å…·æ–‡æ¡£
+
+
+â€”PoiCSharpAnalyzer
+
+â€”â€”Poiç¼–è¯‘å™¨C#é¡¹ç›®ä¸»ç›®å½•
+
+â€”â€”Analyzer
+
+â€”â€”â€”æ ¸å¿ƒä»£ç ç›®å½•
+
+â€”â€”Example
+
+â€”â€”â€”ç¤ºä¾‹è¯­ä¹‰åˆ†æžå™¨ç›®å½•
+
+
+â€”src
+
+â€”â€”poiè¯­è¨€ç¼–å†™çš„ä»£ç 
+
+
+â€”PoiCSharpAnalyzer.sln
+
+â€”â€”Poiç¼–è¯‘å™¨C#è§£å†³æ–¹æ¡ˆæ–‡ä»¶
