@@ -1,5 +1,11 @@
 **/Debug/
+
 **/Release/
+
 **/output/
+
 *.sdf
+
 .vs
+*.exe
+**/.DS_Store
