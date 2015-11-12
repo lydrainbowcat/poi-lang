@@ -24,12 +24,16 @@ namespace PoiCSharpAnalyzer
         private void parseButton_Click(object sender, EventArgs e)
         {
             String code = codeInput.Text;
-            PoiParser parser = new PoiParser(new StringReader(code));
+            PoiParser parser = new PoiParser(new StringReader(code), new PoiBasicAnalyzer());
             //PoiParser arithmeticParser = new PoiParser(new StringReader(code), new PoiArithmeticAnalyzer());
             Node parseTree = null;
             try
             {
                 parseTree = parser.Parse();
+                if (parseTree.Values.Count > 0)
+                    codeOutput.Text = parseTree.Values[0].ToString();
+                else
+                    codeOutput.Text = "";
                 //parseTree = arithmeticParser.Parse();
                 deleteParseTree(parseTreeOutput.Nodes);
                 CreateParseTree(parseTree, parseTreeOutput.Nodes);
@@ -39,6 +43,10 @@ namespace PoiCSharpAnalyzer
             catch (PerCederberg.Grammatica.Runtime.ParserLogException ex)
             {
                 parseTreeOutput.Nodes.Add(ex.GetMessage());
+            }
+            catch (Exception ex)
+            {
+                codeOutput.Text = ex.Message;
             }
         }
 
