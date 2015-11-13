@@ -141,7 +141,7 @@ LOOP_CONTINUE   = "continue"
  */
 LITERAL_BOOLEAN_TRUE                = "true"
 LITERAL_BOOLEAN_FALSE               = "false"
-LITERAL_NUMERIC_INTEGER_DECIMAL      = <<-?(0|[1-9][0-9]*)>>
+LITERAL_NUMERIC_INTEGER_DECIMAL      = <<-?0|([1-9][0-9]*)>>
 LITERAL_NUMERIC_INTEGER_OCTAL        = <<-?0(0|[1-7][0-7]*)>>
 LITERAL_NUMERIC_INTEGER_HEXADECIMAL  = <<-?0x[0-9a-fA-F]+>>
 LITERAL_NUMERIC_REAL                 = <<-?(0|[1-9][0-9]*)\.[0-9]+>>
@@ -263,7 +263,7 @@ BitAndExpression_T  = OPERATOR_BIT_AND BitAndExpression ;
 
 
 /* EqualityExpression
- * Operator: ==£¬!=
+ * Operator: ==, !=
  * Priority: 7
  */
 EqualityExpression      = RelationalExpression [EqualityExpression_T] ;
@@ -326,7 +326,7 @@ BasicExpression     = PrimaryExpression [BasicExpression_T]
                     | FunctionVariable SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
                     | ArrayVariable SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET [BasicExpression_T] ;
 BasicExpression_T   = OPERATOR_INC [BasicExpression_T]
-                    | OPERATOR_DEC [BasicExpression_T] 
+                    | OPERATOR_DEC [BasicExpression_T]
                     | SYMBOL_DOT BasicExpression [BasicExpression_T] ;
 FunctionVariable    = IDENTIFIER
                     | PrimitiveType ; // The type cast function for primitive types
@@ -351,9 +351,10 @@ Literal = LITERAL_NUMERIC_INTEGER_DECIMAL
 Declaration = VariableDeclaration
 			| ClassDeclaration ;
 
-/* VariableDeclaration */			
+/* VariableDeclaration */
 VariableDeclaration		= VariableType IDENTIFIER [VariableAccess] [VariableInitializer] ;
 VariableType			= PrimitiveType
+                        | ContainerType
 						| UserType ;
 PrimitiveType			= PRIMITIVE_INTEGER8
 						| PRIMITIVE_INTEGER8_ALIAS
@@ -378,11 +379,11 @@ PrimitiveType			= PRIMITIVE_INTEGER8
 						| PRIMITIVE_BOOLEAN
 						| PRIMITIVE_BOOLEAN_ALIAS
 						| PRIMITIVE_CHARACTER
-						| CONTAINER_STRING
-						| CONTAINER_ARRAY
-						| CONTAINER_MAP
-						| CONTAINER_EVENT
 						| FUNCTION_TYPE ;
+ContainerType           = StringContainer
+						| ArrayContainer
+						| MapContainer
+						| EventContainer ;
 UserType				= IDENTIFIER ;
 VariableAccess			= SYMBOL_COLON_MARK VariableGetterSetter ;
 VariableGetterSetter 	= VariableGetter [SYMBOL_COMMA VariableSetter]
@@ -390,6 +391,11 @@ VariableGetterSetter 	= VariableGetter [SYMBOL_COMMA VariableSetter]
 VariableGetter			= DECLARATION_GETTER [StatementBlock] ;
 VariableSetter			= DECLARATION_SETTER [StatementBlock] ;
 VariableInitializer		= OPERATOR_ASSIGN Expression ;
+
+StringContainer = CONTAINER_STRING ;
+ArrayContainer  = CONTAINER_ARRAY SYMBOL_LEFT_BRACKET VariableType SYMBOL_COMMA Expression SYMBOL_RIGHT_BRACKET ;
+MapContainer    = CONTAINER_MAP ;
+EventContainer  = CONTAINER_EVENT ;
 
 /* ClassDeclaration */
 ClassDeclaration    = CLASS_TYPE ClassName [CLASS_EXTEND SuperClassName] ClassBody ;

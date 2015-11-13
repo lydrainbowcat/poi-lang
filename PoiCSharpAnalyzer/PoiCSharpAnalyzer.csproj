@@ -59,9 +59,10 @@
     <Compile Include="Analyzer\PoiConstants.cs" />
     <Compile Include="Analyzer\PoiParser.cs" />
     <Compile Include="Analyzer\PoiTokenizer.cs" />
-    <None Include="Example\poi.grammar" />
-    <None Include="Example\PoiArithmeticAnalyzer.cs" />
-    <Compile Include="Example\PoiBasicAnalyzer.cs" />
+    <None Include="Implement\poi.grammar" />
+    <None Include="Implement\PoiArithmeticAnalyzer.cs" />
+    <Compile Include="Implement\PoiBasicAnalyzer.cs" />
+    <Compile Include="Implement\PoiObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AnalyzerForm.resx">

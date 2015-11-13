@@ -621,7 +621,7 @@ namespace PoiLanguage {
             pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_INTEGER_DECIMAL,
                                        "LITERAL_NUMERIC_INTEGER_DECIMAL",
                                        TokenPattern.PatternType.REGEXP,
-                                       "-?(0|[1-9][0-9]*)");
+                                       "-?0|([1-9][0-9]*)");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_INTEGER_OCTAL,

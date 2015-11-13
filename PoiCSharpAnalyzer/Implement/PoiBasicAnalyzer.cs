@@ -19,6 +19,7 @@ namespace PoiLanguage
          */
         public override void EnterSymbolLeftParen(Token node)
         {
+            
         }
 
         /**
@@ -34,6 +35,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolLeftParen(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -62,6 +64,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolRightParen(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -90,6 +93,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolLeftBrace(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -118,6 +122,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolRightBrace(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -146,6 +151,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolLeftBracket(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -174,6 +180,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolRightBracket(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -202,6 +209,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolQuestionMark(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -230,6 +238,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolColonMark(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -258,6 +267,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolSemicolon(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -286,6 +296,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolComma(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -314,6 +325,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolDot(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -342,6 +354,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolArrow(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -370,6 +383,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -398,6 +412,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorAddAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -426,6 +441,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorSubAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -454,6 +470,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorMulAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -482,6 +499,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorDivAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -510,6 +528,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorModAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -538,6 +557,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorShiftLeftAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -566,6 +586,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorShiftRightAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -594,6 +615,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitAndAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -622,6 +644,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitOrAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -650,6 +673,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitXorAssign(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -678,6 +702,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorAdd(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -706,6 +731,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorSub(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -734,6 +760,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorMul(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -762,6 +789,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorDiv(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -790,6 +818,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorModular(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -818,6 +847,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorLess(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -846,6 +876,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorGreater(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -874,6 +905,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorUnequal(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -902,6 +934,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorEqual(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -930,6 +963,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorLessEqual(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -958,6 +992,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorGreaterEqual(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -986,6 +1021,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorLogicAnd(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1014,6 +1050,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorLogicOr(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1042,6 +1079,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorLogicNot(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1070,6 +1108,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitAnd(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1098,6 +1137,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitOr(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1126,6 +1166,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitNot(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1154,6 +1195,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorBitXor(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1182,6 +1224,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorInc(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1210,6 +1253,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorDec(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1238,6 +1282,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorShiftLeft(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -1266,6 +1311,7 @@ namespace PoiLanguage
          */
         public override Node ExitOperatorShiftRight(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2162,6 +2208,7 @@ namespace PoiLanguage
          */
         public override Node ExitLogicTrue(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2190,6 +2237,7 @@ namespace PoiLanguage
          */
         public override Node ExitLogicFalse(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2666,6 +2714,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralBooleanTrue(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, "true"));
             return node;
         }
 
@@ -2694,6 +2743,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralBooleanFalse(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, "false"));
             return node;
         }
 
@@ -2722,6 +2772,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralNumericIntegerDecimal(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2806,6 +2857,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralNumericReal(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2834,6 +2886,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralString(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2862,6 +2915,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralCharacter(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2890,6 +2944,7 @@ namespace PoiLanguage
          */
         public override Node ExitIdentifier(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2946,6 +3001,7 @@ namespace PoiLanguage
          */
         public override Node ExitPoiSource(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -2989,6 +3045,7 @@ namespace PoiLanguage
          */
         public override Node ExitStatementList(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3032,6 +3089,14 @@ namespace PoiLanguage
          */
         public override Node ExitStatement(Production node)
         {
+            if (node.GetChildCount() != 1)
+                throw new PoiAnalyzeException("Statement doesn't have 1 child");
+            Node child = node.GetChildAt(0);
+            if (child.Name == "ExpressionStatement")
+            {
+                node.AddValue(child.GetValue(0) as PoiObject);
+            }
+            //Other conditions: to be done!
             return node;
         }
 
@@ -3075,6 +3140,7 @@ namespace PoiLanguage
          */
         public override Node ExitExpressionStatement(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3204,6 +3270,22 @@ namespace PoiLanguage
          */
         public override Node ExitExpression(Production node)
         {
+            if (node.GetChildCount() != 1)
+                throw new PoiAnalyzeException("Expression doesn't have 1 child");
+            Node child = node.GetChildAt(0);
+            if (child.Name == "ArithmeticExpression")
+            {
+                node.AddValue(child.GetValue(0) as PoiObject);
+            }
+            else if (child.Name == "FunctionExpression")
+            {
+                // To be done!
+            }
+            else if (child.Name == "PairExpression")
+            {
+                // To be done!
+            }
+            else throw new PoiAnalyzeException("Expression not supported");
             return node;
         }
 
@@ -3634,6 +3716,7 @@ namespace PoiLanguage
          */
         public override Node ExitArithmeticExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3677,6 +3760,7 @@ namespace PoiLanguage
          */
         public override Node ExitAssignExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3720,6 +3804,7 @@ namespace PoiLanguage
          */
         public override Node ExitAssignExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3763,6 +3848,7 @@ namespace PoiLanguage
          */
         public override Node ExitConditionExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3806,6 +3892,7 @@ namespace PoiLanguage
          */
         public override Node ExitConditionExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3849,6 +3936,7 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalOrExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3892,6 +3980,7 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalOrExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3935,6 +4024,7 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalAndExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3978,6 +4068,7 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalAndExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4021,6 +4112,7 @@ namespace PoiLanguage
          */
         public override Node ExitBitOrExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4064,6 +4156,7 @@ namespace PoiLanguage
          */
         public override Node ExitBitOrExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4107,6 +4200,7 @@ namespace PoiLanguage
          */
         public override Node ExitBitXorExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4150,6 +4244,7 @@ namespace PoiLanguage
          */
         public override Node ExitBitXorExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4193,6 +4288,7 @@ namespace PoiLanguage
          */
         public override Node ExitBitAndExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4236,6 +4332,7 @@ namespace PoiLanguage
          */
         public override Node ExitBitAndExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4279,6 +4376,7 @@ namespace PoiLanguage
          */
         public override Node ExitEqualityExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4322,6 +4420,7 @@ namespace PoiLanguage
          */
         public override Node ExitEqualityExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4365,6 +4464,7 @@ namespace PoiLanguage
          */
         public override Node ExitRelationalExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4408,6 +4508,7 @@ namespace PoiLanguage
          */
         public override Node ExitRelationalExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4451,6 +4552,7 @@ namespace PoiLanguage
          */
         public override Node ExitShiftExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4494,6 +4596,7 @@ namespace PoiLanguage
          */
         public override Node ExitShiftExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4537,6 +4640,7 @@ namespace PoiLanguage
          */
         public override Node ExitAddSubExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4580,6 +4684,7 @@ namespace PoiLanguage
          */
         public override Node ExitAddSubExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4623,6 +4728,7 @@ namespace PoiLanguage
          */
         public override Node ExitMulDivModExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4666,6 +4772,7 @@ namespace PoiLanguage
          */
         public override Node ExitMulDivModExpressionT(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4709,6 +4816,7 @@ namespace PoiLanguage
          */
         public override Node ExitUnaryExpression(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -4752,6 +4860,31 @@ namespace PoiLanguage
          */
         public override Node ExitBasicExpression(Production node)
         {
+            if (node.GetChildCount() < 1)
+                throw new PoiAnalyzeException("BasicExpression has no child");
+            Node child0 = node.GetChildAt(0);
+            if (child0.Name == "PrimaryExpression")
+            {
+                PoiObject left = child0.GetValue(0) as PoiObject;
+                PoiObject right;
+                if (node.GetChildCount() > 1)
+                    right = node.GetChildAt(1).GetValue(0) as PoiObject;
+                else
+                    right = new PoiObject(PoiObjectType.String, "");
+                node.AddValue(left + right);
+            }
+            else if(child0.Name== "SYMBOL_LEFT_PAREN")
+            {
+                string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                PoiObject left = new PoiObject(PoiObjectType.String, "(" + expression + ")");
+                PoiObject right;
+                if (node.GetChildCount() > 3)
+                    right = node.GetChildAt(3).GetValue(0) as PoiObject;
+                else
+                    right = new PoiObject(PoiObjectType.String, "");
+                node.AddValue(left + right);
+            }
+            // Other conditions: to be done
             return node;
         }
 
@@ -4795,6 +4928,23 @@ namespace PoiLanguage
          */
         public override Node ExitBasicExpressionT(Production node)
         {
+            if (node.GetChildCount() < 1)
+                throw new PoiAnalyzeException("BasicExpressionT has no child");
+            Node child0 = node.GetChildAt(0);
+            if (child0.Name == "OPERATOR_INC" || child0.Name == "OPERATOR_DEC")
+            {
+                PoiObject left = child0.GetValue(0) as PoiObject;
+                PoiObject right;
+                if (node.GetChildCount() > 1)
+                    right = node.GetChildAt(1).GetValue(0) as PoiObject;
+                else
+                    right = new PoiObject(PoiObjectType.String, "");
+                node.AddValue(left + right);
+            }
+            else if (child0.Name == "SYMBOL_DOT")
+            {
+                // Class: To Be Done
+            }
             return node;
         }
 
@@ -4924,6 +5074,14 @@ namespace PoiLanguage
          */
         public override Node ExitPrimaryExpression(Production node)
         {
+            if (node.GetChildCount() != 1)
+                throw new PoiAnalyzeException("PrimaryExpression doesn't have 1 child");
+            Node child = node.GetChildAt(0);
+            if (child.Name == "Literal")
+                node.AddValue(child.GetValue(0) as PoiObject);
+            else if (child.Name == "IDENTIFIER")
+                node.AddValue(child.GetValue(0) as PoiObject);
+            else throw new PoiAnalyzeException("PrimaryExpression not supported");
             return node;
         }
 
@@ -4967,6 +5125,9 @@ namespace PoiLanguage
          */
         public override Node ExitLiteral(Production node)
         {
+            if (node.GetChildCount() != 1)
+                throw new PoiAnalyzeException("Literal doesn't have 1 child");
+            node.AddValue(node.GetChildAt(0).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -6188,5 +6349,22 @@ namespace PoiLanguage
         {
             node.AddChild(child);
         }
+
+
+        #region 自定义方法
+
+        private PoiObject MergeChildList(Node node)
+        {
+            if (node.GetChildCount() == 0)
+                return new PoiObject();
+            PoiObject result = node.GetChildAt(0).GetValue(0) as PoiObject;
+            for (int i = 1; i < node.GetChildCount(); i++)
+            {
+                result += node.GetChildAt(i).GetValue(0) as PoiObject;
+            }
+            return result;
+        }
+
+        #endregion
     }
 }

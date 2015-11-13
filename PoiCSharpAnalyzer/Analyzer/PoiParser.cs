@@ -658,6 +658,9 @@ namespace PoiLanguage {
             alt.AddProduction((int) PoiConstants.PRIMITIVE_TYPE, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.CONTAINER_TYPE, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.USER_TYPE, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
@@ -734,19 +737,23 @@ namespace PoiLanguage {
             alt.AddToken((int) PoiConstants.PRIMITIVE_CHARACTER, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CONTAINER_STRING, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CONTAINER_ARRAY, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CONTAINER_MAP, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CONTAINER_EVENT, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.FUNCTION_TYPE, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.CONTAINER_TYPE,
+                                            "ContainerType");
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.STRING_CONTAINER, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.ARRAY_CONTAINER, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.MAP_CONTAINER, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.EVENT_CONTAINER, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -798,6 +805,39 @@ namespace PoiLanguage {
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.OPERATOR_ASSIGN, 1, 1);
             alt.AddProduction((int) PoiConstants.EXPRESSION, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.STRING_CONTAINER,
+                                            "StringContainer");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.CONTAINER_STRING, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.ARRAY_CONTAINER,
+                                            "ArrayContainer");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.CONTAINER_ARRAY, 1, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_LEFT_BRACKET, 1, 1);
+            alt.AddProduction((int) PoiConstants.VARIABLE_TYPE, 1, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
+            alt.AddProduction((int) PoiConstants.EXPRESSION, 1, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_RIGHT_BRACKET, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.MAP_CONTAINER,
+                                            "MapContainer");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.CONTAINER_MAP, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.EVENT_CONTAINER,
+                                            "EventContainer");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.CONTAINER_EVENT, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 

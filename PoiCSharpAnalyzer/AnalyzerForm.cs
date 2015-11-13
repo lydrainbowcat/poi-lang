@@ -31,7 +31,7 @@ namespace PoiCSharpAnalyzer
             {
                 parseTree = parser.Parse();
                 if (parseTree.Values.Count > 0)
-                    codeOutput.Text = parseTree.Values[0].ToString();
+                    codeOutput.Text = (parseTree.GetValue(0) as PoiObject).ToString();
                 else
                     codeOutput.Text = "";
                 //parseTree = arithmeticParser.Parse();

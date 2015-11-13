@@ -494,6 +494,9 @@ namespace PoiLanguage {
             case (int) PoiConstants.PRIMITIVE_TYPE:
                 EnterPrimitiveType((Production) node);
                 break;
+            case (int) PoiConstants.CONTAINER_TYPE:
+                EnterContainerType((Production) node);
+                break;
             case (int) PoiConstants.USER_TYPE:
                 EnterUserType((Production) node);
                 break;
@@ -511,6 +514,18 @@ namespace PoiLanguage {
                 break;
             case (int) PoiConstants.VARIABLE_INITIALIZER:
                 EnterVariableInitializer((Production) node);
+                break;
+            case (int) PoiConstants.STRING_CONTAINER:
+                EnterStringContainer((Production) node);
+                break;
+            case (int) PoiConstants.ARRAY_CONTAINER:
+                EnterArrayContainer((Production) node);
+                break;
+            case (int) PoiConstants.MAP_CONTAINER:
+                EnterMapContainer((Production) node);
+                break;
+            case (int) PoiConstants.EVENT_CONTAINER:
+                EnterEventContainer((Production) node);
                 break;
             case (int) PoiConstants.CLASS_DECLARATION:
                 EnterClassDeclaration((Production) node);
@@ -894,6 +909,8 @@ namespace PoiLanguage {
                 return ExitVariableType((Production) node);
             case (int) PoiConstants.PRIMITIVE_TYPE:
                 return ExitPrimitiveType((Production) node);
+            case (int) PoiConstants.CONTAINER_TYPE:
+                return ExitContainerType((Production) node);
             case (int) PoiConstants.USER_TYPE:
                 return ExitUserType((Production) node);
             case (int) PoiConstants.VARIABLE_ACCESS:
@@ -906,6 +923,14 @@ namespace PoiLanguage {
                 return ExitVariableSetter((Production) node);
             case (int) PoiConstants.VARIABLE_INITIALIZER:
                 return ExitVariableInitializer((Production) node);
+            case (int) PoiConstants.STRING_CONTAINER:
+                return ExitStringContainer((Production) node);
+            case (int) PoiConstants.ARRAY_CONTAINER:
+                return ExitArrayContainer((Production) node);
+            case (int) PoiConstants.MAP_CONTAINER:
+                return ExitMapContainer((Production) node);
+            case (int) PoiConstants.EVENT_CONTAINER:
+                return ExitEventContainer((Production) node);
             case (int) PoiConstants.CLASS_DECLARATION:
                 return ExitClassDeclaration((Production) node);
             case (int) PoiConstants.CLASS_NAME:
@@ -1114,6 +1139,9 @@ namespace PoiLanguage {
             case (int) PoiConstants.PRIMITIVE_TYPE:
                 ChildPrimitiveType(node, child);
                 break;
+            case (int) PoiConstants.CONTAINER_TYPE:
+                ChildContainerType(node, child);
+                break;
             case (int) PoiConstants.USER_TYPE:
                 ChildUserType(node, child);
                 break;
@@ -1131,6 +1159,18 @@ namespace PoiLanguage {
                 break;
             case (int) PoiConstants.VARIABLE_INITIALIZER:
                 ChildVariableInitializer(node, child);
+                break;
+            case (int) PoiConstants.STRING_CONTAINER:
+                ChildStringContainer(node, child);
+                break;
+            case (int) PoiConstants.ARRAY_CONTAINER:
+                ChildArrayContainer(node, child);
+                break;
+            case (int) PoiConstants.MAP_CONTAINER:
+                ChildMapContainer(node, child);
+                break;
+            case (int) PoiConstants.EVENT_CONTAINER:
+                ChildEventContainer(node, child);
                 break;
             case (int) PoiConstants.CLASS_DECLARATION:
                 ChildClassDeclaration(node, child);
@@ -5981,6 +6021,46 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
+        public virtual void EnterContainerType(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitContainerType(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildContainerType(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
         public virtual void EnterUserType(Production node) {
         }
 
@@ -6210,6 +6290,166 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual void ChildVariableInitializer(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterStringContainer(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitStringContainer(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildStringContainer(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterArrayContainer(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitArrayContainer(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildArrayContainer(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterMapContainer(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitMapContainer(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildMapContainer(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterEventContainer(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitEventContainer(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildEventContainer(Production node, Node child) {
             node.AddChild(child);
         }
 
