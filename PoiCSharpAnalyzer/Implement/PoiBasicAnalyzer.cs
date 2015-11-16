@@ -6454,13 +6454,14 @@ namespace PoiLanguage
 
         #region 自定义方法
 
-        private PoiObject MergeChildList(Node node)
+        private PoiObject MergeChildList(Node node, string separator = "")
         {
             if (node.GetChildCount() == 0)
                 return new PoiObject();
             PoiObject result = node.GetChildAt(0).GetValue(0) as PoiObject;
             for (int i = 1; i < node.GetChildCount(); i++)
             {
+                result += new PoiObject(PoiObjectType.String, separator);
                 result += node.GetChildAt(i).GetValue(0) as PoiObject;
             }
             return result;

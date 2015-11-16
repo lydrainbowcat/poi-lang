@@ -1,0 +1,8 @@
+Fetch:
+git pull origin master
+
+
+Submit:
+git add .
+git commit -m "***SOME MESSAGE***"
+git push origin candela
