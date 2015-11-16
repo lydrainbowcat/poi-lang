@@ -371,29 +371,32 @@ namespace PoiLanguage {
             case (int) PoiConstants.FUNCTION_BODY:
                 EnterFunctionBody((Production) node);
                 break;
-            case (int) PoiConstants.PAIR_DECLARATION:
-                EnterPairDeclaration((Production) node);
-                break;
-            case (int) PoiConstants.PAIR_EXPRESSION:
-                EnterPairExpression((Production) node);
-                break;
-            case (int) PoiConstants.PAIR_DECLARATION_CONTENT:
-                EnterPairDeclarationContent((Production) node);
-                break;
-            case (int) PoiConstants.PAIR_EXPRESSION_CONTENT:
-                EnterPairExpressionContent((Production) node);
-                break;
             case (int) PoiConstants.STATEMENT_BLOCK:
                 EnterStatementBlock((Production) node);
                 break;
-            case (int) PoiConstants.ARITHMETIC_EXPRESSION:
-                EnterArithmeticExpression((Production) node);
+            case (int) PoiConstants.PAIR_DECLARATION:
+                EnterPairDeclaration((Production) node);
+                break;
+            case (int) PoiConstants.PAIR_DECLARATION_CONTENT:
+                EnterPairDeclarationContent((Production) node);
                 break;
             case (int) PoiConstants.ASSIGN_EXPRESSION:
                 EnterAssignExpression((Production) node);
                 break;
             case (int) PoiConstants.ASSIGN_EXPRESSION_T:
                 EnterAssignExpressionT((Production) node);
+                break;
+            case (int) PoiConstants.PAIR_OR_FUNCTION_EXPRESSION:
+                EnterPairOrFunctionExpression((Production) node);
+                break;
+            case (int) PoiConstants.PAIR_EXPRESSION:
+                EnterPairExpression((Production) node);
+                break;
+            case (int) PoiConstants.PAIR_EXPRESSION_CONTENT:
+                EnterPairExpressionContent((Production) node);
+                break;
+            case (int) PoiConstants.ARITHMETIC_EXPRESSION:
+                EnterArithmeticExpression((Production) node);
                 break;
             case (int) PoiConstants.CONDITION_EXPRESSION:
                 EnterConditionExpression((Production) node);
@@ -827,22 +830,24 @@ namespace PoiLanguage {
                 return ExitFunctionReturnValue((Production) node);
             case (int) PoiConstants.FUNCTION_BODY:
                 return ExitFunctionBody((Production) node);
-            case (int) PoiConstants.PAIR_DECLARATION:
-                return ExitPairDeclaration((Production) node);
-            case (int) PoiConstants.PAIR_EXPRESSION:
-                return ExitPairExpression((Production) node);
-            case (int) PoiConstants.PAIR_DECLARATION_CONTENT:
-                return ExitPairDeclarationContent((Production) node);
-            case (int) PoiConstants.PAIR_EXPRESSION_CONTENT:
-                return ExitPairExpressionContent((Production) node);
             case (int) PoiConstants.STATEMENT_BLOCK:
                 return ExitStatementBlock((Production) node);
-            case (int) PoiConstants.ARITHMETIC_EXPRESSION:
-                return ExitArithmeticExpression((Production) node);
+            case (int) PoiConstants.PAIR_DECLARATION:
+                return ExitPairDeclaration((Production) node);
+            case (int) PoiConstants.PAIR_DECLARATION_CONTENT:
+                return ExitPairDeclarationContent((Production) node);
             case (int) PoiConstants.ASSIGN_EXPRESSION:
                 return ExitAssignExpression((Production) node);
             case (int) PoiConstants.ASSIGN_EXPRESSION_T:
                 return ExitAssignExpressionT((Production) node);
+            case (int) PoiConstants.PAIR_OR_FUNCTION_EXPRESSION:
+                return ExitPairOrFunctionExpression((Production) node);
+            case (int) PoiConstants.PAIR_EXPRESSION:
+                return ExitPairExpression((Production) node);
+            case (int) PoiConstants.PAIR_EXPRESSION_CONTENT:
+                return ExitPairExpressionContent((Production) node);
+            case (int) PoiConstants.ARITHMETIC_EXPRESSION:
+                return ExitArithmeticExpression((Production) node);
             case (int) PoiConstants.CONDITION_EXPRESSION:
                 return ExitConditionExpression((Production) node);
             case (int) PoiConstants.CONDITION_EXPRESSION_T:
@@ -1016,29 +1021,32 @@ namespace PoiLanguage {
             case (int) PoiConstants.FUNCTION_BODY:
                 ChildFunctionBody(node, child);
                 break;
-            case (int) PoiConstants.PAIR_DECLARATION:
-                ChildPairDeclaration(node, child);
-                break;
-            case (int) PoiConstants.PAIR_EXPRESSION:
-                ChildPairExpression(node, child);
-                break;
-            case (int) PoiConstants.PAIR_DECLARATION_CONTENT:
-                ChildPairDeclarationContent(node, child);
-                break;
-            case (int) PoiConstants.PAIR_EXPRESSION_CONTENT:
-                ChildPairExpressionContent(node, child);
-                break;
             case (int) PoiConstants.STATEMENT_BLOCK:
                 ChildStatementBlock(node, child);
                 break;
-            case (int) PoiConstants.ARITHMETIC_EXPRESSION:
-                ChildArithmeticExpression(node, child);
+            case (int) PoiConstants.PAIR_DECLARATION:
+                ChildPairDeclaration(node, child);
+                break;
+            case (int) PoiConstants.PAIR_DECLARATION_CONTENT:
+                ChildPairDeclarationContent(node, child);
                 break;
             case (int) PoiConstants.ASSIGN_EXPRESSION:
                 ChildAssignExpression(node, child);
                 break;
             case (int) PoiConstants.ASSIGN_EXPRESSION_T:
                 ChildAssignExpressionT(node, child);
+                break;
+            case (int) PoiConstants.PAIR_OR_FUNCTION_EXPRESSION:
+                ChildPairOrFunctionExpression(node, child);
+                break;
+            case (int) PoiConstants.PAIR_EXPRESSION:
+                ChildPairExpression(node, child);
+                break;
+            case (int) PoiConstants.PAIR_EXPRESSION_CONTENT:
+                ChildPairExpressionContent(node, child);
+                break;
+            case (int) PoiConstants.ARITHMETIC_EXPRESSION:
+                ChildArithmeticExpression(node, child);
                 break;
             case (int) PoiConstants.CONDITION_EXPRESSION:
                 ChildConditionExpression(node, child);
@@ -4381,166 +4389,6 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterPairDeclaration(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitPairDeclaration(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildPairDeclaration(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterPairExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitPairExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildPairExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterPairDeclarationContent(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitPairDeclarationContent(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildPairDeclarationContent(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterPairExpressionContent(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitPairExpressionContent(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildPairExpressionContent(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterStatementBlock(Production node) {
         }
 
@@ -4581,7 +4429,7 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterArithmeticExpression(Production node) {
+        public virtual void EnterPairDeclaration(Production node) {
         }
 
         /**
@@ -4595,7 +4443,7 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual Node ExitArithmeticExpression(Production node) {
+        public virtual Node ExitPairDeclaration(Production node) {
             return node;
         }
 
@@ -4609,7 +4457,47 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void ChildArithmeticExpression(Production node, Node child) {
+        public virtual void ChildPairDeclaration(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterPairDeclarationContent(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitPairDeclarationContent(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildPairDeclarationContent(Production node, Node child) {
             node.AddChild(child);
         }
 
@@ -4690,6 +4578,166 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual void ChildAssignExpressionT(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterPairOrFunctionExpression(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitPairOrFunctionExpression(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildPairOrFunctionExpression(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterPairExpression(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitPairExpression(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildPairExpression(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterPairExpressionContent(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitPairExpressionContent(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildPairExpressionContent(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterArithmeticExpression(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitArithmeticExpression(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildArithmeticExpression(Production node, Node child) {
             node.AddChild(child);
         }
 

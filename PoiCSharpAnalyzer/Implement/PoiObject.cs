@@ -10,7 +10,8 @@ namespace PoiLanguage
     public enum PoiObjectType
     {
         Null = 0,
-        String = 1
+        String = 1,
+        Pair = 2
     }
 
     public class PoiObject
@@ -32,9 +33,28 @@ namespace PoiLanguage
 
         public override string ToString()
         {
-            if (Type != PoiObjectType.String)
-                throw new PoiObjectException("Not a String");
-            return Data as string;
+            if (Type == PoiObjectType.String)
+                return Data as string;
+            if (Type == PoiObjectType.Pair)
+            {
+                List<PoiObject> list = this.ToPair();
+                return list.ToString();
+            }
+            throw new PoiObjectException("Can't convert to a String");
+        }
+
+        public List<PoiObject> ToPair()
+        {
+            if (Type != PoiObjectType.Pair)
+                throw new PoiObjectException("Not a Pair");
+            try
+            {
+                return Data as List<PoiObject>;
+            }
+            catch(Exception)
+            {
+                throw new PoiObjectException("Not a Valid Pair");
+            }
         }
 
         public static PoiObject operator +(PoiObject a, PoiObject b)

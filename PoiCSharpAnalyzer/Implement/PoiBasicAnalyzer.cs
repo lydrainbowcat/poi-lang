@@ -267,7 +267,7 @@ namespace PoiLanguage
          */
         public override Node ExitSymbolSemicolon(Token node)
         {
-            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage() + "\r\n"));
             return node;
         }
 
@@ -3096,6 +3096,10 @@ namespace PoiLanguage
             {
                 node.AddValue(child.GetValue(0) as PoiObject);
             }
+            else if (child.Name == "EmptyStatement")
+            {
+                node.AddValue(new PoiObject(PoiObjectType.String, ";"));
+            }
             //Other conditions: to be done!
             return node;
         }
@@ -3227,6 +3231,7 @@ namespace PoiLanguage
          */
         public override Node ExitEmptyStatement(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -3273,15 +3278,11 @@ namespace PoiLanguage
             if (node.GetChildCount() != 1)
                 throw new PoiAnalyzeException("Expression doesn't have 1 child");
             Node child = node.GetChildAt(0);
-            if (child.Name == "ArithmeticExpression")
+            if (child.Name == "AssignExpression")
             {
                 node.AddValue(child.GetValue(0) as PoiObject);
             }
             else if (child.Name == "FunctionExpression")
-            {
-                // To be done!
-            }
-            else if (child.Name == "PairExpression")
             {
                 // To be done!
             }
@@ -3544,6 +3545,7 @@ namespace PoiLanguage
          */
         public override Node ExitPairExpression(Production node)
         {
+            node.AddValue(node.GetChildAt(1).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -3630,6 +3632,18 @@ namespace PoiLanguage
          */
         public override Node ExitPairExpressionContent(Production node)
         {
+            if (node.GetChildCount() == 1)
+            {
+                List<PoiObject> list = new List<PoiObject>();
+                list.Insert(0, node.GetChildAt(0).GetValue(0) as PoiObject);
+                node.AddValue(new PoiObject(PoiObjectType.Pair, list));
+            }
+            else
+            {
+                List<PoiObject> list = (node.GetChildAt(2).GetValue(0) as PoiObject).ToPair();
+                list.Insert(0, node.GetChildAt(0).GetValue(0) as PoiObject);
+                node.AddValue(new PoiObject(PoiObjectType.Pair, list));
+            }
             return node;
         }
 
@@ -3760,7 +3774,41 @@ namespace PoiLanguage
          */
         public override Node ExitAssignExpression(Production node)
         {
-            node.AddValue(MergeChildList(node));
+            Node child = node.GetChildAt(0);
+            if (child.Name == "ArithmeticExpression")
+            {
+                node.AddValue(MergeChildList(node));
+            }
+            else if (child.Name == "PairExpression")
+            {
+                if (node.GetChildCount() == 1)
+                {
+                    List<PoiObject> left = (node.GetChildAt(0).GetValue(0) as PoiObject).ToPair();
+                    string result = "";
+                    for (int i = 0; i < left.Count; i++)
+                    {
+                        string str = left[i].ToString() + (i == left.Count - 1 ? "" : ";\r\n");
+                        result += str;
+                    }
+                    node.AddValue(new PoiObject(PoiObjectType.String, result));
+                }
+                else
+                {
+                    List<PoiObject> left = (node.GetChildAt(0).GetValue(0) as PoiObject).ToPair();
+                    List<PoiObject> right = (node.GetChildAt(2).GetValue(0) as PoiObject).ToPair();
+                    if (left.Count != right.Count)
+                        throw new PoiAnalyzeException("AssignExpression pairs are in different counts");
+                    string result = "{\r\n";
+                    for (int i = 0; i < left.Count; i++)
+                    {
+                        string str = left[i].ToString() + " = " + right[i].ToString() + ";\r\n";
+                        result += str;
+                    }
+                    result += "}";
+                    node.AddValue(new PoiObject(PoiObjectType.String, result));
+                }
+            }
+            else throw new PoiAnalyzeException("AssignExpression not supported");
             return node;
         }
 
@@ -3819,6 +3867,59 @@ namespace PoiLanguage
          * discovered errors</exception>
          */
         public override void ChildAssignExpressionT(Production node, Node child)
+        {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void EnterPairOrFunctionExpression(Production node)
+        {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override Node ExitPairOrFunctionExpression(Production node)
+        {
+            Node child = node.GetChildAt(0);
+            if (child.Name == "PairExpression")
+            {
+                node.AddValue(child.GetValue(0) as PoiObject);
+            }
+            else if (child.Name == "FunctionExpression")
+            {
+                // To be done
+            }
+            else throw new PoiAnalyzeException("PairOrFunctionExpression not supported");
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void ChildPairOrFunctionExpression(Production node, Node child)
         {
             node.AddChild(child);
         }

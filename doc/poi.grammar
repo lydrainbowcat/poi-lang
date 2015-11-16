@@ -178,9 +178,8 @@ DeclarationStatement    = Declaration SYMBOL_SEMICOLON ;
 EmptyStatement          = SYMBOL_SEMICOLON ;
 
 /* EXPRESSION */
-Expression 		= ArithmeticExpression
-				| FunctionExpression
-                | PairExpression ;
+Expression 		= AssignExpression
+				| FunctionExpression ;
 
 /* FunctionExpression */
 FunctionExpression  = FUNCTION_SIGN FunctionParameter SYMBOL_ARROW FunctionReturnValue FunctionBody ;
@@ -188,25 +187,19 @@ FunctionParameter   = PairDeclaration ;
 FunctionReturnValue = PairDeclaration ;
 FunctionBody        = StatementBlock ;
 
-/* PairExpression and PairDeclaration */
-PairDeclaration         = SYMBOL_LEFT_BRACKET [PairDeclarationContent] SYMBOL_RIGHT_BRACKET ;
-PairExpression          = SYMBOL_LEFT_BRACKET [PairExpressionContent] SYMBOL_RIGHT_BRACKET ;
-PairDeclarationContent  = Declaration {SYMBOL_COMMA Declaration} ;
-PairExpressionContent   = Expression {SYMBOL_COMMA Expression} ;
-
 /* StatementBlock */
 StatementBlock = SYMBOL_LEFT_BRACE StatementList SYMBOL_RIGHT_BRACE ;
 
-/* ArithmeticExpression
- * Subexpression: Assign, Condition, Logical, Bit, Equality, Relational, Shift, Mathematic, Unary, etc.
- */
-ArithmeticExpression = AssignExpression ;
+/* PairDeclaration */
+PairDeclaration         = SYMBOL_LEFT_BRACKET [PairDeclarationContent] SYMBOL_RIGHT_BRACKET ;
+PairDeclarationContent  = Declaration {SYMBOL_COMMA Declaration} ;
 
 /* AssignExpression
  * Operator: =, +=, -=, *=, %=, <<=, >>=, &=, |=, ^=
  * Priority: 14
  */
-AssignExpression    = ConditionExpression [AssignExpression_T] ;
+AssignExpression    = ArithmeticExpression [AssignExpression_T]
+					| PairExpression [OPERATOR_ASSIGN PairOrFunctionExpression] ;
 AssignExpression_T	= OPERATOR_ASSIGN AssignExpression
 					| OPERATOR_ADD_ASSIGN AssignExpression
 					| OPERATOR_SUB_ASSIGN AssignExpression
@@ -218,6 +211,19 @@ AssignExpression_T	= OPERATOR_ASSIGN AssignExpression
 					| OPERATOR_BIT_AND_ASSIGN AssignExpression
 					| OPERATOR_BIT_OR_ASSIGN AssignExpression
 					| OPERATOR_BIT_XOR_ASSIGN AssignExpression ;
+PairOrFunctionExpression = PairExpression
+						 | FunctionExpression ;
+
+
+/* PairExpression and PairDeclaration */
+PairExpression          = SYMBOL_LEFT_BRACKET [PairExpressionContent] SYMBOL_RIGHT_BRACKET ;
+PairExpressionContent   = ArithmeticExpression [SYMBOL_COMMA PairExpressionContent]
+						| FunctionExpression [SYMBOL_COMMA PairExpressionContent] ;
+
+/* ArithmeticExpression
+ * Subexpression: Condition, Logical, Bit, Equality, Relational, Shift, Mathematic, Unary, etc.
+ */
+ArithmeticExpression = ConditionExpression ;
 
 /* ConditionExpression
  * Operator: ?:

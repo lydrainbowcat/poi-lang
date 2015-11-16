@@ -30,7 +30,9 @@ namespace PoiLanguage {
             SUBPRODUCTION_6 = 3006,
             SUBPRODUCTION_7 = 3007,
             SUBPRODUCTION_8 = 3008,
-            SUBPRODUCTION_9 = 3009
+            SUBPRODUCTION_9 = 3009,
+            SUBPRODUCTION_10 = 3010,
+            SUBPRODUCTION_11 = 3011
         }
 
         /**
@@ -148,13 +150,10 @@ namespace PoiLanguage {
             pattern = new ProductionPattern((int) PoiConstants.EXPRESSION,
                                             "Expression");
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.ARITHMETIC_EXPRESSION, 1, 1);
+            alt.AddProduction((int) PoiConstants.ASSIGN_EXPRESSION, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.FUNCTION_EXPRESSION, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -190,20 +189,20 @@ namespace PoiLanguage {
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
+            pattern = new ProductionPattern((int) PoiConstants.STATEMENT_BLOCK,
+                                            "StatementBlock");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.SYMBOL_LEFT_BRACE, 1, 1);
+            alt.AddProduction((int) PoiConstants.STATEMENT_LIST, 1, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_RIGHT_BRACE, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
             pattern = new ProductionPattern((int) PoiConstants.PAIR_DECLARATION,
                                             "PairDeclaration");
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.SYMBOL_LEFT_BRACKET, 1, 1);
             alt.AddProduction((int) PoiConstants.PAIR_DECLARATION_CONTENT, 0, 1);
-            alt.AddToken((int) PoiConstants.SYMBOL_RIGHT_BRACKET, 1, 1);
-            pattern.AddAlternative(alt);
-            AddPattern(pattern);
-
-            pattern = new ProductionPattern((int) PoiConstants.PAIR_EXPRESSION,
-                                            "PairExpression");
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.SYMBOL_LEFT_BRACKET, 1, 1);
-            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION_CONTENT, 0, 1);
             alt.AddToken((int) PoiConstants.SYMBOL_RIGHT_BRACKET, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
@@ -216,35 +215,15 @@ namespace PoiLanguage {
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern((int) PoiConstants.PAIR_EXPRESSION_CONTENT,
-                                            "PairExpressionContent");
-            alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.EXPRESSION, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_2, 0, -1);
-            pattern.AddAlternative(alt);
-            AddPattern(pattern);
-
-            pattern = new ProductionPattern((int) PoiConstants.STATEMENT_BLOCK,
-                                            "StatementBlock");
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.SYMBOL_LEFT_BRACE, 1, 1);
-            alt.AddProduction((int) PoiConstants.STATEMENT_LIST, 1, 1);
-            alt.AddToken((int) PoiConstants.SYMBOL_RIGHT_BRACE, 1, 1);
-            pattern.AddAlternative(alt);
-            AddPattern(pattern);
-
-            pattern = new ProductionPattern((int) PoiConstants.ARITHMETIC_EXPRESSION,
-                                            "ArithmeticExpression");
-            alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.ASSIGN_EXPRESSION, 1, 1);
-            pattern.AddAlternative(alt);
-            AddPattern(pattern);
-
             pattern = new ProductionPattern((int) PoiConstants.ASSIGN_EXPRESSION,
                                             "AssignExpression");
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.CONDITION_EXPRESSION, 1, 1);
+            alt.AddProduction((int) PoiConstants.ARITHMETIC_EXPRESSION, 1, 1);
             alt.AddProduction((int) PoiConstants.ASSIGN_EXPRESSION_T, 0, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION, 1, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_2, 0, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -293,6 +272,44 @@ namespace PoiLanguage {
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.OPERATOR_BIT_XOR_ASSIGN, 1, 1);
             alt.AddProduction((int) PoiConstants.ASSIGN_EXPRESSION, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.PAIR_OR_FUNCTION_EXPRESSION,
+                                            "PairOrFunctionExpression");
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.FUNCTION_EXPRESSION, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.PAIR_EXPRESSION,
+                                            "PairExpression");
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.SYMBOL_LEFT_BRACKET, 1, 1);
+            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION_CONTENT, 0, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_RIGHT_BRACKET, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.PAIR_EXPRESSION_CONTENT,
+                                            "PairExpressionContent");
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.ARITHMETIC_EXPRESSION, 1, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_3, 0, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.FUNCTION_EXPRESSION, 1, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_4, 0, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) PoiConstants.ARITHMETIC_EXPRESSION,
+                                            "ArithmeticExpression");
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) PoiConstants.CONDITION_EXPRESSION, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -776,11 +793,11 @@ namespace PoiLanguage {
                                             "VariableGetterSetter");
             alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.VARIABLE_GETTER, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_3, 0, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_5, 0, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.VARIABLE_SETTER, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_4, 0, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_6, 0, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -846,7 +863,7 @@ namespace PoiLanguage {
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.CLASS_TYPE, 1, 1);
             alt.AddProduction((int) PoiConstants.CLASS_NAME, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_5, 0, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_7, 0, 1);
             alt.AddProduction((int) PoiConstants.CLASS_BODY, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
@@ -928,7 +945,7 @@ namespace PoiLanguage {
             alt.AddToken((int) PoiConstants.BRANCH_IF, 1, 1);
             alt.AddProduction((int) PoiConstants.BRANCH_CONDITION, 1, 1);
             alt.AddProduction((int) PoiConstants.BRANCH_TARGET_STATEMENT, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_6, 0, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_8, 0, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -958,10 +975,10 @@ namespace PoiLanguage {
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.LOOP_FOR, 1, 1);
             alt.AddProduction((int) PoiConstants.LOOP_START_CONDITION, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_7, 0, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_8, 0, 1);
-            alt.AddProduction((int) PoiConstants.LOOP_TARGET_STATEMENT, 1, 1);
             alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_9, 0, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_10, 0, 1);
+            alt.AddProduction((int) PoiConstants.LOOP_TARGET_STATEMENT, 1, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_11, 0, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1026,8 +1043,8 @@ namespace PoiLanguage {
                                             "Subproduction2");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
-            alt.AddProduction((int) PoiConstants.EXPRESSION, 1, 1);
+            alt.AddToken((int) PoiConstants.OPERATOR_ASSIGN, 1, 1);
+            alt.AddProduction((int) PoiConstants.PAIR_OR_FUNCTION_EXPRESSION, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1036,7 +1053,7 @@ namespace PoiLanguage {
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
-            alt.AddProduction((int) PoiConstants.VARIABLE_SETTER, 1, 1);
+            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION_CONTENT, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1045,7 +1062,7 @@ namespace PoiLanguage {
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
-            alt.AddProduction((int) PoiConstants.VARIABLE_GETTER, 1, 1);
+            alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION_CONTENT, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1053,8 +1070,8 @@ namespace PoiLanguage {
                                             "Subproduction5");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CLASS_EXTEND, 1, 1);
-            alt.AddProduction((int) PoiConstants.SUPER_CLASS_NAME, 1, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
+            alt.AddProduction((int) PoiConstants.VARIABLE_SETTER, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1062,8 +1079,8 @@ namespace PoiLanguage {
                                             "Subproduction6");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.BRANCH_ELSE, 1, 1);
-            alt.AddProduction((int) PoiConstants.BRANCH_TARGET_STATEMENT, 1, 1);
+            alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
+            alt.AddProduction((int) PoiConstants.VARIABLE_GETTER, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1071,8 +1088,8 @@ namespace PoiLanguage {
                                             "Subproduction7");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.LOOP_INITIAL, 1, 1);
-            alt.AddProduction((int) PoiConstants.LOOP_INIT_STATEMENT, 1, 1);
+            alt.AddToken((int) PoiConstants.CLASS_EXTEND, 1, 1);
+            alt.AddProduction((int) PoiConstants.SUPER_CLASS_NAME, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1080,13 +1097,31 @@ namespace PoiLanguage {
                                             "Subproduction8");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.LOOP_STEP, 1, 1);
-            alt.AddProduction((int) PoiConstants.LOOP_STEP_STATEMENT, 1, 1);
+            alt.AddToken((int) PoiConstants.BRANCH_ELSE, 1, 1);
+            alt.AddProduction((int) PoiConstants.BRANCH_TARGET_STATEMENT, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
             pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_9,
                                             "Subproduction9");
+            pattern.Synthetic = true;
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LOOP_INITIAL, 1, 1);
+            alt.AddProduction((int) PoiConstants.LOOP_INIT_STATEMENT, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_10,
+                                            "Subproduction10");
+            pattern.Synthetic = true;
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LOOP_STEP, 1, 1);
+            alt.AddProduction((int) PoiConstants.LOOP_STEP_STATEMENT, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_11,
+                                            "Subproduction11");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.LOOP_UNTIL, 1, 1);
