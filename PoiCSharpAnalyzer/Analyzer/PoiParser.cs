@@ -32,7 +32,8 @@ namespace PoiLanguage {
             SUBPRODUCTION_8 = 3008,
             SUBPRODUCTION_9 = 3009,
             SUBPRODUCTION_10 = 3010,
-            SUBPRODUCTION_11 = 3011
+            SUBPRODUCTION_11 = 3011,
+            SUBPRODUCTION_12 = 3012
         }
 
         /**
@@ -974,11 +975,11 @@ namespace PoiLanguage {
                                             "LoopStatement");
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.LOOP_FOR, 1, 1);
-            alt.AddProduction((int) PoiConstants.LOOP_START_CONDITION, 1, 1);
             alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_9, 0, 1);
             alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_10, 0, 1);
-            alt.AddProduction((int) PoiConstants.LOOP_TARGET_STATEMENT, 1, 1);
             alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_11, 0, 1);
+            alt.AddProduction((int) PoiConstants.LOOP_TARGET_STATEMENT, 1, 1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_12, 0, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1115,13 +1116,22 @@ namespace PoiLanguage {
                                             "Subproduction10");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.LOOP_STEP, 1, 1);
-            alt.AddProduction((int) PoiConstants.LOOP_STEP_STATEMENT, 1, 1);
+            alt.AddToken((int) PoiConstants.LOOP_WHILE, 1, 1);
+            alt.AddProduction((int) PoiConstants.LOOP_START_CONDITION, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
             pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_11,
                                             "Subproduction11");
+            pattern.Synthetic = true;
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LOOP_STEP, 1, 1);
+            alt.AddProduction((int) PoiConstants.LOOP_STEP_STATEMENT, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_12,
+                                            "Subproduction12");
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.LOOP_UNTIL, 1, 1);
