@@ -6152,7 +6152,7 @@ namespace PoiLanguage
         public override Node ExitBranchCondition(Production node)
         {
             if (node.GetChildCount() < 3)
-                throw new PoiAnalyzeException("BranchCondition has no 3 child");
+                throw new PoiAnalyzeException("BranchCondition doesn't have 3 children");
             string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
             PoiObject value = new PoiObject(PoiObjectType.String, "(" + expression + ")");
             node.AddValue(value);
@@ -6272,7 +6272,7 @@ namespace PoiLanguage
                 a2 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
                 current += 2;
             }
-            else a2 = "";
+            else a2 = "true";
             if (node.GetChildAt(current).Name == "LOOP_STEP")
             {
                 a3 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
@@ -6285,7 +6285,7 @@ namespace PoiLanguage
             if (node.GetChildCount() != current)
             {
                 a4 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
-                value = new PoiObject(PoiObjectType.String, value +"if(" + a4 + ") break;\r\n" + a3 + "}\r\n}\r\n");
+                value = new PoiObject(PoiObjectType.String, value +"if" + a4 + " break;\r\n" + a3 + "}\r\n}\r\n");
             }
             else value = new PoiObject(PoiObjectType.String, value + a3 + "}\r\n}\r\n");
 
