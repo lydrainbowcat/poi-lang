@@ -19,7 +19,7 @@ namespace PoiLanguage
          */
         public override void EnterSymbolLeftParen(Token node)
         {
-            
+
         }
 
         /**
@@ -4978,7 +4978,7 @@ namespace PoiLanguage
                     right = new PoiObject(PoiObjectType.String, "");
                 node.AddValue(left + right);
             }
-            else if(child0.Name== "SYMBOL_LEFT_PAREN")
+            else if (child0.Name == "SYMBOL_LEFT_PAREN")
             {
                 string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
                 PoiObject left = new PoiObject(PoiObjectType.String, "(" + expression + ")");
@@ -6285,7 +6285,7 @@ namespace PoiLanguage
             if (node.GetChildCount() != current)
             {
                 a4 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
-                value = new PoiObject(PoiObjectType.String, value +"if" + a4 + " break;\r\n" + a3 + "}\r\n}\r\n");
+                value = new PoiObject(PoiObjectType.String, value + "if" + a4 + " break;\r\n" + a3 + "}\r\n}\r\n");
             }
             else value = new PoiObject(PoiObjectType.String, value + a3 + "}\r\n}\r\n");
 
