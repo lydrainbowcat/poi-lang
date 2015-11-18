@@ -98,10 +98,10 @@ PRIMITIVE_BOOLEAN_ALIAS     = "bool"
 PRIMITIVE_CHARACTER         = "char"
 
 /* Container type */
-CONTAINER_STRING    = "String"
-CONTAINER_ARRAY     = "Array"
-CONTAINER_MAP       = "Map"
-CONTAINER_EVENT     = "Event"
+CONTAINER_STRING    = "string"
+CONTAINER_ARRAY     = "array"
+CONTAINER_MAP       = "map"
+CONTAINER_EVENT     = "event"
 
 /* Function */
 FUNCTION_TYPE   = "function"
@@ -131,6 +131,7 @@ BRANCH_ELSE = "else"
 /* Loop structure */
 LOOP_FOR        = "for"
 LOOP_INITIAL    = "init"
+LOOP_WHILE      = "while"
 LOOP_STEP       = "step"
 LOOP_UNTIL      = "until"
 LOOP_BREAK      = "break"
@@ -192,7 +193,7 @@ StatementBlock = SYMBOL_LEFT_BRACE StatementList SYMBOL_RIGHT_BRACE ;
 
 /* PairDeclaration */
 PairDeclaration         = SYMBOL_LEFT_BRACKET [PairDeclarationContent] SYMBOL_RIGHT_BRACKET ;
-PairDeclarationContent  = Declaration {SYMBOL_COMMA Declaration} ;
+PairDeclarationContent  = VariableDeclaration {SYMBOL_COMMA VariableDeclaration} ;
 
 /* AssignExpression
  * Operator: =, +=, -=, *=, %=, <<=, >>=, &=, |=, ^=
@@ -330,7 +331,7 @@ UnaryExpression = BasicExpression
 BasicExpression     = PrimaryExpression [BasicExpression_T]
                     | SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
                     | FunctionVariable SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
-                    | ArrayVariable SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET [BasicExpression_T] ;
+                    | ArrayVariable (SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET)+ [BasicExpression_T] ;
 BasicExpression_T   = OPERATOR_INC [BasicExpression_T]
                     | OPERATOR_DEC [BasicExpression_T]
                     | SYMBOL_DOT BasicExpression [BasicExpression_T] ;
@@ -399,7 +400,7 @@ VariableSetter			= DECLARATION_SETTER [StatementBlock] ;
 VariableInitializer		= OPERATOR_ASSIGN Expression ;
 
 StringContainer = CONTAINER_STRING ;
-ArrayContainer  = CONTAINER_ARRAY SYMBOL_LEFT_BRACKET VariableType SYMBOL_COMMA Expression SYMBOL_RIGHT_BRACKET ;
+ArrayContainer  = CONTAINER_ARRAY SYMBOL_LEFT_BRACKET VariableType (SYMBOL_COMMA Expression)+ SYMBOL_RIGHT_BRACKET ;
 MapContainer    = CONTAINER_MAP ;
 EventContainer  = CONTAINER_EVENT ;
 
@@ -416,7 +417,7 @@ ClassAccessModifier = CLASS_PUBLIC
                     | CLASS_PROTECTED ;
 
 /* ReturnStatement */
-ReturnStatement = FUNCTION_RETURN ;
+ReturnStatement = FUNCTION_RETURN SYMBOL_SEMICOLON ;
 
 /* StructualStatement */
 StructualStatement  = BranchStatement
@@ -429,8 +430,9 @@ BranchTargetStatement   = Statement
                         | SYMBOL_LEFT_BRACE StatementList SYMBOL_RIGHT_BRACE ;
                         
 /* LoopStatement */
-LoopStatement       = LOOP_FOR LoopStartCondition
+LoopStatement       = LOOP_FOR
                     [LOOP_INITIAL LoopInitStatement]
+					[LOOP_WHILE LoopStartCondition]
                     [LOOP_STEP LoopStepStatement]
                     LoopTargetStatement
                     [LOOP_UNTIL LoopStopCondition SYMBOL_SEMICOLON] ;

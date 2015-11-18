@@ -11,7 +11,8 @@ namespace PoiLanguage
     {
         Null = 0,
         String = 1,
-        Pair = 2
+        Pair = 2,
+        Array = 3
     }
 
     public class PoiObject
@@ -40,6 +41,11 @@ namespace PoiLanguage
                 List<PoiObject> list = this.ToPair();
                 return list.ToString();
             }
+            if(Type==PoiObjectType.Array)
+            {
+                List<string> list = this.ToArray();
+                return list.ToString();
+            }
             throw new PoiObjectException("Can't convert to a String");
         }
 
@@ -53,7 +59,21 @@ namespace PoiLanguage
             }
             catch(Exception)
             {
-                throw new PoiObjectException("Not a Valid Pair");
+                throw new PoiObjectException("Not a valid Pair");
+            }
+        }
+
+        public List<string> ToArray()
+        {
+            if (Type != PoiObjectType.Array)
+                throw new PoiObjectException("Not an Array");
+            try
+            {
+                return Data as List<string>;
+            }
+            catch(Exception)
+            {
+                throw new PoiObjectException("Not a valid Array");
             }
         }
 

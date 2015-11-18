@@ -5,3 +5,4 @@
 .vs
 *.exe
 **/.DS_Store
+cmd.txt

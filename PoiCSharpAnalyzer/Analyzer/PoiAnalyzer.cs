@@ -296,6 +296,9 @@ namespace PoiLanguage {
             case (int) PoiConstants.LOOP_INITIAL:
                 EnterLoopInitial((Token) node);
                 break;
+            case (int) PoiConstants.LOOP_WHILE:
+                EnterLoopWhile((Token) node);
+                break;
             case (int) PoiConstants.LOOP_STEP:
                 EnterLoopStep((Token) node);
                 break;
@@ -780,6 +783,8 @@ namespace PoiLanguage {
                 return ExitLoopFor((Token) node);
             case (int) PoiConstants.LOOP_INITIAL:
                 return ExitLoopInitial((Token) node);
+            case (int) PoiConstants.LOOP_WHILE:
+                return ExitLoopWhile((Token) node);
             case (int) PoiConstants.LOOP_STEP:
                 return ExitLoopStep((Token) node);
             case (int) PoiConstants.LOOP_UNTIL:
@@ -3574,6 +3579,32 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual Node ExitLoopInitial(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterLoopWhile(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitLoopWhile(Token node) {
             return node;
         }
 
