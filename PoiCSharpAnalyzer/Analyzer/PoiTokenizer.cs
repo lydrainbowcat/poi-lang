@@ -459,25 +459,25 @@ namespace PoiLanguage {
             pattern = new TokenPattern((int) PoiConstants.CONTAINER_STRING,
                                        "CONTAINER_STRING",
                                        TokenPattern.PatternType.STRING,
-                                       "String");
+                                       "string");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.CONTAINER_ARRAY,
                                        "CONTAINER_ARRAY",
                                        TokenPattern.PatternType.STRING,
-                                       "Array");
+                                       "array");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.CONTAINER_MAP,
                                        "CONTAINER_MAP",
                                        TokenPattern.PatternType.STRING,
-                                       "Map");
+                                       "map");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.CONTAINER_EVENT,
                                        "CONTAINER_EVENT",
                                        TokenPattern.PatternType.STRING,
-                                       "Event");
+                                       "event");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.FUNCTION_TYPE,

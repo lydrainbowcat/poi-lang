@@ -98,10 +98,10 @@ PRIMITIVE_BOOLEAN_ALIAS     = "bool"
 PRIMITIVE_CHARACTER         = "char"
 
 /* Container type */
-CONTAINER_STRING    = "String"
-CONTAINER_ARRAY     = "Array"
-CONTAINER_MAP       = "Map"
-CONTAINER_EVENT     = "Event"
+CONTAINER_STRING    = "string"
+CONTAINER_ARRAY     = "array"
+CONTAINER_MAP       = "map"
+CONTAINER_EVENT     = "event"
 
 /* Function */
 FUNCTION_TYPE   = "function"
@@ -400,7 +400,7 @@ VariableSetter			= DECLARATION_SETTER [StatementBlock] ;
 VariableInitializer		= OPERATOR_ASSIGN Expression ;
 
 StringContainer = CONTAINER_STRING ;
-ArrayContainer  = CONTAINER_ARRAY SYMBOL_LEFT_BRACKET VariableType SYMBOL_COMMA Expression SYMBOL_RIGHT_BRACKET ;
+ArrayContainer  = CONTAINER_ARRAY SYMBOL_LEFT_BRACKET VariableType (SYMBOL_COMMA Expression)+ SYMBOL_RIGHT_BRACKET ;
 MapContainer    = CONTAINER_MAP ;
 EventContainer  = CONTAINER_EVENT ;
 
@@ -417,7 +417,7 @@ ClassAccessModifier = CLASS_PUBLIC
                     | CLASS_PROTECTED ;
 
 /* ReturnStatement */
-ReturnStatement = FUNCTION_RETURN ;
+ReturnStatement = FUNCTION_RETURN SYMBOL_SEMICOLON ;
 
 /* StructualStatement */
 StructualStatement  = BranchStatement
