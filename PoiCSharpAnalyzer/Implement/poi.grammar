@@ -193,7 +193,7 @@ StatementBlock = SYMBOL_LEFT_BRACE StatementList SYMBOL_RIGHT_BRACE ;
 
 /* PairDeclaration */
 PairDeclaration         = SYMBOL_LEFT_BRACKET [PairDeclarationContent] SYMBOL_RIGHT_BRACKET ;
-PairDeclarationContent  = Declaration {SYMBOL_COMMA Declaration} ;
+PairDeclarationContent  = VariableDeclaration {SYMBOL_COMMA VariableDeclaration} ;
 
 /* AssignExpression
  * Operator: =, +=, -=, *=, %=, <<=, >>=, &=, |=, ^=
