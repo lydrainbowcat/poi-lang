@@ -13,10 +13,11 @@ namespace PoiLanguage
 
         private Dictionary<String, PoiVariable> variableDictionary = new Dictionary<String, PoiVariable>();
 
-        private String globalCode;
-
         private const String POI_PREFIX = "__";
-        private const String POI_TEMP_VARIABLE = "__poi_temp_variable";
+
+        private const String POI_TEMP_VARIABLE = POI_PREFIX + "poi_temp_variable";
+        private const String POI_TEMP_RETURN = POI_PREFIX + "poi_temp_return";
+
         private const String POI_GETTER_SETTER_PARAMETER_VARIABLE = "_value";
         private const String POI_GETTER_PREFIX = "_getter";
         private const String POI_SETTER_PREFIX = "_setter";
@@ -24,6 +25,9 @@ namespace PoiLanguage
         private const String POI_SETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
         private const String POI_GETTER_DEFAULT_CODE = "{ return " + POI_GETTER_SETTER_PARAMETER_VARIABLE + "}";
         private const String POI_SETTER_DEFAULT_CODE = "{" + POI_TEMP_VARIABLE + " = " + POI_GETTER_SETTER_PARAMETER_VARIABLE + "}";
+
+        private const String POI_FUNCTION_BODY_LABEL = POI_PREFIX + "poi_function_body";
+        private const String POI_FUNCTION_RETURN_CODE = "break " + POI_FUNCTION_BODY_LABEL + ";";
 
         /**
          * <summary>Called when entering a parse tree node.</summary>
@@ -3138,7 +3142,7 @@ namespace PoiLanguage
             if (node.GetChildCount() != 1)
                 throw new PoiAnalyzeException("Statement doesn't have 1 child");
             Node child = node.GetChildAt(0);
-            if (child.Name == "ExpressionStatement" || child.Name == "DeclarationStatement" || child.Name == "StructualStatement")
+            if (child.Name == "ExpressionStatement" || child.Name == "DeclarationStatement" || child.Name == "StructualStatement" || child.Name == "ReturnStatement")
             {
                 node.AddValue(child.GetValue(0) as PoiObject);
             }
@@ -3330,7 +3334,7 @@ namespace PoiLanguage
             }
             else if (child.Name == "FunctionExpression")
             {
-                // To be done!
+                node.AddValue(child.GetValue(0) as PoiObject);
             }
             else throw new PoiAnalyzeException("Expression not supported");
             return node;
@@ -3377,11 +3381,85 @@ namespace PoiLanguage
         public override Node ExitFunctionExpression(Production node)
         {
             Node parameter = node.GetChildAt(1);
-            Node returnValue = node.GetChildAt(3);
+            Node returnVariables = node.GetChildAt(3);
             Node functionBody = node.GetChildAt(4);
 
-            
+            List<PoiObject> parameterList;
+            List<PoiObject> returnVariablesList;
+            String body;
 
+            try
+            {
+                parameterList = (parameter.GetValue(0) as PoiObject).ToPair();
+                returnVariablesList = (returnVariables.GetValue(0) as PoiObject).ToPair();
+                body = (functionBody.GetValue(0) as PoiObject).ToString();
+            }
+            catch (PoiObjectException ex)
+            {
+                throw new PoiAnalyzeException("FunctionExpression: invalid parameter pair, return pair or functionBody String: " + ex.Message);
+            }
+
+            String variableAccess = "";
+            String variables = "";
+            String variablesDeclaration = "";
+            parameterList.ForEach(delegate(PoiObject param)
+            {
+                String paramDeclaration = param.ToString();
+
+                String[] declarations = paramDeclaration.Split(';');
+                for (int i = 0; i < declarations.Length; i++)
+                {
+                    if (declarations[i].IndexOf("function") != -1)
+                    {
+                        variableAccess += declarations[i] + ";";
+                    }
+                    else
+                    {
+                        if (variables != "")
+                            variables += ",";
+                        int variableStart = declarations[i].IndexOf("var") + 4;
+                        variables += declarations[i].Substring(variableStart, declarations[i].Length - variableStart);
+                    }
+                }
+            });
+
+            String[] returnVariablesArray = new String[returnVariablesList.Count];
+            int vi = 0;
+            returnVariablesList.ForEach(delegate(PoiObject param)
+            {
+                String paramDeclaration = param.ToString();
+
+                String[] declarations = paramDeclaration.Split(';');
+                for (int i = 0; i < declarations.Length; i++)
+                {
+                    if (declarations[i].IndexOf("function") != -1)
+                    {
+                        variableAccess += declarations[i] + ";";
+                    }
+                    else
+                    {
+                        variablesDeclaration += declarations[i] + ";";
+                        int variableStart = declarations[i].IndexOf("var") + 4;
+                        returnVariablesArray[vi++] = declarations[i].Substring(variableStart, declarations[i].Length - variableStart);
+                    }
+                }
+            });
+
+            String bodyLabel = POI_FUNCTION_BODY_LABEL + ":";
+
+            String returnAssignCode = "";
+            for (int i = 0; i < returnVariablesArray.Length; i++)
+            {
+                returnAssignCode += POI_TEMP_RETURN + "[" + i + "] = " + returnVariablesArray[i] + ";"; 
+            }
+
+            int bodyStart = body.IndexOf("{");
+            int bodyEnd = body.LastIndexOf("}");
+            body = "{" + body.Substring(bodyStart + 1, bodyEnd - bodyStart - 1) + POI_FUNCTION_RETURN_CODE + "}";
+            body = "{" + variableAccess + variablesDeclaration + bodyLabel + body + returnAssignCode + "}";
+
+            String function = "function(" + variables + ")" + body;
+            node.AddValue(new PoiObject(PoiObjectType.String, function));
             return node;
         }
 
@@ -3425,6 +3503,7 @@ namespace PoiLanguage
          */
         public override Node ExitFunctionParameter(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0));
             return node;
         }
 
@@ -3448,7 +3527,7 @@ namespace PoiLanguage
          *
          * <param name='node'>the node being entered</param>
          *
-         * <exception cref='ParseException'>if the node analysis
+         * <exception cref='ParseException'>if the node analysisH
          * discovered errors</exception>
          */
         public override void EnterFunctionReturnValue(Production node)
@@ -3468,6 +3547,7 @@ namespace PoiLanguage
          */
         public override Node ExitFunctionReturnValue(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0));
             return node;
         }
 
@@ -3511,6 +3591,7 @@ namespace PoiLanguage
          */
         public override Node ExitFunctionBody(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0));
             return node;
         }
 
@@ -3752,6 +3833,7 @@ namespace PoiLanguage
          */
         public override Node ExitStatementBlock(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -5452,8 +5534,8 @@ namespace PoiLanguage
                 }
                 else
                 {
-                    getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_DEFAULT_CODE;
-                    setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_DEFAULT_CODE;
+                    getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_PARAMETER + POI_GETTER_DEFAULT_CODE;
+                    setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_PARAMETER + POI_SETTER_DEFAULT_CODE;
                 }
                 String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
 
@@ -5480,7 +5562,6 @@ namespace PoiLanguage
             }
             else if (type == "UserType")
             {
-                // To be done
             }
             return node;
         }
@@ -6463,6 +6544,7 @@ namespace PoiLanguage
          */
         public override Node ExitReturnStatement(Production node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, POI_FUNCTION_RETURN_CODE));
             return node;
         }
 
