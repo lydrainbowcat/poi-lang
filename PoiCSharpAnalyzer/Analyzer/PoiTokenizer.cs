@@ -582,6 +582,12 @@ namespace PoiLanguage {
                                        "init");
             AddPattern(pattern);
 
+            pattern = new TokenPattern((int) PoiConstants.LOOP_WHILE,
+                                       "LOOP_WHILE",
+                                       TokenPattern.PatternType.STRING,
+                                       "while");
+            AddPattern(pattern);
+
             pattern = new TokenPattern((int) PoiConstants.LOOP_STEP,
                                        "LOOP_STEP",
                                        TokenPattern.PatternType.STRING,

@@ -35,7 +35,7 @@ namespace PoiLanguage
          */
         public override void EnterSymbolLeftParen(Token node)
         {
-            
+
         }
 
         /**
@@ -3138,7 +3138,7 @@ namespace PoiLanguage
             if (node.GetChildCount() != 1)
                 throw new PoiAnalyzeException("Statement doesn't have 1 child");
             Node child = node.GetChildAt(0);
-            if (child.Name == "ExpressionStatement")
+            if (child.Name == "ExpressionStatement" || child.Name == "DeclarationStatement" || child.Name == "StructualStatement")
             {
                 node.AddValue(child.GetValue(0) as PoiObject);
             }
@@ -3146,11 +3146,6 @@ namespace PoiLanguage
             {
                 node.AddValue(new PoiObject(PoiObjectType.String, ";"));
             }
-            else if (child.Name == "DeclarationStatement")
-            {
-                node.AddValue(child.GetValue(0) as PoiObject);
-            }
-            //Other conditions: to be done!
             return node;
         }
 
@@ -5044,7 +5039,7 @@ namespace PoiLanguage
                     right = new PoiObject(PoiObjectType.String, "");
                 node.AddValue(left + right);
             }
-            else if(child0.Name== "SYMBOL_LEFT_PAREN")
+            else if (child0.Name == "SYMBOL_LEFT_PAREN")
             {
                 string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
                 PoiObject left = new PoiObject(PoiObjectType.String, "(" + expression + ")");
@@ -6266,6 +6261,7 @@ namespace PoiLanguage
          */
         public override Node ExitStructualStatement(Production node)
         {
+            node.AddValue(MergeChildList(node));
             return node;
         }
 
@@ -6309,6 +6305,20 @@ namespace PoiLanguage
          */
         public override Node ExitBranchStatement(Production node)
         {
+            if (node.GetChildCount() < 3)
+                throw new PoiAnalyzeException("BranchCondition has no 3 child");
+            string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+            string statement = (node.GetChildAt(2).GetValue(0) as PoiObject).ToString();
+            PoiObject left = new PoiObject(PoiObjectType.String, "if" + expression + statement);
+            PoiObject right;
+            if (node.GetChildCount() > 3)
+            {
+                right = node.GetChildAt(4).GetValue(0) as PoiObject;
+                right = new PoiObject(PoiObjectType.String, "else" + right);
+            }
+            else
+                right = new PoiObject(PoiObjectType.String, "");
+            node.AddValue(left + right);
             return node;
         }
 
@@ -6352,6 +6362,11 @@ namespace PoiLanguage
          */
         public override Node ExitBranchCondition(Production node)
         {
+            if (node.GetChildCount() < 3)
+                throw new PoiAnalyzeException("BranchCondition doesn't have 3 children");
+            string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+            PoiObject value = new PoiObject(PoiObjectType.String, "(" + expression + ")");
+            node.AddValue(value);
             return node;
         }
 
@@ -6395,6 +6410,23 @@ namespace PoiLanguage
          */
         public override Node ExitBranchTargetStatement(Production node)
         {
+            if (node.GetChildCount() < 1)
+                throw new PoiAnalyzeException("BranchTargetStatement has no child");
+            Node child0 = node.GetChildAt(0);
+            if (child0.Name == "Statement")
+            {
+                node.AddValue(child0.GetValue(0) as PoiObject);
+            }
+            else if (child0.Name == "SYMBOL_LEFT_BRACE")
+            {
+                string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                PoiObject value = new PoiObject(PoiObjectType.String, "\r\n{\r\n" + expression + "}\r\n");
+                node.AddValue(value);
+            }
+            else
+            {
+                throw new PoiAnalyzeException("BranchTargetStatement not supported");
+            }
             return node;
         }
 
@@ -6438,6 +6470,37 @@ namespace PoiLanguage
          */
         public override Node ExitLoopStatement(Production node)
         {
+            int current = 1;
+            string a1, a2, a3, a4, b;
+            if (node.GetChildAt(current).Name == "LOOP_INITIAL")
+            {
+                a1 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
+                current += 2;
+            }
+            else a1 = "";
+            if (node.GetChildAt(current).Name == "LOOP_WHILE")
+            {
+                a2 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
+                current += 2;
+            }
+            else a2 = "true";
+            if (node.GetChildAt(current).Name == "LOOP_STEP")
+            {
+                a3 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
+                current += 2;
+            }
+            else a3 = "";
+            b = (node.GetChildAt(current).GetValue(0) as PoiObject).ToString();
+            current++;
+            PoiObject value = new PoiObject(PoiObjectType.String, "{\r\n" + a1 + "while(" + a2 + "){\r\n" + b);
+            if (node.GetChildCount() != current)
+            {
+                a4 = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
+                value = new PoiObject(PoiObjectType.String, value + "if" + a4 + " break;\r\n" + a3 + "}\r\n}\r\n");
+            }
+            else value = new PoiObject(PoiObjectType.String, value + a3 + "}\r\n}\r\n");
+
+            node.AddValue(value);
             return node;
         }
 
@@ -6481,6 +6544,12 @@ namespace PoiLanguage
          */
         public override Node ExitLoopStartCondition(Production node)
         {
+            if (node.GetChildCount() == 2)
+            {
+                node.AddValue(new PoiObject(PoiObjectType.String, ""));
+            }
+            else
+                node.AddValue(node.GetChildAt(1).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -6524,6 +6593,7 @@ namespace PoiLanguage
          */
         public override Node ExitLoopInitStatement(Production node)
         {
+            node.AddValue(node.GetChildAt(1).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -6567,6 +6637,7 @@ namespace PoiLanguage
          */
         public override Node ExitLoopStepStatement(Production node)
         {
+            node.AddValue(node.GetChildAt(1).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -6610,6 +6681,14 @@ namespace PoiLanguage
          */
         public override Node ExitLoopTargetStatement(Production node)
         {
+            if (node.GetChildCount() == 1)
+            {
+                node.AddValue(MergeChildList(node));
+            }
+            else
+            {
+                node.AddValue(node.GetChildAt(1).GetValue(0) as PoiObject);
+            }
             return node;
         }
 
@@ -6653,6 +6732,11 @@ namespace PoiLanguage
          */
         public override Node ExitLoopStopCondition(Production node)
         {
+            if (node.GetChildCount() < 3)
+                throw new PoiAnalyzeException("BranchCondition has no 3 child");
+            string expression = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+            PoiObject value = new PoiObject(PoiObjectType.String, "(" + expression + ")");
+            node.AddValue(value);
             return node;
         }
 
