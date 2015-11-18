@@ -41,7 +41,7 @@ namespace PoiLanguage
                 List<PoiObject> list = this.ToPair();
                 return list.ToString();
             }
-            if(Type==PoiObjectType.Array)
+            if (Type == PoiObjectType.Array)
             {
                 List<string> list = this.ToArray();
                 return list.ToString();

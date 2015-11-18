@@ -2055,7 +2055,7 @@ namespace PoiLanguage
          */
         public override Node ExitContainerString(Token node)
         {
-            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
+            node.AddValue(new PoiObject(PoiObjectType.String, "var"));
             return node;
         }
 
