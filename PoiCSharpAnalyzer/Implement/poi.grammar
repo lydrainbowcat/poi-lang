@@ -331,7 +331,7 @@ UnaryExpression = BasicExpression
 BasicExpression     = PrimaryExpression [BasicExpression_T]
                     | SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
                     | FunctionVariable SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
-                    | ArrayVariable SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET [BasicExpression_T] ;
+                    | ArrayVariable (SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET)+ [BasicExpression_T] ;
 BasicExpression_T   = OPERATOR_INC [BasicExpression_T]
                     | OPERATOR_DEC [BasicExpression_T]
                     | SYMBOL_DOT BasicExpression [BasicExpression_T] ;
