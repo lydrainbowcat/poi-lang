@@ -4989,6 +4989,17 @@ namespace PoiLanguage
                     right = new PoiObject(PoiObjectType.String, "");
                 node.AddValue(left + right);
             }
+            else if (child0.Name == "ArrayVariable")
+            {
+                string arrayvariable = (node.GetChildAt(0).GetValue(0) as PoiObject).ToString();
+                string expression = (node.GetChildAt(2).GetValue(0) as PoiObject).ToString();
+                PoiObject left = new PoiObject(PoiObjectType.String, arrayvariable + "[" + expression + "]");
+                PoiObject right;
+                if (node.GetChildCount() > 4)
+                    right = node.GetChildAt(4).GetValue(0) as PoiObject;
+                else right = new PoiObject(PoiObjectType.String, "");
+                node.AddValue(left + right);
+            }
             // Other conditions: to be done
             return node;
         }
@@ -5136,6 +5147,7 @@ namespace PoiLanguage
          */
         public override Node ExitArrayVariable(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0) as PoiObject);
             return node;
         }
 
