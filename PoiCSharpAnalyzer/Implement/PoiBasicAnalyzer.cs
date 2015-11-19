@@ -2456,6 +2456,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassPublic(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2484,6 +2485,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassPrivate(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -2512,6 +2514,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassProtected(Token node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -6458,6 +6461,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassVariable(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -6501,6 +6505,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassAccessModifier(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0) as PoiObject);
             return node;
         }
 
