@@ -6,3 +6,4 @@
 *.exe
 **/.DS_Store
 cmd.txt
+*.v12.suo

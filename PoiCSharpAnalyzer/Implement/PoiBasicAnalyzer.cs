@@ -5513,36 +5513,21 @@ namespace PoiLanguage
                     accessNode = node.GetChildAt(2);
                     initializerNode = node.GetChildAt(3);
                 }
-                type = "var";
-                String identifier = (identifierNode.GetValue(0) as PoiObject).ToString();
 
-                String initializer = "";
-                if (initializerNode != null)
+                Node setterGetterNode = accessNode.GetChildAt(1);
+                if (setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter")
                 {
-                    initializer += (initializerNode.GetValue(0) as PoiObject).ToString();
-                }
-
-                String prefix = "function " + POI_PREFIX + identifier;
-                String getterCode = "", setterCode = "";
-                if (accessNode != null)
-                {
-                    Node setterGetterNode = accessNode.GetChildAt(1);
-                    getterCode = prefix + POI_GETTER_PREFIX + accessNode.GetValue(0);
-                    if (setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter")
-                    {
-                        type = "const";
-                    }
-                    else
-                    {
-                        setterCode = prefix + POI_SETTER_PREFIX + accessNode.GetValue(1);
-                    }
+                    type = "const";
                 }
                 else
                 {
-                    getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_PARAMETER + POI_GETTER_DEFAULT_CODE;
-                    setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_PARAMETER + POI_SETTER_DEFAULT_CODE;
+                    type = "var";
                 }
-                String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
+
+                String identifier = (identifierNode.GetValue(0) as PoiObject).ToString();
+
+                String initializer = generateInitializer(initializerNode);
+                String access = generateGetterSetter(accessNode, identifier);
 
                 String declaration = access + type + " " + identifier + initializer;
 
@@ -7159,6 +7144,38 @@ namespace PoiLanguage
         public void initVariableDictionary()
         {
             variableDictionary.Clear();
+        }
+
+        private string generateInitializer(Node initializerNode)
+        {
+            string initializer = "";
+            if (initializerNode != null)
+            {
+                initializer = (initializerNode.GetValue(0) as PoiObject).ToString();
+            }
+            return initializer;
+        }
+
+        private string generateGetterSetter(Node accessNode, string identifier)
+        {
+            String prefix = "function " + POI_PREFIX + identifier;
+            String getterCode = "", setterCode = "";
+            if (accessNode != null)
+            {
+                Node setterGetterNode = accessNode.GetChildAt(1);
+                getterCode = prefix + POI_GETTER_PREFIX + accessNode.GetValue(0);
+                if (!(setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter"))
+                {
+                    setterCode = prefix + POI_SETTER_PREFIX + accessNode.GetValue(1);
+                }
+            }
+            else
+            {
+                getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_PARAMETER + POI_GETTER_DEFAULT_CODE;
+                setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_PARAMETER + POI_SETTER_DEFAULT_CODE;
+            }
+            String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
+            return access;
         }
 
         #endregion
