@@ -213,7 +213,7 @@ AssignExpression_T	= OPERATOR_ASSIGN AssignExpression
 					| OPERATOR_BIT_OR_ASSIGN AssignExpression
 					| OPERATOR_BIT_XOR_ASSIGN AssignExpression ;
 PairOrFunctionExpression = PairExpression
-						 | FunctionExpression ;
+						 | BasicExpression ;
 
 
 /* PairExpression and PairDeclaration */
