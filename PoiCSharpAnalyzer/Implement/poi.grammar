@@ -409,8 +409,7 @@ ClassDeclaration    = CLASS_TYPE ClassName [CLASS_EXTEND SuperClassName] ClassBo
 ClassName           = IDENTIFIER ;
 SuperClassName      = IDENTIFIER ;
 ClassBody           = SYMBOL_LEFT_BRACE {ClassContent} SYMBOL_RIGHT_BRACE ;
-ClassContent        = ClassAccessModifier SYMBOL_COLON_MARK
-                    | ClassVariable ;
+ClassContent        = ClassAccessModifier ClassVariable ;
 ClassVariable       = DeclarationStatement ;
 ClassAccessModifier = CLASS_PUBLIC
                     | CLASS_PRIVATE

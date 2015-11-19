@@ -895,9 +895,6 @@ namespace PoiLanguage {
                                             "ClassContent");
             alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.CLASS_ACCESS_MODIFIER, 1, 1);
-            alt.AddToken((int) PoiConstants.SYMBOL_COLON_MARK, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.CLASS_VARIABLE, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
