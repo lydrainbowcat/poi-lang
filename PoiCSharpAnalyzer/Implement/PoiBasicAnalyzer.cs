@@ -5162,8 +5162,15 @@ namespace PoiLanguage
                 string arrayvariable = (node.GetChildAt(0).GetValue(0) as PoiObject).ToString();
                 string expression = (node.GetChildAt(2).GetValue(0) as PoiObject).ToString();
                 PoiObject left = new PoiObject(PoiObjectType.String, arrayvariable + "[" + expression + "]");
+                int current = 4;
+                while (current + 3 <= node.GetChildCount())
+                {
+                    expression = (node.GetChildAt(current + 1).GetValue(0) as PoiObject).ToString();
+                    left = new PoiObject(PoiObjectType.String, left + "[" + expression + "]");
+                    current += 3;
+                }
                 PoiObject right;
-                if (node.GetChildCount() > 4)
+                if (node.GetChildCount() > current)
                     right = node.GetChildAt(4).GetValue(0) as PoiObject;
                 else right = new PoiObject(PoiObjectType.String, "");
                 node.AddValue(left + right);
