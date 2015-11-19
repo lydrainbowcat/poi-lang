@@ -23,13 +23,15 @@ namespace PoiLanguage
         private const String POI_SETTER_PREFIX = "_setter";
         private const String POI_GETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
         private const String POI_SETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
-        private const String POI_GETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE;
-        private const String POI_SETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE;
+        private const String POI_GETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE + ";";
+        private const String POI_SETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE + ";";
         private const String POI_GETTER_DEFAULT_CODE = "{" + POI_GETTER_RETURN_CODE + "}";
         private const String POI_SETTER_DEFAULT_CODE = "{" + POI_SETTER_RETURN_CODE + "}";
 
         private const String POI_FUNCTION_BODY_LABEL = POI_PREFIX + "poi_function_body";
         private const String POI_FUNCTION_RETURN_CODE = "break " + POI_FUNCTION_BODY_LABEL + ";";
+
+        private const String POI_HEADER_CODE = "var __poi_temp_variable;\r\nvar __poi_temp_return = new Array()\r\n\r\nfunction ____value_setter(__value) {return __value;};\r\nfunction ____value_setter(__value) {return __value;};\r\nvar __value;\r\n\r\n";
 
         /**
          * <summary>Called when entering a parse tree node.</summary>
@@ -3056,7 +3058,8 @@ namespace PoiLanguage
          */
         public override Node ExitPoiSource(Production node)
         {
-            node.AddValue(MergeChildList(node));
+            String code = POI_HEADER_CODE + MergeChildList(node).ToString();
+            node.AddValue(new PoiObject(PoiObjectType.String, code));
             return node;
         }
 
@@ -3414,6 +3417,8 @@ namespace PoiLanguage
                 int variableDeclarationStart = paramDeclaration.LastIndexOf("var");
                 int variableStart = variableDeclarationStart + 4;
 
+                if (variables != "")
+                    variables += ",";
                 variables += paramDeclaration.Substring(variableStart, paramDeclaration.Length - variableStart);
                 variableAccess += paramDeclaration.Substring(0, variableDeclarationStart);
             });
@@ -3428,8 +3433,8 @@ namespace PoiLanguage
                 int variableStart = variableDeclarationStart + 4;
 
                 returnVariablesArray[vi++] = paramDeclaration.Substring(variableStart, paramDeclaration.Length - variableStart);
-                variableAccess += paramDeclaration.Substring(0, variableStart);
-                variablesDeclaration += paramDeclaration.Substring(variableDeclarationStart, paramDeclaration.Length - variableDeclarationStart);
+                variableAccess += paramDeclaration.Substring(0, variableDeclarationStart);
+                variablesDeclaration += paramDeclaration.Substring(variableDeclarationStart, paramDeclaration.Length - variableDeclarationStart) + ";";
             });
 
             String bodyLabel = POI_FUNCTION_BODY_LABEL + ":";
@@ -3966,6 +3971,8 @@ namespace PoiLanguage
                     {
                         string right = rightObject.ToString();
                         string result = "{\r\n";
+
+                        result += right + ";";
 
                         for (int i = 0; i < left.Count; i++)
                         {
