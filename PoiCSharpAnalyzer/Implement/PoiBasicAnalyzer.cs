@@ -18,13 +18,15 @@ namespace PoiLanguage
         private const String POI_TEMP_VARIABLE = POI_PREFIX + "poi_temp_variable";
         private const String POI_TEMP_RETURN = POI_PREFIX + "poi_temp_return";
 
-        private const String POI_GETTER_SETTER_PARAMETER_VARIABLE = "_value";
+        private const String POI_GETTER_SETTER_PARAMETER_VARIABLE = POI_PREFIX + "value";
         private const String POI_GETTER_PREFIX = "_getter";
         private const String POI_SETTER_PREFIX = "_setter";
         private const String POI_GETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
         private const String POI_SETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
-        private const String POI_GETTER_DEFAULT_CODE = "{ return " + POI_GETTER_SETTER_PARAMETER_VARIABLE + "}";
-        private const String POI_SETTER_DEFAULT_CODE = "{" + POI_TEMP_VARIABLE + " = " + POI_GETTER_SETTER_PARAMETER_VARIABLE + "}";
+        private const String POI_GETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE;
+        private const String POI_SETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE;
+        private const String POI_GETTER_DEFAULT_CODE = "{" + POI_GETTER_RETURN_CODE + "}";
+        private const String POI_SETTER_DEFAULT_CODE = "{" + POI_SETTER_RETURN_CODE + "}";
 
         private const String POI_FUNCTION_BODY_LABEL = POI_PREFIX + "poi_function_body";
         private const String POI_FUNCTION_RETURN_CODE = "break " + POI_FUNCTION_BODY_LABEL + ";";
@@ -3406,21 +3408,11 @@ namespace PoiLanguage
             {
                 String paramDeclaration = param.ToString();
 
-                String[] declarations = paramDeclaration.Split(';');
-                for (int i = 0; i < declarations.Length; i++)
-                {
-                    if (declarations[i].IndexOf("function") != -1)
-                    {
-                        variableAccess += declarations[i] + ";";
-                    }
-                    else
-                    {
-                        if (variables != "")
-                            variables += ",";
-                        int variableStart = declarations[i].IndexOf("var") + 4;
-                        variables += declarations[i].Substring(variableStart, declarations[i].Length - variableStart);
-                    }
-                }
+                int variableDeclarationStart = paramDeclaration.LastIndexOf("var");
+                int variableStart = variableDeclarationStart + 4;
+
+                variables += paramDeclaration.Substring(variableStart, paramDeclaration.Length - variableStart);
+                variableAccess += paramDeclaration.Substring(0, variableDeclarationStart);
             });
 
             String[] returnVariablesArray = new String[returnVariablesList.Count];
@@ -3429,20 +3421,12 @@ namespace PoiLanguage
             {
                 String paramDeclaration = param.ToString();
 
-                String[] declarations = paramDeclaration.Split(';');
-                for (int i = 0; i < declarations.Length; i++)
-                {
-                    if (declarations[i].IndexOf("function") != -1)
-                    {
-                        variableAccess += declarations[i] + ";";
-                    }
-                    else
-                    {
-                        variablesDeclaration += declarations[i] + ";";
-                        int variableStart = declarations[i].IndexOf("var") + 4;
-                        returnVariablesArray[vi++] = declarations[i].Substring(variableStart, declarations[i].Length - variableStart);
-                    }
-                }
+                int variableDeclarationStart = paramDeclaration.LastIndexOf("var");
+                int variableStart = variableDeclarationStart + 4;
+
+                returnVariablesArray[vi++] = paramDeclaration.Substring(variableStart, paramDeclaration.Length - variableStart);
+                variableAccess += paramDeclaration.Substring(0, variableStart);
+                variablesDeclaration += paramDeclaration.Substring(variableDeclarationStart, paramDeclaration.Length - variableDeclarationStart);
             });
 
             String bodyLabel = POI_FUNCTION_BODY_LABEL + ":";
@@ -3924,7 +3908,23 @@ namespace PoiLanguage
             Node child = node.GetChildAt(0);
             if (child.Name == "ArithmeticExpression")
             {
-                node.AddValue(MergeChildList(node));
+                if (node.GetChildCount() == 1)
+                {
+                    node.AddValue(node.GetChildAt(0).GetValue(0));
+                }
+                else
+                {
+                    Node left = node.GetChildAt(0);
+                    Node right = node.GetChildAt(1);
+
+                    String variable = (left.GetValue(0) as PoiObject).ToString();
+                    String variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
+                    String assignOperator = (right.GetChildAt(0).GetValue(0) as PoiObject).ToString();
+                    String variableExpression = (right.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+
+                    String assignExpression = variable + assignOperator + variableSetter + "(" + variableExpression + ")";
+                    node.AddValue(new PoiObject(PoiObjectType.String, assignExpression));
+                }
             }
             else if (child.Name == "PairExpression")
             {
@@ -3948,7 +3948,9 @@ namespace PoiLanguage
                     string result = "{\r\n";
                     for (int i = 0; i < left.Count; i++)
                     {
-                        string str = left[i].ToString() + " = " + right[i].ToString() + ";\r\n";
+                        string variable = left[i].ToString();
+                        string variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
+                        string str = variable + " = " + variableSetter + "(" + right[i].ToString() + ");\r\n";
                         result += str;
                     }
                     result += "}";
@@ -5895,7 +5897,7 @@ namespace PoiLanguage
             if (!(getterCode != "" && setterCode == ""))
             {
                 getterCode = (getterCode == "") ? POI_GETTER_DEFAULT_CODE : getterCode;
-                setterCode = (setterCode == "") ? POI_SETTER_DEFAULT_CODE : getterCode;
+                setterCode = (setterCode == "") ? POI_SETTER_DEFAULT_CODE : setterCode;
             }
 
             getterCode = POI_GETTER_PARAMETER + getterCode;
@@ -5948,11 +5950,15 @@ namespace PoiLanguage
         {
             if (node.GetChildCount() == 2)
             {
-                node.AddValue(node.GetChildAt(1).GetValue(0));
+                String body = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                int bodyStart = body.IndexOf("{");
+                int bodyEnd = body.LastIndexOf("}");
+                body = "{" + body.Substring(bodyStart + 1, bodyEnd - bodyStart - 1) + POI_GETTER_RETURN_CODE + "}";
+                node.AddValue(new PoiObject(PoiObjectType.String, body));
             }
             else
             {
-                node.AddValue(new PoiObject(PoiObjectType.String, ""));
+                node.AddValue(new PoiObject(PoiObjectType.String, POI_GETTER_DEFAULT_CODE));
             }
             return node;
         }
@@ -5999,11 +6005,15 @@ namespace PoiLanguage
         {
             if (node.GetChildCount() == 2)
             {
-                node.AddValue(node.GetChildAt(1).GetValue(0));
+                String body = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                int bodyStart = body.IndexOf("{");
+                int bodyEnd = body.LastIndexOf("}");
+                body = "{" + body.Substring(bodyStart + 1, bodyEnd - bodyStart - 1) + POI_SETTER_RETURN_CODE + "}";
+                node.AddValue(new PoiObject(PoiObjectType.String, body));
             }
             else
             {
-                node.AddValue(new PoiObject(PoiObjectType.String, ""));
+                node.AddValue(new PoiObject(PoiObjectType.String, POI_SETTER_DEFAULT_CODE));
             }
             return node;
         }

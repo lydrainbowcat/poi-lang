@@ -44,10 +44,10 @@ namespace PoiCSharpAnalyzer
             {
                 parseTreeOutput.Nodes.Add(ex.GetMessage());
             }
-            catch (Exception ex)
+            /*catch (Exception ex)
             {
                 codeOutput.Text = ex.Message;
-            }
+            }*/
         }
 
         private void deleteParseTree(TreeNodeCollection nodes)
