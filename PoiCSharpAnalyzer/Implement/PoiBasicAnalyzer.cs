@@ -32,7 +32,7 @@ namespace PoiLanguage
         private const String POI_FUNCTION_BODY_LABEL = POI_PREFIX + "poi_function_body";
         private const String POI_FUNCTION_RETURN_CODE = "break " + POI_FUNCTION_BODY_LABEL + ";";
 
-        private const String POI_HEADER_CODE = "var __poi_temp_variable;\r\nvar __poi_temp_return = new Array()；\r\n\r\nfunction ____value_setter(__value) {return __value;};\r\nfunction ____value_setter(__value) {return __value;};\r\nvar __value;\r\n\r\n";
+        private const String POI_HEADER_CODE = "var __poi_temp_variable;\r\nvar __poi_temp_return = new Array();\r\n\r\nfunction ____value_setter(__value) {return __value;};\r\nfunction ____value_setter(__value) {return __value;};\r\nvar __value;\r\n\r\n";
 
         /**
          * <summary>Called when entering a parse tree node.</summary>
@@ -3972,8 +3972,6 @@ namespace PoiLanguage
                     {
                         string right = rightObject.ToString();
                         string result = "{\r\n";
-
-                        result += POI_TEMP_RETURN_CLEAR_CODE;
 
                         result += right + ";";
 
