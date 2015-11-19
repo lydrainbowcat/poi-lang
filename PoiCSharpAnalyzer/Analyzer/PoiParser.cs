@@ -284,7 +284,7 @@ namespace PoiLanguage {
             alt.AddProduction((int) PoiConstants.PAIR_EXPRESSION, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.FUNCTION_EXPRESSION, 1, 1);
+            alt.AddProduction((int) PoiConstants.BASIC_EXPRESSION, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 

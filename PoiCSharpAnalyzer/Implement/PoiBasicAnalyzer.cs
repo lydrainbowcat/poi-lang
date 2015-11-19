@@ -3434,7 +3434,7 @@ namespace PoiLanguage
             String returnAssignCode = "";
             for (int i = 0; i < returnVariablesArray.Length; i++)
             {
-                returnAssignCode += POI_TEMP_RETURN + "[" + i + "] = " + returnVariablesArray[i] + ";"; 
+                returnAssignCode += POI_TEMP_RETURN + "[" + i + "] = " + returnVariablesArray[i] + ";";
             }
 
             int bodyStart = body.IndexOf("{");
@@ -3942,19 +3942,39 @@ namespace PoiLanguage
                 else
                 {
                     List<PoiObject> left = (node.GetChildAt(0).GetValue(0) as PoiObject).ToPair();
-                    List<PoiObject> right = (node.GetChildAt(2).GetValue(0) as PoiObject).ToPair();
-                    if (left.Count != right.Count)
-                        throw new PoiAnalyzeException("AssignExpression pairs are in different counts");
-                    string result = "{\r\n";
-                    for (int i = 0; i < left.Count; i++)
+                    PoiObject rightObject = node.GetChildAt(2).GetValue(0) as PoiObject;
+                    if (rightObject.Type == PoiObjectType.Pair)
                     {
-                        string variable = left[i].ToString();
-                        string variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
-                        string str = variable + " = " + variableSetter + "(" + right[i].ToString() + ");\r\n";
-                        result += str;
+                        List<PoiObject> right = rightObject.ToPair();
+                        if (left.Count != right.Count)
+                            throw new PoiAnalyzeException("AssignExpression pairs are in different counts");
+                        string result = "{\r\n";
+                        for (int i = 0; i < left.Count; i++)
+                        {
+                            string variable = left[i].ToString();
+                            string variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
+                            string str = variable + " = " + variableSetter + "(" + right[i].ToString() + ");\r\n";
+                            result += str;
+                        }
+                        result += "}";
+                        node.AddValue(new PoiObject(PoiObjectType.String, result));
                     }
-                    result += "}";
-                    node.AddValue(new PoiObject(PoiObjectType.String, result));
+                    else if (rightObject.Type == PoiObjectType.String)
+                    {
+                        string right = rightObject.ToString();
+                        string result = "{\r\n";
+
+                        for (int i = 0; i < left.Count; i++)
+                        {
+                            string variable = left[i].ToString();
+                            string variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
+                            string str = variable + " = " + variableSetter + "(" + POI_TEMP_RETURN + "[" + i + "]);\r\n";
+                            result += str;
+                        }
+
+                        result += "}";
+                        node.AddValue(new PoiObject(PoiObjectType.String, result));
+                    }
                 }
             }
             else throw new PoiAnalyzeException("AssignExpression not supported");
@@ -4050,9 +4070,9 @@ namespace PoiLanguage
             {
                 node.AddValue(child.GetValue(0) as PoiObject);
             }
-            else if (child.Name == "FunctionExpression")
+            else if (child.Name == "BasicExpression")
             {
-                // To be done
+                node.AddValue(child.GetValue(0) as PoiObject);
             }
             else throw new PoiAnalyzeException("PairOrFunctionExpression not supported");
             return node;
@@ -5145,7 +5165,28 @@ namespace PoiLanguage
                 else right = new PoiObject(PoiObjectType.String, "");
                 node.AddValue(left + right);
             }
-            // Other conditions: to be done
+            else if (child0.Name == "FunctionVariable")
+            {
+                string functionVariable = (node.GetChildAt(0).GetValue(0) as PoiObject).ToString();
+
+                string[] functionParameter = (node.GetChildAt(2).GetValue(0) as PoiObject).ToString().Split(';');
+                string parameter = "";
+                for (int i = 0; i < functionParameter.Length; i++)
+                {
+                    if (parameter != "")
+                        parameter += ",";
+                    parameter += functionParameter[i].ToString();
+                }
+
+
+                PoiObject left = new PoiObject(PoiObjectType.String, functionVariable + "(" + parameter + ")");
+                PoiObject right;
+                if (node.GetChildCount() > 4)
+                    right = node.GetChildAt(4).GetValue(0) as PoiObject;
+                else right = new PoiObject(PoiObjectType.String, "");
+
+                node.AddValue(left + right);
+            }
             return node;
         }
 
@@ -5249,6 +5290,7 @@ namespace PoiLanguage
          */
         public override Node ExitFunctionVariable(Production node)
         {
+            node.AddValue(node.GetChildAt(0).GetValue(0));
             return node;
         }
 
@@ -5510,36 +5552,22 @@ namespace PoiLanguage
                     accessNode = node.GetChildAt(2);
                     initializerNode = node.GetChildAt(3);
                 }
+
+                Node setterGetterNode = accessNode.GetChildAt(1);
                 type = "var";
-                String identifier = (identifierNode.GetValue(0) as PoiObject).ToString();
-
-                String initializer = "";
-                if (initializerNode != null)
+                if (setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter")
                 {
-                    initializer += (initializerNode.GetValue(0) as PoiObject).ToString();
-                }
-
-                String prefix = "function " + POI_PREFIX + identifier;
-                String getterCode = "", setterCode = "";
-                if (accessNode != null)
-                {
-                    Node setterGetterNode = accessNode.GetChildAt(1);
-                    getterCode = prefix + POI_GETTER_PREFIX + accessNode.GetValue(0);
-                    if (setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter")
-                    {
-                        type = "const";
-                    }
-                    else
-                    {
-                        setterCode = prefix + POI_SETTER_PREFIX + accessNode.GetValue(1);
-                    }
+                    type = "const";
                 }
                 else
                 {
-                    getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_PARAMETER + POI_GETTER_DEFAULT_CODE;
-                    setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_PARAMETER + POI_SETTER_DEFAULT_CODE;
+                    type = "var";
                 }
-                String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
+
+                String identifier = (identifierNode.GetValue(0) as PoiObject).ToString();
+
+                String initializer = generateInitializer(initializerNode);
+                String access = generateGetterSetter(accessNode, identifier);
 
                 String declaration = access + type + " " + identifier + initializer;
 
@@ -5556,7 +5584,7 @@ namespace PoiLanguage
                     string result = "var __num = new Array(" + (num + 1).ToString() + ");\r\n";
                     for (int i = 1; i <= num; i++)
                     {
-                        result += "__num[" + i.ToString() + "] = " + array[i] + ";\r\n" ;
+                        result += "__num[" + i.ToString() + "] = " + array[i] + ";\r\n";
                     }
                     result += "var " + identifier + "= new Array(__num[1]);\r\n";
                     for (int i = 1; i < num; i++)
@@ -6151,7 +6179,7 @@ namespace PoiLanguage
             array.Add("1");
             int num = 1;
             string expression = (node.GetChildAt(4).GetValue(0) as PoiObject).ToString();
-            array.Add(expression); 
+            array.Add(expression);
             while (num * 2 + 4 < node.GetChildCount())
             {
                 num++;
@@ -7154,6 +7182,38 @@ namespace PoiLanguage
         public void initVariableDictionary()
         {
             variableDictionary.Clear();
+        }
+
+        private string generateInitializer(Node initializerNode)
+        {
+            string initializer = "";
+            if (initializerNode != null)
+            {
+                initializer = (initializerNode.GetValue(0) as PoiObject).ToString();
+            }
+            return initializer;
+        }
+
+        private string generateGetterSetter(Node accessNode, string identifier)
+        {
+            String prefix = "function " + POI_PREFIX + identifier;
+            String getterCode = "", setterCode = "";
+            if (accessNode != null)
+            {
+                Node setterGetterNode = accessNode.GetChildAt(1);
+                getterCode = prefix + POI_GETTER_PREFIX + accessNode.GetValue(0);
+                if (!(setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter"))
+                {
+                    setterCode = prefix + POI_SETTER_PREFIX + accessNode.GetValue(1);
+                }
+            }
+            else
+            {
+                getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_PARAMETER + POI_GETTER_DEFAULT_CODE;
+                setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_PARAMETER + POI_SETTER_DEFAULT_CODE;
+            }
+            String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
+            return access;
         }
 
         #endregion
