@@ -2057,7 +2057,7 @@ namespace PoiLanguage
          */
         public override Node ExitContainerString(Token node)
         {
-            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
+            node.AddValue(new PoiObject(PoiObjectType.String, "var"));
             return node;
         }
 
@@ -5552,14 +5552,41 @@ namespace PoiLanguage
                 {
                     List<string> array = (typeNode.GetValue(0) as PoiObject).ToArray();
                     string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                    // Do your things here...
-                    node.AddValue(new PoiObject(PoiObjectType.String, "Your result string here."));
+                    int num = Convert.ToInt32(array[0]);
+                    string result = "var __num = new Array(" + (num + 1).ToString() + ");\r\n";
+                    for (int i = 1; i <= num; i++)
+                    {
+                        result += "__num[" + i.ToString() + "] = " + array[i] + ";\r\n" ;
+                    }
+                    result += "var " + identifier + "= new Array(__num[1]);\r\n";
+                    for (int i = 1; i < num; i++)
+                    {
+                        string index = i.ToString();
+                        result += "for (var __i" + index + "= 0; __i" + index + "< __num[" + index + "];" +
+                                  "++ __i" + index + ")\r\n{\r\n";
+                        result += identifier;
+                        for (int j = 1; j <= i; j++)
+                        {
+                            result += "[__i" + j.ToString() + "]";
+                        }
+                        result += " = new Array(__num[" + (i + 1).ToString() + "]);\r\n";
+                    }
+                    for (int i = 1; i < num; i++)
+                    {
+                        result += "}\r\n";
+                    }
+                    node.AddValue(new PoiObject(PoiObjectType.String, result));
                 }
                 else if (containerNode.Name == "StringContainer")
                 {
                     PoiObject left = typeNode.GetValue(0) as PoiObject;
                     PoiObject right = node.GetChildAt(1).GetValue(0) as PoiObject;
                     node.AddValue(left + new PoiObject(PoiObjectType.String, " ") + right);
+                }
+                else if (containerNode.Name == "MapContainer")
+                {
+                    string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                    node.AddValue(new PoiObject(PoiObjectType.String, "var " + identifier + " = new Object()"));
                 }
             }
             else if (type == "UserType")
@@ -6121,8 +6148,17 @@ namespace PoiLanguage
         {
             List<string> array = new List<string>();
 
-            // Do your things here
-
+            array.Add("1");
+            int num = 1;
+            string expression = (node.GetChildAt(4).GetValue(0) as PoiObject).ToString();
+            array.Add(expression); 
+            while (num * 2 + 4 < node.GetChildCount())
+            {
+                num++;
+                expression = (node.GetChildAt(2 + 2 * num).GetValue(0) as PoiObject).ToString();
+                array.Add(expression);
+            }
+            array[0] = num.ToString();
             node.AddValue(new PoiObject(PoiObjectType.Array, array));
             return node;
         }
@@ -6167,6 +6203,7 @@ namespace PoiLanguage
          */
         public override Node ExitMapContainer(Production node)
         {
+            node.AddValue(new PoiObject(PoiObjectType.String, "map"));
             return node;
         }
 

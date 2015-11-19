@@ -214,7 +214,7 @@ namespace PoiLanguage {
                                             "PairDeclarationContent");
             alt = new ProductionPatternAlternative();
             alt.AddProduction((int) PoiConstants.VARIABLE_DECLARATION, 1, 1);
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_1, 0, -1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_1, 0, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -1036,7 +1036,7 @@ namespace PoiLanguage {
             pattern.Synthetic = true;
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.SYMBOL_COMMA, 1, 1);
-            alt.AddProduction((int) PoiConstants.VARIABLE_DECLARATION, 1, 1);
+            alt.AddProduction((int) PoiConstants.PAIR_DECLARATION_CONTENT, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
