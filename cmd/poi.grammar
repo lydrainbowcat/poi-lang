@@ -118,8 +118,8 @@ DECLARATION_SETTER  = "set"
 DECLARATION_ALLOC   = "new"
 
 /* Class */
-CLASS_TYPE      = "class"
-CLASS_EXTEND    = "extends"
+CLASS_TYPE      = "struct"
+CLASS_EXTEND    = "as"
 CLASS_PUBLIC    = "public"
 CLASS_PRIVATE   = "private"
 CLASS_PROTECTED = "protected"
@@ -409,12 +409,9 @@ ClassDeclaration    = CLASS_TYPE ClassName [CLASS_EXTEND SuperClassName] ClassBo
 ClassName           = IDENTIFIER ;
 SuperClassName      = IDENTIFIER ;
 ClassBody           = SYMBOL_LEFT_BRACE {ClassContent} SYMBOL_RIGHT_BRACE ;
-ClassContent        = ClassAccessModifier SYMBOL_COLON_MARK
-                    | ClassVariable ;
-ClassVariable       = DeclarationStatement ;
-ClassAccessModifier = CLASS_PUBLIC
-                    | CLASS_PRIVATE
-                    | CLASS_PROTECTED ;
+ClassContent        = ClassAccessModifier ClassVariable ;
+ClassVariable       = Literal ;
+ClassAccessModifier = IDENTIFIER ;
 
 /* ReturnStatement */
 ReturnStatement = FUNCTION_RETURN SYMBOL_SEMICOLON ;

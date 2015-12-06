@@ -531,13 +531,13 @@ namespace PoiLanguage {
             pattern = new TokenPattern((int) PoiConstants.CLASS_TYPE,
                                        "CLASS_TYPE",
                                        TokenPattern.PatternType.STRING,
-                                       "class");
+                                       "struct");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.CLASS_EXTEND,
                                        "CLASS_EXTEND",
                                        TokenPattern.PatternType.STRING,
-                                       "extends");
+                                       "as");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.CLASS_PUBLIC,
