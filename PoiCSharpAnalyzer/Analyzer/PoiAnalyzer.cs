@@ -24,7 +24,10 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
+        static Node curptr;
         public override void Enter(Node node) {
+            PoiInfo.AddValuePos(node, curptr, 2);
+            curptr = node;
             switch (node.Id) {
             case (int) PoiConstants.SYMBOL_LEFT_PAREN:
                 EnterSymbolLeftParen((Token) node);
@@ -608,6 +611,7 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public override Node Exit(Node node) {
+            curptr = node.GetValue(2) as Node;
             switch (node.Id) {
             case (int) PoiConstants.SYMBOL_LEFT_PAREN:
                 return ExitSymbolLeftParen((Token) node);

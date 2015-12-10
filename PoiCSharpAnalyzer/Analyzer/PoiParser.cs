@@ -914,20 +914,14 @@ namespace PoiLanguage {
             pattern = new ProductionPattern((int) PoiConstants.CLASS_VARIABLE,
                                             "ClassVariable");
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) PoiConstants.DECLARATION_STATEMENT, 1, 1);
+            alt.AddProduction((int) PoiConstants.LITERAL, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
             pattern = new ProductionPattern((int) PoiConstants.CLASS_ACCESS_MODIFIER,
                                             "ClassAccessModifier");
             alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CLASS_PUBLIC, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CLASS_PRIVATE, 1, 1);
-            pattern.AddAlternative(alt);
-            alt = new ProductionPatternAlternative();
-            alt.AddToken((int) PoiConstants.CLASS_PROTECTED, 1, 1);
+            alt.AddToken((int) PoiConstants.IDENTIFIER, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 

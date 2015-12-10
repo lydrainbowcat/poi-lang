@@ -80,10 +80,7 @@ namespace PoiCSharpAnalyzer
             if (valueCount != 0)
             {
                 nodeString += " [Values:";
-                for (int i = 0; i < valueCount; i++)
-                {
-                    nodeString += " " + (node.GetValue(i) as PoiObject).ToString();
-                }
+                nodeString += " " + (node.GetValue(0) as PoiObject).ToString();
                 nodeString += "]";
 
                 nodeString += " [Types:";
