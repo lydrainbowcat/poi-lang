@@ -1,9 +1,9 @@
 Debug:
-    java -jar grammatica-1.6.jar poi.grammar --debug
+    java -jar grammatica-1.6.jar ../PoiCSharpAnalyzer/Implement/poi.grammar --debug
 Parse:
-    java -jar grammatica-1.6.jar poi.grammar --parse ...
+    java -jar grammatica-1.6.jar ../PoiCSharpAnalyzer/Implement/poi.grammar --parse ...
 CSharp Analyzer:
   make a copy:
-    java -jar grammatica-1.6.jar poi.grammar --csoutput output --csnamespace PoiLanguage --csclassname Poi
+    java -jar grammatica-1.6.jar ../PoiCSharpAnalyzer/Implement/poi.grammar --csoutput output --csnamespace PoiLanguage --csclassname Poi
   cover directly:
-    java -jar grammatica-1.6.jar poi.grammar --csoutput ../PoiCSharpAnalyzer/Analyzer --csnamespace PoiLanguage --csclassname Poi
+    java -jar grammatica-1.6.jar ../PoiCSharpAnalyzer/Implement/poi.grammar --csoutput ../PoiCSharpAnalyzer/Analyzer --csnamespace PoiLanguage --csclassname Poi

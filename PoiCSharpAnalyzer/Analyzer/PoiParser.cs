@@ -643,10 +643,22 @@ namespace PoiLanguage {
             alt.AddToken((int) PoiConstants.LITERAL_NUMERIC_REAL, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LITERAL_NUMERIC_UINTEGER_DECIMAL, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LITERAL_NUMERIC_UREAL, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.LITERAL_STRING, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
             alt.AddToken((int) PoiConstants.LITERAL_CHARACTER, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LITERAL_BOOLEAN_TRUE, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) PoiConstants.LITERAL_BOOLEAN_FALSE, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 

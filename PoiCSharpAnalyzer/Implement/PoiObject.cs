@@ -19,17 +19,20 @@ namespace PoiLanguage
     public class PoiObject
     {
         public PoiObjectType Type { get; set; }
+        public PoiVariableType VariableType { get; set; }
         private object Data;
 
         public PoiObject()
         {
             Type = PoiObjectType.Null;
+            VariableType = PoiVariableType.Undefined;
             Data = new object();
         }
 
-        public PoiObject(PoiObjectType type, object data)
+        public PoiObject(PoiObjectType type, object data, PoiVariableType variableType = PoiVariableType.Undefined)
         {
             Type = type;
+            VariableType = variableType;
             Data = data;
         }
 

@@ -9,10 +9,8 @@ namespace PoiLanguage
 {
     class PoiBasicAnalyzer : PoiAnalyzer
     {
-        private Stack<PoiAnalyzerScope> scopeStack = new Stack<PoiAnalyzerScope>();
-
-        private Dictionary<String, PoiVariable> variableDictionary = new Dictionary<String, PoiVariable>();
-
+        private PoiAnalyzerScopeStack scopeStack;
+        
         private const String POI_PREFIX = "__";
 
         private const String POI_TEMP_VARIABLE = POI_PREFIX + "poi_temp_variable";
@@ -44,7 +42,6 @@ namespace PoiLanguage
          */
         public override void EnterSymbolLeftParen(Token node)
         {
-
         }
 
         /**
@@ -2772,7 +2769,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralBooleanTrue(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "true"));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "true", PoiVariableType.Boolean));
             return node;
         }
 
@@ -2801,7 +2798,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralBooleanFalse(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "false"));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "false", PoiVariableType.Boolean));
             return node;
         }
 
@@ -2830,7 +2827,8 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralNumericIntegerDecimal(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
+            long integer = Convert.ToInt64(node.GetImage(), 10);
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
             return node;
         }
 
@@ -2859,6 +2857,8 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralNumericIntegerOctal(Token node)
         {
+            long integer = Convert.ToInt64(node.GetImage(), 8);
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
             return node;
         }
 
@@ -2887,6 +2887,8 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralNumericIntegerHexadecimal(Token node)
         {
+            long integer = Convert.ToInt64(node.GetImage(), 16);
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
             return node;
         }
 
@@ -2914,6 +2916,67 @@ namespace PoiLanguage
          * discovered errors</exception>
          */
         public override Node ExitLiteralNumericReal(Token node)
+        {
+            double real = Convert.ToDouble(node.GetImage());
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, real.ToString(), RealNumberType(real)));
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void EnterLiteralNumericUintegerDecimal(Token node)
+        {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override Node ExitLiteralNumericUintegerDecimal(Token node)
+        {
+            String image = node.GetImage();
+            ulong integer = Convert.ToUInt64(image.Substring(0, image.Length - 1), 10);
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), UIntegerType(integer)));
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void EnterLiteralNumericUreal(Token node)
+        {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override Node ExitLiteralNumericUreal(Token node)
         {
             PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
@@ -7218,15 +7281,15 @@ namespace PoiLanguage
             return result;
         }
 
-        public void initScopeStack()
+        public void InitializeAnalyzerStatus()
         {
-            scopeStack.Clear();
-            scopeStack.Push(new PoiAnalyzerScope(""));
+            InitScopeStack();
         }
 
-        public void initVariableDictionary()
+        public void InitScopeStack()
         {
-            variableDictionary.Clear();
+            scopeStack = new PoiAnalyzerScopeStack();
+            scopeStack.Clear();
         }
 
         private string generateInitializer(Node initializerNode)
@@ -7259,6 +7322,69 @@ namespace PoiLanguage
             }
             String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
             return access;
+        }
+        private PoiVariableType IntegerType(long number)
+        {
+            int length = 1;
+            if (number > 0)
+            {
+                length = (int)(Math.Log(number) / Math.Log(2)) + 1;
+            }
+            else if (number < 0)
+            {
+                length = (int)(Math.Log(~number) / Math.Log(2)) + 1;
+            }
+
+            if (length < 8) {
+                return PoiVariableType.Integer8;
+            }
+            else if (length < 16) {
+                return PoiVariableType.Integer16;
+            }
+            else if (length < 32) {
+                return PoiVariableType.Integer32;
+            }
+            else if (length < 64) {
+                return PoiVariableType.Integer64;
+            }
+            else {
+                // throw error number exception;
+            }
+
+            return PoiVariableType.Undefined;
+        }
+
+        private PoiVariableType RealNumberType(double number)
+        {
+            double num = Math.Abs(Convert.ToDouble(Convert.ToSingle(number)) - number);
+            if (Math.Abs(Convert.ToSingle(number) - number) < 1e-7 * number)
+            {
+                return PoiVariableType.Single;
+            }
+            return PoiVariableType.Double;
+        }
+
+        private PoiVariableType UIntegerType(ulong number)
+        {
+            int length = (int)(Math.Log(number) / Math.Log(2)) + 1;
+
+            if (length <= 8) {
+                return PoiVariableType.UInteger8;
+            }
+            else if (length <= 16) {
+                return PoiVariableType.UInteger16;
+            }
+            else if (length <= 32) {
+                return PoiVariableType.UInteger32;
+            }
+            else if (length <= 64) {
+                return PoiVariableType.UInteger64;
+            }
+            else {
+                // throw error number exception;
+            }
+
+            return PoiVariableType.Undefined;
         }
 
         private Node GetParent(Node node)
