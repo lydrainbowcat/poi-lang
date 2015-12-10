@@ -55,6 +55,7 @@
     <Compile Include="AnalyzerForm.Designer.cs">
       <DependentUpon>AnalyzerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Implement\PoiHtmlLayout.cs" />
     <Compile Include="Implement\PoiInfo.cs" />
     <Compile Include="Analyzer\PoiAnalyzer.cs" />
     <Compile Include="Analyzer\PoiConstants.cs" />

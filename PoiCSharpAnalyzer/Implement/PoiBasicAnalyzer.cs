@@ -5263,6 +5263,7 @@ namespace PoiLanguage
             }
             else if (child0.Name == "SYMBOL_DOT")
             {
+                // To Do
                 PoiInfo.AddValuePos(node, MergeChildList(node));
             }
             return node;
@@ -5548,12 +5549,6 @@ namespace PoiLanguage
             Node typeNode = node.GetChildAt(0);
             string type = typeNode.GetChildAt(0).GetName();
             bool fromClassPub = false;
-            /*Node fa = node.GetParent().GetParent().GetParent();
-            if (fa.Name == "ClassVariable")
-            {
-                if ((fa.GetParent().GetChildAt(0).GetValue(0) as PoiObject).ToString() != "private")
-                    fromClassPub = true;
-            }*/
             if (type == "PrimitiveType")
             {
                 Node identifierNode = node.GetChildAt(1);
@@ -6348,9 +6343,13 @@ namespace PoiLanguage
          */
         public override Node ExitClassDeclaration(Production node)
         {
-            string className = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-            PoiObject decl = new PoiObject(PoiObjectType.String, "var " + className + " = new function()\r\n");
-            PoiInfo.AddValuePos(node, decl + (node.GetChildAt(node.GetChildCount() - 1).GetValue(0) as PoiObject));
+            if (node.GetChildCount() != 5)
+                throw new PoiAnalyzeException("ClassDeclaration not supported");
+            string name = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+            string type = (node.GetChildAt(3).GetValue(0) as PoiObject).ToString();
+            PoiHtmlLayout layout = new PoiHtmlLayout(name, type, (node.GetChildAt(4).GetValue(0) as PoiObject).ToStruct());
+            PoiHtmlLayout.Map[name] = layout;
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, ""));
             return node;
         }
 
@@ -6482,7 +6481,10 @@ namespace PoiLanguage
          */
         public override Node ExitClassBody(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            PoiObject body = new PoiObject(PoiObjectType.Struct, new List<KeyValuePair<string, string>>());
+            for (int i = 1; i < node.GetChildCount() - 1; i++)
+                body += node.GetChildAt(i).GetValue(0) as PoiObject;
+            PoiInfo.AddValuePos(node, body);
             return node;
         }
 
@@ -6526,7 +6528,11 @@ namespace PoiLanguage
          */
         public override Node ExitClassContent(Production node)
         {
-            PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(0) as PoiObject);
+            List<KeyValuePair<string, string>> rec = new List<KeyValuePair<string, string>>();
+            string key = (node.GetChildAt(0).GetValue(0) as PoiObject).ToString();
+            string value = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+            rec.Add(new KeyValuePair<string, string>(key, value));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Struct, rec));
             return node;
         }
 
