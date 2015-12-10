@@ -85,6 +85,13 @@ namespace PoiCSharpAnalyzer
                     nodeString += " " + (node.GetValue(i) as PoiObject).ToString();
                 }
                 nodeString += "]";
+
+                nodeString += " [Types:";
+                for (int i = 0; i < valueCount; i++)
+                {
+                    nodeString += " " + (node.GetValue(i) as PoiObject).VariableType.ToString();
+                }
+                nodeString += "]";
             }
 
             return nodeString;

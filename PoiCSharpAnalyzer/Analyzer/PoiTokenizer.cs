@@ -627,25 +627,37 @@ namespace PoiLanguage {
             pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_INTEGER_DECIMAL,
                                        "LITERAL_NUMERIC_INTEGER_DECIMAL",
                                        TokenPattern.PatternType.REGEXP,
-                                       "-?0|([1-9][0-9]*)");
+                                       "-?(0|([1-9][0-9]*))");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_INTEGER_OCTAL,
                                        "LITERAL_NUMERIC_INTEGER_OCTAL",
                                        TokenPattern.PatternType.REGEXP,
-                                       "-?0(0|[1-7][0-7]*)");
+                                       "0(0|[1-7][0-7]*)");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_INTEGER_HEXADECIMAL,
                                        "LITERAL_NUMERIC_INTEGER_HEXADECIMAL",
                                        TokenPattern.PatternType.REGEXP,
-                                       "-?0x[0-9a-fA-F]+");
+                                       "0x[0-9a-fA-F]+");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_REAL,
                                        "LITERAL_NUMERIC_REAL",
                                        TokenPattern.PatternType.REGEXP,
-                                       "-?(0|[1-9][0-9]*)\\.[0-9]+");
+                                       "-?((0|[1-9][0-9]*)\\.[0-9]+)");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_UINTEGER_DECIMAL,
+                                       "LITERAL_NUMERIC_UINTEGER_DECIMAL",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "(0|([1-9][0-9]*))U");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_UREAL,
+                                       "LITERAL_NUMERIC_UREAL",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "(0|[1-9][0-9]*)\\.[0-9]+");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) PoiConstants.LITERAL_STRING,

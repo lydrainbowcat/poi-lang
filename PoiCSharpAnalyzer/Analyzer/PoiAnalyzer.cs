@@ -329,6 +329,12 @@ namespace PoiLanguage {
             case (int) PoiConstants.LITERAL_NUMERIC_REAL:
                 EnterLiteralNumericReal((Token) node);
                 break;
+            case (int) PoiConstants.LITERAL_NUMERIC_UINTEGER_DECIMAL:
+                EnterLiteralNumericUintegerDecimal((Token) node);
+                break;
+            case (int) PoiConstants.LITERAL_NUMERIC_UREAL:
+                EnterLiteralNumericUreal((Token) node);
+                break;
             case (int) PoiConstants.LITERAL_STRING:
                 EnterLiteralString((Token) node);
                 break;
@@ -805,6 +811,10 @@ namespace PoiLanguage {
                 return ExitLiteralNumericIntegerHexadecimal((Token) node);
             case (int) PoiConstants.LITERAL_NUMERIC_REAL:
                 return ExitLiteralNumericReal((Token) node);
+            case (int) PoiConstants.LITERAL_NUMERIC_UINTEGER_DECIMAL:
+                return ExitLiteralNumericUintegerDecimal((Token) node);
+            case (int) PoiConstants.LITERAL_NUMERIC_UREAL:
+                return ExitLiteralNumericUreal((Token) node);
             case (int) PoiConstants.LITERAL_STRING:
                 return ExitLiteralString((Token) node);
             case (int) PoiConstants.LITERAL_CHARACTER:
@@ -3865,6 +3875,58 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual Node ExitLiteralNumericReal(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterLiteralNumericUintegerDecimal(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitLiteralNumericUintegerDecimal(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterLiteralNumericUreal(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitLiteralNumericUreal(Token node) {
             return node;
         }
 

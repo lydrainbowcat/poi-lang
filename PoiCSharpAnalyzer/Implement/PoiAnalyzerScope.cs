@@ -7,18 +7,115 @@ using System.Collections;
 
 namespace PoiLanguage
 {
+    public enum PoiVariableType
+    {
+        Undefined = 0,
+        Integer8,
+        Integer16,
+        Integer32,
+        Integer64,
+        UInteger8,
+        UInteger16,
+        UInteger32,
+        UInteger64,
+        Single,
+        Double,
+        Extended,
+        Boolean,
+        Character,
+        String,
+        Array,
+        Map,
+        Event,
+        Function
+    }
+
     class PoiAnalyzerScope
     {
-        private String scopeIdentifier;
+        private const String DEFAULT_SCOPE_PREFIX = "__poi_analyzer_scope_";
 
-        public PoiAnalyzerScope(String identifier)
+        private static int scopeNumber = 0;
+        private String scopeName;
+
+        private Dictionary<String, PoiVariableType> variables;
+
+        public PoiAnalyzerScope(String name = null)
         {
-            scopeIdentifier = identifier;
+            if (name == null)
+            {
+                name = DEFAULT_SCOPE_PREFIX + (scopeNumber++).ToString();
+            }
+            scopeName = name;
+            variables = new Dictionary<string,PoiVariableType>();
         }
 
-        public String GetScope()
+        public String GetScopeName()
         {
-            return scopeIdentifier;
+            return scopeName;
+        }
+
+        public PoiVariableType GetVariableType(String name)
+        {
+            if (variables.ContainsKey(name))
+            {
+                return variables[name];
+            }
+            return PoiVariableType.Undefined;
+        }
+
+        public void AddVariable(String name, PoiVariableType type)
+        {
+            if (variables.ContainsKey(name))
+            {
+                // throw "Variable redefinition" exception
+                return;
+            }
+            variables.Add(name, type);
+        }
+    }
+
+    class PoiAnalyzerScopeStack
+    {
+        private List<PoiAnalyzerScope> scopeList;
+
+        public PoiAnalyzerScopeStack()
+        {
+            scopeList = new List<PoiAnalyzerScope>();
+            Clear();
+        }
+
+        public void Clear()
+        {
+            scopeList.Clear();
+            scopeList.Add(new PoiAnalyzerScope("__global"));
+        }
+
+        public void EnterScope(String name = null)
+        {
+            scopeList.Add(new PoiAnalyzerScope(name));
+        }
+
+        public void LeaveScope()
+        {
+            scopeList.RemoveAt(scopeList.Count - 1);
+        }
+
+        public void DefiniteVariable(String name, PoiVariableType type)
+        {
+            scopeList.ElementAt(scopeList.Count - 1).AddVariable(name, type);
+        }
+
+        public PoiVariableType GetVariableType(String name)
+        {
+            for (int i = scopeList.Count - 1; i >= 0; i--)
+            {
+                PoiVariableType type = scopeList[i].GetVariableType(name);
+                if (type != PoiVariableType.Undefined)
+                {
+                    return type;
+                }
+            }
+            return PoiVariableType.Undefined;
         }
     }
 }

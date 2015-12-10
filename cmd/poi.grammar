@@ -40,6 +40,11 @@ OPERATOR_BIT_AND_ASSIGN		= "&="
 OPERATOR_BIT_OR_ASSIGN		= "^="
 OPERATOR_BIT_XOR_ASSIGN		= "|="
 
+LITERAL_NUMERIC_INTEGER_DECIMAL      = <<-?0|([1-9][0-9]*)>>
+LITERAL_NUMERIC_INTEGER_OCTAL        = <<-?0(0|[1-7][0-7]*)>>
+LITERAL_NUMERIC_INTEGER_HEXADECIMAL  = <<-?0x[0-9a-fA-F]+>>
+LITERAL_NUMERIC_REAL                 = <<-?(0|[1-9][0-9]*)\.[0-9]+>>
+
 OPERATOR_ADD        = "+"
 OPERATOR_SUB        = "-"
 OPERATOR_MUL        = "*"
@@ -142,10 +147,6 @@ LOOP_CONTINUE   = "continue"
  */
 LITERAL_BOOLEAN_TRUE                = "true"
 LITERAL_BOOLEAN_FALSE               = "false"
-LITERAL_NUMERIC_INTEGER_DECIMAL      = <<-?0|([1-9][0-9]*)>>
-LITERAL_NUMERIC_INTEGER_OCTAL        = <<-?0(0|[1-7][0-7]*)>>
-LITERAL_NUMERIC_INTEGER_HEXADECIMAL  = <<-?0x[0-9a-fA-F]+>>
-LITERAL_NUMERIC_REAL                 = <<-?(0|[1-9][0-9]*)\.[0-9]+>>
 LITERAL_STRING                      = <<"[^"]*">>
 LITERAL_CHARACTER                   = <<'[^']'>>
 
@@ -352,7 +353,9 @@ Literal = LITERAL_NUMERIC_INTEGER_DECIMAL
         | LITERAL_NUMERIC_INTEGER_HEXADECIMAL
         | LITERAL_NUMERIC_REAL
         | LITERAL_STRING
-        | LITERAL_CHARACTER ;
+        | LITERAL_CHARACTER
+		| LITERAL_BOOLEAN_TRUE
+		| LITERAL_BOOLEAN_FALSE ;
 
 /* DECLARATION */
 Declaration = VariableDeclaration
@@ -409,8 +412,7 @@ ClassDeclaration    = CLASS_TYPE ClassName [CLASS_EXTEND SuperClassName] ClassBo
 ClassName           = IDENTIFIER ;
 SuperClassName      = IDENTIFIER ;
 ClassBody           = SYMBOL_LEFT_BRACE {ClassContent} SYMBOL_RIGHT_BRACE ;
-ClassContent        = ClassAccessModifier SYMBOL_COLON_MARK
-                    | ClassVariable ;
+ClassContent        = ClassAccessModifier ClassVariable ;
 ClassVariable       = DeclarationStatement ;
 ClassAccessModifier = CLASS_PUBLIC
                     | CLASS_PRIVATE
