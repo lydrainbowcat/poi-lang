@@ -2769,7 +2769,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralBooleanTrue(Token node)
         {
-            node.AddValue(new PoiObject(PoiObjectType.String, "true", PoiVariableType.Boolean));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "true", PoiVariableType.Boolean));
             return node;
         }
 
@@ -2798,7 +2798,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralBooleanFalse(Token node)
         {
-            node.AddValue(new PoiObject(PoiObjectType.String, "false", PoiVariableType.Boolean));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "false", PoiVariableType.Boolean));
             return node;
         }
 
@@ -2828,7 +2828,7 @@ namespace PoiLanguage
         public override Node ExitLiteralNumericIntegerDecimal(Token node)
         {
             long integer = Convert.ToInt64(node.GetImage(), 10);
-            node.AddValue(new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
             return node;
         }
 
@@ -2858,7 +2858,7 @@ namespace PoiLanguage
         public override Node ExitLiteralNumericIntegerOctal(Token node)
         {
             long integer = Convert.ToInt64(node.GetImage(), 8);
-            node.AddValue(new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
             return node;
         }
 
@@ -2888,7 +2888,7 @@ namespace PoiLanguage
         public override Node ExitLiteralNumericIntegerHexadecimal(Token node)
         {
             long integer = Convert.ToInt64(node.GetImage(), 16);
-            node.AddValue(new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), IntegerType(integer)));
             return node;
         }
 
@@ -2918,7 +2918,7 @@ namespace PoiLanguage
         public override Node ExitLiteralNumericReal(Token node)
         {
             double real = Convert.ToDouble(node.GetImage());
-            node.AddValue(new PoiObject(PoiObjectType.String, real.ToString(), RealNumberType(real)));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, real.ToString(), RealNumberType(real)));
             return node;
         }
 
@@ -2949,7 +2949,7 @@ namespace PoiLanguage
         {
             String image = node.GetImage();
             ulong integer = Convert.ToUInt64(image.Substring(0, image.Length - 1), 10);
-            node.AddValue(new PoiObject(PoiObjectType.String, integer.ToString(), UIntegerType(integer)));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, integer.ToString(), UIntegerType(integer)));
             return node;
         }
 
@@ -2978,7 +2978,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralNumericUreal(Token node)
         {
-            node.AddValue(new PoiObject(PoiObjectType.String, node.GetImage()));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
             return node;
         }
 
@@ -7362,24 +7362,19 @@ namespace PoiLanguage
         {
             int length = (int)(Math.Log(number) / Math.Log(2)) + 1;
 
-            if (length <= 8)
-            {
+            if (length <= 8) {
                 return PoiVariableType.UInteger8;
             }
-            else if (length <= 16)
-            {
+            else if (length <= 16) {
                 return PoiVariableType.UInteger16;
             }
-            else if (length <= 32)
-            {
+            else if (length <= 32) {
                 return PoiVariableType.UInteger32;
             }
-            else if (length <= 64)
-            {
+            else if (length <= 64) {
                 return PoiVariableType.UInteger64;
             }
-            else
-            {
+            else {
                 // throw error number exception;
             }
 
