@@ -95,6 +95,42 @@ namespace PoiLanguage
             if (type != PoiLayoutType.Page) return;
 
         }
+
+        // 静态添加子元素
+        public void Add(PoiHtmlElement element)
+        {
+            content.Add(element);
+        }
+
+        // 处理某种操作
+        public PoiObject Solve(string operation, Node dataNode)
+        {
+            switch(operation) // 静态操作按照C#规则翻译，data应该为Literal构成的Pair；动态操作翻译为JS，直接生成操作data的代码。
+            {
+                case "add":
+                    List<string> data = ParseStatic(dataNode);
+                    // ...
+                    break;
+                default:
+                    break;
+            }
+            return new PoiObject(PoiObjectType.String, "");
+        }
+
+        // 按照静态操作规则解析参数
+        private List<string> ParseStatic(Node dataNode)
+        {
+            Node pairNode = dataNode.GetChildAt(0).GetChildAt(0);
+            if (pairNode.GetName() != "PairExpression")
+                throw new PoiAnalyzeException("Static struct operation only support Pair arguments consist of Literals");
+            List<PoiObject> rawData = (pairNode.GetValue(0) as PoiObject).ToPair();
+            List<string> data = new List<string>();
+            for (int i = 0; i < rawData.Count;i++)
+            {
+                data.Add(rawData[i].ToString());
+            }
+            return data;
+        }
     }
 
     class PoiHtmlElement

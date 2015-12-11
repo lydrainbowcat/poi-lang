@@ -5326,8 +5326,19 @@ namespace PoiLanguage
             }
             else if (child0.Name == "SYMBOL_DOT")
             {
-                // To Do
-                PoiInfo.AddValuePos(node, MergeChildList(node));
+                Node fa = GetParent(child0);
+                if (fa.GetChildCount() != 2 || fa.GetChildAt(0).GetName() != "PrimaryExpression")
+                    throw new PoiAnalyzeException("BasicExpressionT, DOT: " + fa.GetChildCount() + " children not supported.");
+                if (child0.GetChildAt(1).GetChildAt(0).GetName() != "FunctionVariable")
+                    throw new PoiAnalyzeException("BasicExpressionT, DOT: FunctionVariable expected, " + child0.GetChildAt(1).GetChildAt(0).GetName() + " found.");
+                string name = (fa.GetChildAt(0).GetValue(0) as PoiObject).ToString();
+                if (!PoiHtmlLayout.Map.ContainsKey(name))
+                    throw new PoiAnalyzeException("Not an existing struct: " + name);
+                PoiHtmlLayout handle = PoiHtmlLayout.Map[name];
+                string function = (child0.GetChildAt(1).GetChildAt(0).GetValue(0) as PoiObject).ToString();
+                Node expression = child0.GetChildAt(1).GetChildAt(2);
+                PoiObject text = handle.Solve(function, expression);
+                PoiInfo.AddValuePos(node, text);
             }
             return node;
         }
