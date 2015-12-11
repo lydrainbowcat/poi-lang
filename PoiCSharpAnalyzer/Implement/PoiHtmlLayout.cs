@@ -24,6 +24,7 @@ namespace PoiLanguage
         int cntrow = 0, cntcol = 0;
         private Dictionary<string, string> property = new Dictionary<string, string>();
         private List<PoiHtmlElement> content = new List<PoiHtmlElement>();
+        private string htmlcode;
 
         public static Dictionary<string, PoiHtmlLayout> Map = new Dictionary<string, PoiHtmlLayout>();
         
@@ -92,8 +93,31 @@ namespace PoiLanguage
         // 生成并保存该页
         public void Generate()
         {
-            if (type != PoiLayoutType.Page) return;
-
+            string prefix, suffix;
+            switch(type)
+            {
+                case PoiLayoutType.Page:
+                    prefix = "<!DOCTYPE html>\r\n<html>";
+                    if (property.ContainsKey("head")) prefix += "<head>\r\n" + property["head"] + "\r\n";
+                    if (property.ContainsKey("title")) prefix += "<title>" + property["title"] + "</title>\r\n";
+                    prefix += "</head>\r\n<body>\r\n";
+                    foreach(PoiHtmlElement element in content)
+                    {
+                        // TO DO
+                    }
+                    suffix = "</body>\r\n</html>";
+                    htmlcode = prefix + htmlcode + suffix;
+                    // TO DO: IO
+                    break;
+                case PoiLayoutType.Grid:
+                    break;
+                case PoiLayoutType.Panel:
+                    break;
+                case PoiLayoutType.Group:
+                    break;
+                default:
+                    break;
+            }
         }
 
         // 静态添加子元素
@@ -103,19 +127,41 @@ namespace PoiLanguage
                 throw new PoiAnalyzeException("Struct.add: adding not existing element " + data[0]);
             PoiHtmlLayout child = Map[data[0]];
             PoiHtmlElement element;
+            int x, y, w, h;
             switch (this.type)
             {
                 case PoiLayoutType.Page:
-
+                    if (child.type != PoiLayoutType.Panel && child.type != PoiLayoutType.Grid)
+                        throw new PoiAnalyzeException("Warning: Page只能包含Panel或Grid");
+                    element = new PoiHtmlElement(child);
                     break;
                 case PoiLayoutType.Grid:
+                    if (child.type != PoiLayoutType.Panel)
+                        throw new PoiAnalyzeException("Warning: Grid只能包含Panel");
+                    x = Convert.ToInt32(data[1]);
+                    y = Convert.ToInt32(data[2]);
+                    w = Convert.ToInt32(data[3]);
+                    h = Convert.ToInt32(data[4]);
+                    if (x < 1 || y < 1 || w < 1 || h < 1 || x + w > cntrow || y + h > cntcol)
+                        throw new PoiAnalyzeException("Warning: 元素占据Grid的区域不合法");
+                    element = new PoiHtmlElement(child, x, y, w, h);
                     break;
                 case PoiLayoutType.Panel:
+                    if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
+                        throw new PoiAnalyzeException("Warning: Panel只能包含Panel, Group或具体的HTML DOM元素");
+                    element = new PoiHtmlElement(child);
                     break;
                 case PoiLayoutType.Group:
+                    if (child.type != PoiLayoutType.Panel)
+                        throw new PoiAnalyzeException("Warning: Group只能包含Panel");
+                    y = Convert.ToInt32(data[1]);
+                    h = Convert.ToInt32(data[2]);
+                    if (y < 1 || h < 1 || y + h > cntcol)
+                        throw new PoiAnalyzeException("Warning: 元素占据Group的区域不合法");
+                    element = new PoiHtmlElement(child, 0, y, 0, h);
                     break;
                 default:
-                    throw new PoiAnalyzeException("Struct in type " + this.type + " doesn't have add method.");
+                    throw new PoiAnalyzeException("Warning: Struct in type " + this.type + " doesn't have Add method.");
             }
             content.Add(element);
         }
@@ -128,6 +174,11 @@ namespace PoiLanguage
                 case "add":
                     List<string> data = ParseStatic(dataNode);
                     this.Add(data);
+                    return new PoiObject(PoiObjectType.String, "");
+                case "generate":
+                    if (this.type != PoiLayoutType.Page)
+                        throw new PoiAnalyzeException("Warning: 只有Page才支持generate方法");
+                    this.Generate();
                     return new PoiObject(PoiObjectType.String, "");
                 default:
                     return new PoiObject(PoiObjectType.String, "");
