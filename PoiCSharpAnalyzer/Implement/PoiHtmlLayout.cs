@@ -97,8 +97,26 @@ namespace PoiLanguage
         }
 
         // 静态添加子元素
-        public void Add(PoiHtmlElement element)
+        public void Add(List<string> data)
         {
+            if (!Map.ContainsKey(data[0]))
+                throw new PoiAnalyzeException("Struct.add: adding not existing element " + data[0]);
+            PoiHtmlLayout child = Map[data[0]];
+            PoiHtmlElement element;
+            switch (this.type)
+            {
+                case PoiLayoutType.Page:
+
+                    break;
+                case PoiLayoutType.Grid:
+                    break;
+                case PoiLayoutType.Panel:
+                    break;
+                case PoiLayoutType.Group:
+                    break;
+                default:
+                    throw new PoiAnalyzeException("Struct in type " + this.type + " doesn't have add method.");
+            }
             content.Add(element);
         }
 
@@ -109,12 +127,11 @@ namespace PoiLanguage
             {
                 case "add":
                     List<string> data = ParseStatic(dataNode);
-                    // ...
-                    break;
+                    this.Add(data);
+                    return new PoiObject(PoiObjectType.String, "");
                 default:
-                    break;
+                    return new PoiObject(PoiObjectType.String, "");
             }
-            return new PoiObject(PoiObjectType.String, "");
         }
 
         // 按照静态操作规则解析参数
