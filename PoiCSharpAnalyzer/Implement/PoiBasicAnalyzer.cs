@@ -2402,6 +2402,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassType(Token node)
         {
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiVariableType.Undefined));
             return node;
         }
 
@@ -2430,6 +2431,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassExtend(Token node)
         {
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiVariableType.Undefined));
             return node;
         }
 
@@ -5210,11 +5212,13 @@ namespace PoiLanguage
             if (child0.Name == "PrimaryExpression")
             {
                 PoiObject left = child0.GetValue(0) as PoiObject;
-                PoiObject right;
+                PoiObject right = new PoiObject(PoiObjectType.String, "");
                 if (node.GetChildCount() > 1)
+                {
                     right = node.GetChildAt(1).GetValue(0) as PoiObject;
-                else
-                    right = new PoiObject(PoiObjectType.String, "");
+                    if (node.GetChildAt(1).GetChildAt(0).GetName() == "SYMBOL_DOT" && right.ToString().IndexOf("static") == 0)
+                        left = new PoiObject(PoiObjectType.String, "// " + left.ToString() + " ");
+                }
                 PoiInfo.AddValuePos(node, left + right);
             }
             else if (child0.Name == "SYMBOL_LEFT_PAREN")
@@ -5326,17 +5330,17 @@ namespace PoiLanguage
             }
             else if (child0.Name == "SYMBOL_DOT")
             {
-                Node fa = GetParent(child0);
-                if (fa.GetChildCount() != 2 || fa.GetChildAt(0).GetName() != "PrimaryExpression")
+                Node fa = GetParent(node);
+                if (fa.GetChildCount() < 1 || fa.GetChildAt(0).GetName() != "PrimaryExpression")
                     throw new PoiAnalyzeException("BasicExpressionT, DOT: " + fa.GetChildCount() + " children not supported.");
-                if (child0.GetChildAt(1).GetChildAt(0).GetName() != "FunctionVariable")
-                    throw new PoiAnalyzeException("BasicExpressionT, DOT: FunctionVariable expected, " + child0.GetChildAt(1).GetChildAt(0).GetName() + " found.");
+                if (node.GetChildAt(1).GetChildAt(0).GetName() != "FunctionVariable")
+                    throw new PoiAnalyzeException("BasicExpressionT, DOT: FunctionVariable expected, " + node.GetChildAt(1).GetChildAt(0).GetName() + " found.");
                 string name = (fa.GetChildAt(0).GetValue(0) as PoiObject).ToString();
                 if (!PoiHtmlLayout.Map.ContainsKey(name))
                     throw new PoiAnalyzeException("Not an existing struct: " + name);
                 PoiHtmlLayout handle = PoiHtmlLayout.Map[name];
-                string function = (child0.GetChildAt(1).GetChildAt(0).GetValue(0) as PoiObject).ToString();
-                Node expression = child0.GetChildAt(1).GetChildAt(2);
+                string function = (node.GetChildAt(1).GetChildAt(0).GetValue(0) as PoiObject).ToString();
+                Node expression = node.GetChildAt(1).GetChildAt(2);
                 PoiObject text = handle.Solve(function, expression);
                 PoiInfo.AddValuePos(node, text);
             }
@@ -5571,11 +5575,11 @@ namespace PoiLanguage
             Node child = node.GetChildAt(0);
             if (child.GetName() == "VariableDeclaration")
             {
-                PoiInfo.AddValuePos(node, child.GetValue(0));
+                PoiInfo.AddValuePos(node, child.GetValue(0) as PoiObject);
             }
             else if (child.GetName() == "ClassDeclaration")
             {
-                PoiInfo.AddValuePos(node, child.GetValue(0));
+                PoiInfo.AddValuePos(node, child.GetValue(0) as PoiObject);
             }
             return node;
         }
@@ -6423,7 +6427,7 @@ namespace PoiLanguage
             string type = (node.GetChildAt(3).GetValue(0) as PoiObject).ToString();
             PoiHtmlLayout layout = new PoiHtmlLayout(name, type, (node.GetChildAt(4).GetValue(0) as PoiObject).ToStruct());
             PoiHtmlLayout.Map[name] = layout;
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, ""));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, string.Format("// Created {0} {1}", type, name)));
             return node;
         }
 
