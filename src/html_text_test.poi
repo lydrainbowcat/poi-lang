@@ -1,0 +1,24 @@
+struct index as Page{
+    title "test"
+};
+struct content as Panel{};
+struct divide as Group{
+    cntcol 4
+};
+struct cell as Panel{};
+struct core as Text{
+    format "bi+>@http://poi.org"
+	value "  <!233>~ "
+};
+struct hint as core{
+    format "/"
+};
+cell.add(core);
+cell.add(hint);
+divide.add([cell, 0, 1]);
+divide.add([cell, 1, 2]);
+divide.add([cell, 3, 1]);
+content.add(cell);
+content.add(divide);
+index.add(content);
+index.generate("");
