@@ -21,14 +21,12 @@ namespace PoiLanguage
         Table = 6, // with tbody, thead, tfoot, tr, td, th, caption 
         Input = 7,
         Form = 8,
-        Part = 9, // with div, span, p, pre, label
-        Break = 10, // with br, hr
-        Button = 11,
-        H = 12, // h1 ~ h6,
-        Image = 13, // img
-        List = 14, // with li, ol, ul
-        Script = 15,
-        Textarea = 16,
+        Image = 9, // img
+        Script = 10,
+        Single = 11, // <* />, with br, hr
+        Part = 12, // <*>...</*>, with div, span, p, pre, label, h1~h6, li, ol, ul
+        Button = 13,
+        Textarea = 14,
 
         #region NOT_SUPPORTED_YET
         audio = 100,
@@ -68,10 +66,17 @@ namespace PoiLanguage
             { "Grid", PoiLayoutType.Grid },
             { "Panel", PoiLayoutType.Panel },
             { "Group", PoiLayoutType.Group },
-            { "Text", PoiLayoutType.Text }
+            { "Text", PoiLayoutType.Text },
+            { "Script", PoiLayoutType.Script },
+            { "Single", PoiLayoutType.Single },
+            { "Part", PoiLayoutType.Part },
+            { "Button", PoiLayoutType.Button },
+            { "Textarea", PoiLayoutType.Textarea }
         };
         private static Dictionary<string, string> TextFormatMap = new Dictionary<string, string>
         { {"b","b"}, {"i","i"}, {"u","u"}, {"-","del"}, {"+","ins"}, {"_","sub"}, {"^","sup"}, {">","big"}, {"<","small"} };
+        private static Dictionary<string, string> PermMap = new Dictionary<string, string>
+        { {"x","disabled=\"disabled\" "}, {"r","readonly=\"readonly\" "}, {"q","required "}, {"a","autofocus "} };
         private static Random rand = new Random();
         
         // 构造函数
@@ -107,6 +112,12 @@ namespace PoiLanguage
                     case "id":
                         property["id"] = value;
                         break;
+                    case "text":
+                        property["text"] = value;
+                        break;
+                    case "type":
+                        property["type"] = value;
+                        break;
                 }
                 switch(this.type)
                 {
@@ -122,7 +133,7 @@ namespace PoiLanguage
                         }
                         break;
                     case PoiLayoutType.Text:
-                        switch(pair.Key)
+                        switch (pair.Key)
                         {
                             case "format":
                                 property["text_format"] = value;
@@ -132,6 +143,32 @@ namespace PoiLanguage
                                 break;
                             case "encode":
                                 property["text_encode"] = value;
+                                break;
+                        }
+                        break;
+                    case PoiLayoutType.Image:
+                        break;
+                    case PoiLayoutType.Button:
+                        if (!property.ContainsKey("permission")) property["permission"] = "";
+                        switch (pair.Key)
+                        {
+                            case "permission":
+                                property["permission"] = value;
+                                break;
+                            case "value":
+                                property["value"] = value;
+                                break;
+                        }
+                        break;
+                    case PoiLayoutType.Textarea:
+                        if (!property.ContainsKey("permission")) property["permission"] = "";
+                        switch (pair.Key)
+                        {
+                            case "permission":
+                                property["permission"] = value;
+                                break;
+                            case "placeholder":
+                                property["placeholder"] = value;
                                 break;
                         }
                         break;
@@ -178,6 +215,7 @@ namespace PoiLanguage
                     writer.Write(htmlcode);
                     writer.Close();
                     break;
+
                 case PoiLayoutType.Grid:
                     foreach (PoiHtmlElement element in content)
                     {
@@ -188,15 +226,17 @@ namespace PoiLanguage
                     htmlcode = string.Format("<div name=\"{2}\" id=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n",
                         MakeStyleAbso(0, 0, 100, 100, "%"), htmlcode, name, GetProperty("id"));
                     break;
+
                 case PoiLayoutType.Panel:
                     foreach (PoiHtmlElement element in content)
                     {
                         element.layout.Generate();
                         htmlcode += element.layout.htmlcode;
                     }
-                    htmlcode = string.Format("<div name=\"{2}\" id=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n", 
+                    htmlcode = string.Format("<div name=\"{2}\" id=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n",
                         MakeStyleFlow(), htmlcode, name, GetProperty("id"));
                     break;
+
                 case PoiLayoutType.Group:
                     prefix = "<table width=\"100%\">\r\n<colgroup>";
                     for (int i = 0; i < cntcol; i++)
@@ -204,7 +244,7 @@ namespace PoiLanguage
                     prefix += "</colgroup>\r\n<tr>\r\n";
                     suffix = "</tr>\r\n</table>\r\n";
                     PoiHtmlElement[] ele_list = new PoiHtmlElement[cntcol];
-                    foreach(PoiHtmlElement element in content)
+                    foreach (PoiHtmlElement element in content)
                     {
                         element.layout.Generate();
                         ele_list[element.rect.X] = element;
@@ -220,12 +260,13 @@ namespace PoiLanguage
                         i += ele_list[i].rect.Width;
                     }
                     htmlcode = prefix + htmlcode + suffix;
-                    htmlcode = string.Format("<div name=\"{2}\" id=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n", 
+                    htmlcode = string.Format("<div name=\"{2}\" id=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n",
                         MakeStyleFlow(), htmlcode, name, GetProperty("id"));
                     break;
+
                 case PoiLayoutType.Text: // format=("/biu-+_^><@...")
-                    string textf = property["text_format"], textv = property["text_value"];
-                    if (textf[0] == '/') // hint
+                    string textf = GetProperty("text_format"), textv = GetProperty("text_value");
+                    if (textf.Length > 0 && textf[0] == '/') // hint
                         htmlcode = "<!--" + textv + "-->";
                     else
                     {
@@ -252,6 +293,83 @@ namespace PoiLanguage
                         htmlcode = prefix + textv + suffix;
                         htmlcode = string.Format("<span name=\"{1}\" id=\"{2}\">\r\n{0}\r\n</span>\r\n", htmlcode, name, GetProperty("id"));
                     }
+                    break;
+
+                case PoiLayoutType.Image:
+                    break;
+
+                case PoiLayoutType.Part:
+                    htmlcode = GetProperty("text");
+                    foreach (PoiHtmlElement element in content)
+                    {
+                        element.layout.Generate();
+                        htmlcode += element.layout.htmlcode;
+                    }
+                    htmlcode = string.Format("<{0} name=\"{2}\" id=\"{3}\">\r\n{1}</{0}>\r\n",
+                        GetProperty("type"), htmlcode, name, GetProperty("id"));
+                    break;
+
+                case PoiLayoutType.Single:
+                    htmlcode = string.Format("<{0} name=\"{1}\" id=\"{2}\" />\r\n",
+                        GetProperty("type"), name, GetProperty("id"));
+                    break;
+
+                case PoiLayoutType.Script:
+                    htmlcode = GetProperty("text");
+                    foreach (PoiHtmlElement element in content)
+                    {
+                        element.layout.Generate();
+                        htmlcode += element.layout.htmlcode;
+                    }
+                    htmlcode = "<script>" + htmlcode + "</script>";
+                    break;
+
+                case PoiLayoutType.Button:
+                    htmlcode = GetProperty("text");
+                    foreach (PoiHtmlElement element in content)
+                    {
+                        element.layout.Generate();
+                        htmlcode += element.layout.htmlcode;
+                    }
+                    string btn = string.Format("value=\"{0}\" ", GetProperty("value"));
+                    string btn_perm = GetProperty("permission");
+                    int btn_form = btn_perm.IndexOf('@');
+                    if (btn_form >= 0 && btn_form < btn_perm.Length) // form
+                    {
+                        btn += string.Format("form=\"{0}\"", btn_perm.Substring(btn_form + 1));
+                        btn_perm = btn_perm.Substring(0, btn_form);
+                    }
+                    for (int i = 0; i < btn_perm.Length; i++)
+                    {
+                        if (!PermMap.ContainsKey(btn_perm[i].ToString())) continue;
+                        btn += PermMap[btn_perm[i].ToString()];
+                    }
+                    htmlcode = string.Format("<button name=\"{1}\" id=\"{2}\" {3}>\r\n{0}</button>\r\n",
+                    htmlcode, name, GetProperty("id"), btn);
+                    break;
+
+                case PoiLayoutType.Textarea:
+                    htmlcode = GetProperty("text");
+                    foreach (PoiHtmlElement element in content)
+                    {
+                        element.layout.Generate();
+                        htmlcode += element.layout.htmlcode;
+                    }
+                    string area = string.Format("placeholder=\"{0}\" ", GetProperty("placeholder"));
+                    string area_perm = GetProperty("permission");
+                    int pos_form = area_perm.IndexOf('@');
+                    if (pos_form >= 0 && pos_form < area_perm.Length) // form
+                    {
+                        area += string.Format("form=\"{0}\"", area_perm.Substring(pos_form + 1));
+                        area_perm = area_perm.Substring(0, pos_form);
+                    }
+                    for(int i=0;i<area_perm.Length;i++)
+                    {
+                        if (!PermMap.ContainsKey(area_perm[i].ToString())) continue;
+                        area += PermMap[area_perm[i].ToString()];
+                    }
+                    htmlcode = string.Format("<textarea name=\"{1}\" id=\"{2}\" {3}>\r\n{0}</textarea>\r\n",
+                    htmlcode, name, GetProperty("id"), area);
                     break;
                 default:
                     break;
@@ -301,6 +419,18 @@ namespace PoiLanguage
                     element = new PoiHtmlElement(child, x, 0, w, 0);
                     break;
                 case PoiLayoutType.Text:
+                    element = new PoiHtmlElement(child);
+                    break;
+                case PoiLayoutType.Part:
+                    element = new PoiHtmlElement(child);
+                    break;
+                case PoiLayoutType.Script:
+                    element = new PoiHtmlElement(child);
+                    break;
+                case PoiLayoutType.Button:
+                    element = new PoiHtmlElement(child);
+                    break;
+                case PoiLayoutType.Textarea:
                     element = new PoiHtmlElement(child);
                     break;
                 default:
