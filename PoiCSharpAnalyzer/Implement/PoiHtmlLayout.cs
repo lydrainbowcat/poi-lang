@@ -19,14 +19,14 @@ namespace PoiLanguage
         Group = 4,
         Text = 5, // format=("/biu-+_^><@..."): with hint, a, b, i, u, del, ins, sub, sup, big, small
         Table = 6, // with tbody, thead, tfoot, tr, td, th, caption 
-        Input = 7,
+        Input = 7, // permission=("rxqac@..."), range=("min~max|step")
         Form = 8,
         Image = 9, // img
         Script = 10,
         Single = 11, // <* />, with br, hr
         Part = 12, // <*>...</*>, with div, span, p, pre, label, h1~h6, li, ol, ul
         Button = 13,
-        Textarea = 14,
+        Textarea = 14, // permission=("rxqa@...")
 
         #region NOT_SUPPORTED_YET
         audio = 100,
@@ -76,7 +76,7 @@ namespace PoiLanguage
         private static Dictionary<string, string> TextFormatMap = new Dictionary<string, string>
         { {"b","b"}, {"i","i"}, {"u","u"}, {"-","del"}, {"+","ins"}, {"_","sub"}, {"^","sup"}, {">","big"}, {"<","small"} };
         private static Dictionary<string, string> PermMap = new Dictionary<string, string>
-        { {"x","disabled=\"disabled\" "}, {"r","readonly=\"readonly\" "}, {"q","required "}, {"a","autofocus "} };
+        { {"x","disabled=\"disabled\" "}, {"r","readonly=\"readonly\" "}, {"q","required "}, {"a","autofocus "}, {"c","checked=\"checked\" "} };
         private static Dictionary<string, string> TablePosMap = new Dictionary<string, string>
         { {".","center"}, {"<","left"}, {">","right"}, {"^","top"}, {"v","bottom"} };
         private static Random rand = new Random();
@@ -154,7 +154,22 @@ namespace PoiLanguage
                         }
                         break;
                     case PoiLayoutType.Input:
-
+                        if (!property.ContainsKey("permission")) property["permission"] = "";
+                        switch (pair.Key)
+                        {
+                            case "pattern":
+                            case "permission":
+                            case "placeholder":
+                                property[pair.Key] = value;
+                                break;
+                            case "range": // min~max|step
+                                int pos_wave = value.IndexOf('~'), pos_step = value.IndexOf('|');
+                                if (pos_step < 0) pos_step = value.Length;
+                                if (pos_wave > 0) property["input_min"] = value.Substring(0, pos_wave);
+                                if (pos_step - pos_wave > 1) property["input_max"] = value.Substring(pos_wave + 1, pos_step - pos_wave - 1);
+                                if (pos_wave + 1 < value.Length) property["input_step"] = value.Substring(pos_step + 1);
+                                break;
+                        }
                         break;
                     case PoiLayoutType.Form:
                         switch(pair.Key)
@@ -366,7 +381,25 @@ namespace PoiLanguage
                     break;
 
                 case PoiLayoutType.Input:
-
+                    string input = string.Format("placeholder=\"{0}\" ", GetProperty("placeholder"));
+                    string input_perm = GetProperty("permission");
+                    int pos_form = input_perm.IndexOf('@');
+                    if (pos_form >= 0 && pos_form < input_perm.Length) // form
+                    {
+                        input += string.Format("form=\"{0}\" ", input_perm.Substring(pos_form + 1));
+                        input_perm = input_perm.Substring(0, pos_form);
+                    }
+                    for (int i = 0; i < input_perm.Length; i++)
+                    {
+                        if (!PermMap.ContainsKey(input_perm[i].ToString())) continue;
+                        input += PermMap[input_perm[i].ToString()];
+                    }
+                    string input_min = GetProperty("input_min"), input_max = GetProperty("input_max"), input_step = GetProperty("input_step");
+                    if (input_min != "") input += string.Format("min=\"{0}\" ", input_min);
+                    if (input_max != "") input += string.Format("max=\"{0}\" ", input_max);
+                    if (input_step != "") input += string.Format("step=\"{0}\" ", input_step);
+                    htmlcode = string.Format("<input name=\"{0}\" value=\"{1}\" id=\"{2}\" {3} />",
+                        name, GetProperty("text"), GetProperty("id"), input);
                     break;
 
                 case PoiLayoutType.Form:
