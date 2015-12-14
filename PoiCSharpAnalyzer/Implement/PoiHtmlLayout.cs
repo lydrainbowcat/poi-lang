@@ -77,6 +77,8 @@ namespace PoiLanguage
         { {"b","b"}, {"i","i"}, {"u","u"}, {"-","del"}, {"+","ins"}, {"_","sub"}, {"^","sup"}, {">","big"}, {"<","small"} };
         private static Dictionary<string, string> PermMap = new Dictionary<string, string>
         { {"x","disabled=\"disabled\" "}, {"r","readonly=\"readonly\" "}, {"q","required "}, {"a","autofocus "} };
+        private static Dictionary<string, string> TablePosMap = new Dictionary<string, string>
+        { {".","center"}, {"<","left"}, {">","right"}, {"^","top"}, {"v","bottom"} };
         private static Random rand = new Random();
         
         // 构造函数
@@ -110,14 +112,10 @@ namespace PoiLanguage
                         cntcol = Convert.ToInt32(value);
                         break;
                     case "id":
-                        property["id"] = value;
-                        break;
                     case "text":
-                        property["text"] = value;
-                        break;
                     case "type":
-                        property["type"] = value;
-                        break;
+                        property[pair.Key] = value;
+                        break; 
                 }
                 switch(this.type)
                 {
@@ -146,17 +144,44 @@ namespace PoiLanguage
                                 break;
                         }
                         break;
-                    case PoiLayoutType.Image:
-                        break;
-                    case PoiLayoutType.Button:
-                        if (!property.ContainsKey("permission")) property["permission"] = "";
+                    case PoiLayoutType.Table:
                         switch (pair.Key)
                         {
-                            case "permission":
-                                property["permission"] = value;
+                            case "headpos": 
+                            case "bodypos":
+                                property[pair.Key] = string.Format("align=\"{0}\" valign=\"{1}\" ", TablePosMap[value[0].ToString()], TablePosMap[value[1].ToString()]);
                                 break;
+                        }
+                        break;
+                    case PoiLayoutType.Input:
+
+                        break;
+                    case PoiLayoutType.Form:
+                        switch(pair.Key)
+                        {
+                            case "action":
+                            case "method":
+                            case "enctype":
+                            case "target":
+                                property[pair.Key] = value;
+                                break;
+                        }
+                        break;
+                    case PoiLayoutType.Image:
+                        switch(pair.Key)
+                        {
+                            case "url":
+                                property["img_url"] = value;
+                                break;
+                        }
+                        break;
+                    case PoiLayoutType.Button:
+                        if (!property.ContainsKey("permission")) property["permission"] = "tre";
+                        switch (pair.Key)
+                        {
+                            case "permission": 
                             case "value":
-                                property["value"] = value;
+                                property[pair.Key] = value;
                                 break;
                         }
                         break;
@@ -165,10 +190,8 @@ namespace PoiLanguage
                         switch (pair.Key)
                         {
                             case "permission":
-                                property["permission"] = value;
-                                break;
                             case "placeholder":
-                                property["placeholder"] = value;
+                                property[pair.Key] = value;
                                 break;
                         }
                         break;
@@ -295,7 +318,75 @@ namespace PoiLanguage
                     }
                     break;
 
+                case PoiLayoutType.Table:
+                    if (cntrow < 1 || cntcol < 1)
+                        throw new PoiAnalyzeException("Warning: cntrow and cntcol of Table shoule be positive integer");
+                    PoiHtmlElement[,] table = new PoiHtmlElement[cntrow + 1, cntcol + 1];
+                    bool[,] occupy = new bool[cntrow + 1, cntcol + 1];
+                    foreach(PoiHtmlElement element in content)
+                    {
+                        element.layout.Generate();
+                        table[element.rect.X, element.rect.Y] = element;
+                    }
+                    prefix = string.Format("<table name=\"{0}\" id=\"{1}\">\r\n", name, GetProperty("id"));
+                    suffix = "</table>";
+                    string thead = string.Format("<thead {0}>\r\n<tr>\r\n", GetProperty("headpos"));
+                    for (int i = 1; i <= cntcol;)
+                    {
+                        if (table[0, i] == null)
+                        {
+                            thead += "<th></th>\r\n";
+                            i++; continue;
+                        }
+                        thead += string.Format("<th colspan=\"{0}\">{1}</th>\r\n", table[0, i].rect.Width, table[0, i].layout.htmlcode);
+                        i += table[0, i].rect.Width;
+                    }
+                    thead += "</tr></thead>\r\n";
+                    string tbody = string.Format("<tbody {0}>\r\n", GetProperty("bodypos"));
+                    for (int i = 1; i <= cntrow; i++)
+                    {
+                        tbody += "<tr>\r\n";
+                        for (int j = 1; j <= cntcol; j++)
+                        {
+                            if (occupy[i, j]) continue;
+                            if (table[i, j] == null)
+                            {
+                                tbody += "<td></td>\r\n";
+                                continue;
+                            }
+                            tbody += string.Format("<td rowspan=\"{0}\" colspan=\"{1}\">{2}</td\r\n>", table[i, j].rect.Height, table[i, j].rect.Width, table[i, j].layout.htmlcode);
+                            for (int x = 0; x < table[i, j].rect.Height; x++)
+                                for (int y = 0; y < table[i, j].rect.Width; y++)
+                                    occupy[i + x, j + y] = true;
+                        }
+                        tbody += "</tr>\r\n";
+                    }
+                    tbody += "</tbody>\r\n";
+                    htmlcode = prefix + thead + tbody + suffix;
+                    break;
+
+                case PoiLayoutType.Input:
+
+                    break;
+
+                case PoiLayoutType.Form:
+                    string param = string.Format("action=\"{0}\" ", GetProperty("action"));
+                    if (property.ContainsKey("method")) param += string.Format("method=\"{1}\" ", GetProperty("method"));
+                    if (property.ContainsKey("enctype")) param += string.Format("enctype=\"{1}\" ", GetProperty("enctype"));
+                    if (property.ContainsKey("target")) param += string.Format("target=\"{1}\" ", GetProperty("target"));
+                    prefix = string.Format("<form {0}>", param);
+                    suffix = "</form>";
+                    foreach (PoiHtmlElement element in content)
+                    {
+                        element.layout.Generate();
+                        htmlcode += element.layout.htmlcode;
+                    }
+                    htmlcode = prefix + htmlcode + suffix;
+                    break;
+
                 case PoiLayoutType.Image:
+                    htmlcode = string.Format("<img src=\"{0}\" alt=\"{1}\" name=\"{2}\" id=\"{3}\" />\r\n",
+                        GetProperty("url"), GetProperty("text"), name, GetProperty("id"));
                     break;
 
                 case PoiLayoutType.Part:
@@ -336,7 +427,7 @@ namespace PoiLanguage
                     int btn_form = btn_perm.IndexOf('@');
                     if (btn_form >= 0 && btn_form < btn_perm.Length) // form
                     {
-                        btn += string.Format("form=\"{0}\"", btn_perm.Substring(btn_form + 1));
+                        btn += string.Format("form=\"{0}\" ", btn_perm.Substring(btn_form + 1));
                         btn_perm = btn_perm.Substring(0, btn_form);
                     }
                     for (int i = 0; i < btn_perm.Length; i++)
@@ -344,6 +435,8 @@ namespace PoiLanguage
                         if (!PermMap.ContainsKey(btn_perm[i].ToString())) continue;
                         btn += PermMap[btn_perm[i].ToString()];
                     }
+                    if (property.ContainsKey("type"))
+                        btn += string.Format("type=\"{0}\" ", GetProperty("type"));
                     htmlcode = string.Format("<button name=\"{1}\" id=\"{2}\" {3}>\r\n{0}</button>\r\n",
                     htmlcode, name, GetProperty("id"), btn);
                     break;
@@ -406,7 +499,7 @@ namespace PoiLanguage
                     break;
                 case PoiLayoutType.Panel:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
-                        throw new PoiAnalyzeException("Warning: Panel只能包含Panel, Group或具体的HTML DOM元素");
+                        throw new PoiAnalyzeException("Warning: Panel只能包含Panel, Group或HTML DOM类元素");
                     element = new PoiHtmlElement(child);
                     break;
                 case PoiLayoutType.Group:
@@ -421,16 +514,25 @@ namespace PoiLanguage
                 case PoiLayoutType.Text:
                     element = new PoiHtmlElement(child);
                     break;
+                case PoiLayoutType.Table:
+                    if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
+                        throw new PoiAnalyzeException("Warning: " + type + "只能包含HTML DOM类元素");
+                    while (data.Count < 4) data.Add("1");
+                    x = Convert.ToInt32(data[1]);
+                    y = Convert.ToInt32(data[2]);
+                    h = Convert.ToInt32(data[3]);
+                    w = Convert.ToInt32(data[4]);
+                    if (x < 0 || h < 1 || y < 1 || w < 1 || x + h > cntrow || y + w > cntcol)
+                        throw new PoiAnalyzeException("Warning: 元素占据Table的区域不合法");
+                    element = new PoiHtmlElement(child, x, y, w, h);
+                    break;
+                case PoiLayoutType.Form:
                 case PoiLayoutType.Part:
-                    element = new PoiHtmlElement(child);
-                    break;
                 case PoiLayoutType.Script:
-                    element = new PoiHtmlElement(child);
-                    break;
                 case PoiLayoutType.Button:
-                    element = new PoiHtmlElement(child);
-                    break;
                 case PoiLayoutType.Textarea:
+                    if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
+                        throw new PoiAnalyzeException("Warning: " + type + "只能包含HTML DOM类元素");
                     element = new PoiHtmlElement(child);
                     break;
                 default:
