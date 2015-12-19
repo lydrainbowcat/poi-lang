@@ -1,0 +1,4 @@
+Line 27:        static Node curptr;
+Enter() Line 1: PoiInfo.AddValuePos(node, curptr, 2);
+                curptr = node;
+Exit() Line 1:  curptr = node.GetValue(2) as Node;

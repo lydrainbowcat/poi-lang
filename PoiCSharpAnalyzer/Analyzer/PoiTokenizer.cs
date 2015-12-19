@@ -654,12 +654,6 @@ namespace PoiLanguage {
                                        "(0|([1-9][0-9]*))U");
             AddPattern(pattern);
 
-            pattern = new TokenPattern((int) PoiConstants.LITERAL_NUMERIC_UREAL,
-                                       "LITERAL_NUMERIC_UREAL",
-                                       TokenPattern.PatternType.REGEXP,
-                                       "(0|[1-9][0-9]*)\\.[0-9]+");
-            AddPattern(pattern);
-
             pattern = new TokenPattern((int) PoiConstants.LITERAL_STRING,
                                        "LITERAL_STRING",
                                        TokenPattern.PatternType.REGEXP,
