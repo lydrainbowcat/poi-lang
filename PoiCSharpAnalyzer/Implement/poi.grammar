@@ -331,7 +331,7 @@ UnaryExpression = BasicExpression
  */
 BasicExpression     = PrimaryExpression [BasicExpression_T]
                     | SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
-                    | FunctionVariable SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN [BasicExpression_T]
+                    | FunctionVariable SYMBOL_LEFT_PAREN [Expression] SYMBOL_RIGHT_PAREN [BasicExpression_T]
                     | ArrayVariable (SYMBOL_LEFT_BRACKET Expression SYMBOL_RIGHT_BRACKET)+ [BasicExpression_T] ;
 BasicExpression_T   = OPERATOR_INC [BasicExpression_T]
                     | OPERATOR_DEC [BasicExpression_T]
@@ -363,7 +363,7 @@ Declaration = VariableDeclaration
 			| ClassDeclaration ;
 
 /* VariableDeclaration */
-VariableDeclaration		= VariableType IDENTIFIER [VariableAccess] [VariableInitializer] ;
+VariableDeclaration		= VariableType IDENTIFIER [VariableInitializer] ;
 VariableType			= PrimitiveType
                         | ContainerType
 						| UserType ;
@@ -396,11 +396,6 @@ ContainerType           = StringContainer
 						| MapContainer
 						| EventContainer ;
 UserType				= IDENTIFIER ;
-VariableAccess			= SYMBOL_COLON_MARK VariableGetterSetter ;
-VariableGetterSetter 	= VariableGetter [SYMBOL_COMMA VariableSetter]
-						| VariableSetter [SYMBOL_COMMA VariableGetter] ;
-VariableGetter			= DECLARATION_GETTER [StatementBlock] ;
-VariableSetter			= DECLARATION_SETTER [StatementBlock] ;
 VariableInitializer		= OPERATOR_ASSIGN Expression ;
 
 StringContainer = CONTAINER_STRING ;

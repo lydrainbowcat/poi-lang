@@ -335,9 +335,6 @@ namespace PoiLanguage {
             case (int) PoiConstants.LITERAL_NUMERIC_UINTEGER_DECIMAL:
                 EnterLiteralNumericUintegerDecimal((Token) node);
                 break;
-            case (int) PoiConstants.LITERAL_NUMERIC_UREAL:
-                EnterLiteralNumericUreal((Token) node);
-                break;
             case (int) PoiConstants.LITERAL_STRING:
                 EnterLiteralString((Token) node);
                 break;
@@ -514,18 +511,6 @@ namespace PoiLanguage {
                 break;
             case (int) PoiConstants.USER_TYPE:
                 EnterUserType((Production) node);
-                break;
-            case (int) PoiConstants.VARIABLE_ACCESS:
-                EnterVariableAccess((Production) node);
-                break;
-            case (int) PoiConstants.VARIABLE_GETTER_SETTER:
-                EnterVariableGetterSetter((Production) node);
-                break;
-            case (int) PoiConstants.VARIABLE_GETTER:
-                EnterVariableGetter((Production) node);
-                break;
-            case (int) PoiConstants.VARIABLE_SETTER:
-                EnterVariableSetter((Production) node);
                 break;
             case (int) PoiConstants.VARIABLE_INITIALIZER:
                 EnterVariableInitializer((Production) node);
@@ -817,8 +802,6 @@ namespace PoiLanguage {
                 return ExitLiteralNumericReal((Token) node);
             case (int) PoiConstants.LITERAL_NUMERIC_UINTEGER_DECIMAL:
                 return ExitLiteralNumericUintegerDecimal((Token) node);
-            case (int) PoiConstants.LITERAL_NUMERIC_UREAL:
-                return ExitLiteralNumericUreal((Token) node);
             case (int) PoiConstants.LITERAL_STRING:
                 return ExitLiteralString((Token) node);
             case (int) PoiConstants.LITERAL_CHARACTER:
@@ -937,14 +920,6 @@ namespace PoiLanguage {
                 return ExitContainerType((Production) node);
             case (int) PoiConstants.USER_TYPE:
                 return ExitUserType((Production) node);
-            case (int) PoiConstants.VARIABLE_ACCESS:
-                return ExitVariableAccess((Production) node);
-            case (int) PoiConstants.VARIABLE_GETTER_SETTER:
-                return ExitVariableGetterSetter((Production) node);
-            case (int) PoiConstants.VARIABLE_GETTER:
-                return ExitVariableGetter((Production) node);
-            case (int) PoiConstants.VARIABLE_SETTER:
-                return ExitVariableSetter((Production) node);
             case (int) PoiConstants.VARIABLE_INITIALIZER:
                 return ExitVariableInitializer((Production) node);
             case (int) PoiConstants.STRING_CONTAINER:
@@ -1171,18 +1146,6 @@ namespace PoiLanguage {
                 break;
             case (int) PoiConstants.USER_TYPE:
                 ChildUserType(node, child);
-                break;
-            case (int) PoiConstants.VARIABLE_ACCESS:
-                ChildVariableAccess(node, child);
-                break;
-            case (int) PoiConstants.VARIABLE_GETTER_SETTER:
-                ChildVariableGetterSetter(node, child);
-                break;
-            case (int) PoiConstants.VARIABLE_GETTER:
-                ChildVariableGetter(node, child);
-                break;
-            case (int) PoiConstants.VARIABLE_SETTER:
-                ChildVariableSetter(node, child);
                 break;
             case (int) PoiConstants.VARIABLE_INITIALIZER:
                 ChildVariableInitializer(node, child);
@@ -3916,32 +3879,6 @@ namespace PoiLanguage {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterLiteralNumericUreal(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitLiteralNumericUreal(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterLiteralString(Token node) {
         }
 
@@ -6235,166 +6172,6 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual void ChildUserType(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterVariableAccess(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitVariableAccess(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildVariableAccess(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterVariableGetterSetter(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitVariableGetterSetter(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildVariableGetterSetter(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterVariableGetter(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitVariableGetter(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildVariableGetter(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterVariableSetter(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitVariableSetter(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildVariableSetter(Production node, Node child) {
             node.AddChild(child);
         }
 
