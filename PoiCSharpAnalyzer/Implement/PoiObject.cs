@@ -12,7 +12,8 @@ namespace PoiLanguage
         Null = 0,
         String = 1,
         Pair = 2,
-        Array = 3
+        Array = 3,
+        Struct = 4
     }
 
     public class PoiObject
@@ -49,6 +50,11 @@ namespace PoiLanguage
                 List<string> list = this.ToArray();
                 return list.ToString();
             }
+            if(Type == PoiObjectType.Struct)
+            {
+                List<KeyValuePair<string, string>> rec = this.ToStruct();
+                return rec.ToString();
+            }
             throw new PoiObjectException("Can't convert to a String");
         }
 
@@ -80,12 +86,33 @@ namespace PoiLanguage
             }
         }
 
+        public List<KeyValuePair<string, string>> ToStruct()
+        {
+            if (Type != PoiObjectType.Struct)
+                throw new PoiObjectException("Not a struct");
+            try
+            {
+                return Data as List<KeyValuePair<string, string>>;
+            }
+            catch(Exception)
+            {
+                throw new PoiObjectException("Not a valid struct");
+            }
+        }
+
         public static PoiObject operator +(PoiObject a, PoiObject b)
         {
             if (a.Type == b.Type)
             {
                 if (a.Type == PoiObjectType.String)
                     return new PoiObject(PoiObjectType.String, a.ToString() + b.ToString());
+                if(a.Type == PoiObjectType.Struct)
+                {
+                    List<KeyValuePair<string, string>> rec = a.ToStruct();
+                    foreach (KeyValuePair<string, string> pair in b.ToStruct())
+                        rec.Add(pair);
+                    return new PoiObject(PoiObjectType.Struct, rec);
+                }
             }
             throw new PoiObjectException("Method not supported");
         }

@@ -55,6 +55,7 @@
     <Compile Include="AnalyzerForm.Designer.cs">
       <DependentUpon>AnalyzerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Implement\PoiHtmlLayout.cs" />
     <Compile Include="Implement\PoiInfo.cs" />
     <Compile Include="Analyzer\PoiAnalyzer.cs" />
     <Compile Include="Analyzer\PoiConstants.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="Implement\PoiAnalyzerScope.cs" />
     <Compile Include="Implement\PoiBasicAnalyzer.cs" />
     <Compile Include="Implement\PoiObject.cs" />
-    <Compile Include="Implement\PoiVariable.cs" />
+    <Compile Include="Implement\PoiType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AnalyzerForm.resx">
