@@ -24,7 +24,9 @@ namespace PoiCSharpAnalyzer
         private void parseButton_Click(object sender, EventArgs e)
         {
             String code = codeInput.Text;
-            PoiParser parser = new PoiParser(new StringReader(code), new PoiBasicAnalyzer());
+            PoiBasicAnalyzer analyzer = new PoiBasicAnalyzer();
+            analyzer.InitializeAnalyzerStatus();
+            PoiParser parser = new PoiParser(new StringReader(code), analyzer);
             //PoiParser arithmeticParser = new PoiParser(new StringReader(code), new PoiArithmeticAnalyzer());
             Node parseTree = null;
             try
@@ -44,10 +46,10 @@ namespace PoiCSharpAnalyzer
             {
                 parseTreeOutput.Nodes.Add(ex.GetMessage());
             }
-            /*catch (Exception ex)
+            catch (PoiAnalyzeException ex)
             {
                 codeOutput.Text = ex.Message;
-            }*/
+            }
         }
 
         private void deleteParseTree(TreeNodeCollection nodes)

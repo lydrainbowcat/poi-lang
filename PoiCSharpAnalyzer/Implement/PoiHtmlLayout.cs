@@ -577,7 +577,8 @@ namespace PoiLanguage
         // 处理某种操作
         public PoiObject Solve(string operation, Node dataNode)
         {
-            switch(operation) // 静态操作按照C#规则翻译，data应该为Literal构成的Pair；动态操作翻译为JS，直接生成操作data的代码。
+            List<string> array = new List<string>();
+            switch (operation) // 静态操作按照C#规则翻译，data应该为Literal构成的Pair；动态操作翻译为JS，直接生成操作data的代码。
             {
                 case "add":
                     List<string> data = ParseStatic(dataNode);
@@ -588,6 +589,20 @@ namespace PoiLanguage
                         throw new PoiAnalyzeException("Warning: 只有Page才支持generate方法");
                     this.Generate();
                     return new PoiObject(PoiObjectType.String, "static generate");
+                case "css":
+                    array.Add("css");
+                    array.Add(dataNode.GetValue(0).ToString());
+                    return new PoiObject(PoiObjectType.Array, array);
+                case "cssdel":
+                    array.Add("cssdel");
+                    array.Add(dataNode.GetValue(0).ToString());
+                    return new PoiObject(PoiObjectType.Array, array);
+                case "cssadd":
+                    array.Add("cssadd");
+                    data = ParseStatic(dataNode);
+                    array.Add(data[0]);
+                    array.Add(data[1]);
+                    return new PoiObject(PoiObjectType.Array, array);
                 default:
                     return new PoiObject(PoiObjectType.String, "static");
             }

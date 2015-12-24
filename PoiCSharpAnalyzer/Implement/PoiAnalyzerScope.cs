@@ -7,29 +7,6 @@ using System.Collections;
 
 namespace PoiLanguage
 {
-    public enum PoiVariableType
-    {
-        Undefined = 0,
-        Integer8,
-        Integer16,
-        Integer32,
-        Integer64,
-        UInteger8,
-        UInteger16,
-        UInteger32,
-        UInteger64,
-        Single,
-        Double,
-        Extended,
-        Boolean,
-        Character,
-        String,
-        Array,
-        Map,
-        Event,
-        Function
-    }
-
     class PoiAnalyzerScope
     {
         private const String DEFAULT_SCOPE_PREFIX = "__poi_analyzer_scope_";

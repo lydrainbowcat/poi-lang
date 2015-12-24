@@ -1,5 +1,5 @@
 function main = @[] -> [int ret] {
-	int a: get, set;
+	int a;
 	int b = 3;
 	int c = a * b - a / b;
 	

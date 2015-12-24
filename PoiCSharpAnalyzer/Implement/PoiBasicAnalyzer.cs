@@ -17,20 +17,10 @@ namespace PoiLanguage
         private const String POI_TEMP_RETURN = POI_PREFIX + "poi_temp_return";
         private const String POI_TEMP_RETURN_CLEAR_CODE = POI_TEMP_RETURN + ".length = 0;";
 
-        private const String POI_GETTER_SETTER_PARAMETER_VARIABLE = POI_PREFIX + "value";
-        private const String POI_GETTER_PREFIX = "_getter";
-        private const String POI_SETTER_PREFIX = "_setter";
-        private const String POI_GETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
-        private const String POI_SETTER_PARAMETER = "(" + POI_GETTER_SETTER_PARAMETER_VARIABLE + ")";
-        private const String POI_GETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE + ";";
-        private const String POI_SETTER_RETURN_CODE = "return " + POI_GETTER_SETTER_PARAMETER_VARIABLE + ";";
-        private const String POI_GETTER_DEFAULT_CODE = "{" + POI_GETTER_RETURN_CODE + "}";
-        private const String POI_SETTER_DEFAULT_CODE = "{" + POI_SETTER_RETURN_CODE + "}";
-
         private const String POI_FUNCTION_BODY_LABEL = POI_PREFIX + "poi_function_body";
         private const String POI_FUNCTION_RETURN_CODE = "break " + POI_FUNCTION_BODY_LABEL + ";";
 
-        private const String POI_HEADER_CODE = "var __poi_temp_variable;\r\nvar __poi_temp_return = new Array();\r\n\r\nfunction ____value_setter(__value) {return __value;};\r\nfunction ____value_setter(__value) {return __value;};\r\nvar __value;\r\n\r\n";
+        private const String POI_HEADER_CODE = "var __poi_temp_variable;\r\nvar __poi_temp_return = new Array();\r\n\r\n";
 
         /**
          * <summary>Called when entering a parse tree node.</summary>
@@ -2963,35 +2953,6 @@ namespace PoiLanguage
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public override void EnterLiteralNumericUreal(Token node)
-        {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override Node ExitLiteralNumericUreal(Token node)
-        {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public override void EnterLiteralString(Token node)
         {
         }
@@ -3009,7 +2970,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralString(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiVariableType.String));
             return node;
         }
 
@@ -3038,7 +2999,7 @@ namespace PoiLanguage
          */
         public override Node ExitLiteralCharacter(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiVariableType.Character));
             return node;
         }
 
@@ -3067,7 +3028,7 @@ namespace PoiLanguage
          */
         public override Node ExitIdentifier(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage()));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), scopeStack.GetVariableType(node.GetImage())));
             return node;
         }
 
@@ -3517,7 +3478,7 @@ namespace PoiLanguage
             body = "{" + variableAccess + variablesDeclaration + bodyLabel + body + returnAssignCode + "}";
 
             String function = "function(" + variables + ")" + body;
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, function));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, function, PoiVariableType.Function));
             return node;
         }
 
@@ -3693,7 +3654,10 @@ namespace PoiLanguage
          */
         public override Node ExitPairDeclaration(Production node)
         {
-            PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(0) as PoiObject);
+            if (node.GetChildCount() == 2)
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, new List<PoiObject>()));
+            else
+                PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -3737,7 +3701,10 @@ namespace PoiLanguage
          */
         public override Node ExitPairExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(0) as PoiObject);
+            if (node.GetChildCount() == 2)
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, new List<PoiObject>()));
+            else
+                PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(0) as PoiObject);
             return node;
         }
 
@@ -3785,13 +3752,13 @@ namespace PoiLanguage
             {
                 List<PoiObject> list = new List<PoiObject>();
                 list.Insert(0, node.GetChildAt(0).GetValue(0) as PoiObject);
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list));
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list, PoiVariableType.Pair));
             }
             else
             {
                 List<PoiObject> list = (node.GetChildAt(2).GetValue(0) as PoiObject).ToPair();
                 list.Insert(0, node.GetChildAt(0).GetValue(0) as PoiObject);
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list));
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list, PoiVariableType.Pair));
             }
             return node;
         }
@@ -3840,13 +3807,13 @@ namespace PoiLanguage
             {
                 List<PoiObject> list = new List<PoiObject>();
                 list.Insert(0, node.GetChildAt(0).GetValue(0) as PoiObject);
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list));
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list, PoiVariableType.Pair));
             }
             else
             {
                 List<PoiObject> list = (node.GetChildAt(2).GetValue(0) as PoiObject).ToPair();
                 list.Insert(0, node.GetChildAt(0).GetValue(0) as PoiObject);
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list));
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.Pair, list, PoiVariableType.Pair));
             }
             return node;
         }
@@ -3935,7 +3902,7 @@ namespace PoiLanguage
          */
         public override Node ExitArithmeticExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
             return node;
         }
 
@@ -3992,11 +3959,10 @@ namespace PoiLanguage
                     Node right = node.GetChildAt(1);
 
                     String variable = (left.GetValue(0) as PoiObject).ToString();
-                    String variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
                     String assignOperator = (right.GetChildAt(0).GetValue(0) as PoiObject).ToString();
                     String variableExpression = (right.GetChildAt(1).GetValue(0) as PoiObject).ToString();
 
-                    String assignExpression = variable + assignOperator + variableSetter + "(" + variableExpression + ")";
+                    String assignExpression = variable + assignOperator + variableExpression;
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, assignExpression));
                 }
             }
@@ -4026,8 +3992,7 @@ namespace PoiLanguage
                         for (int i = 0; i < left.Count; i++)
                         {
                             string variable = left[i].ToString();
-                            string variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
-                            string str = variable + " = " + variableSetter + "(" + right[i].ToString() + ");\r\n";
+                            string str = variable + " = " + right[i].ToString() + ";\r\n";
                             result += str;
                         }
                         result += "}";
@@ -4043,8 +4008,7 @@ namespace PoiLanguage
                         for (int i = 0; i < left.Count; i++)
                         {
                             string variable = left[i].ToString();
-                            string variableSetter = POI_PREFIX + variable + POI_SETTER_PREFIX;
-                            string str = variable + " = " + variableSetter + "(" + POI_TEMP_RETURN + "[" + i + "]);\r\n";
+                            string str = variable + " = " + POI_TEMP_RETURN + "[" + i + "];\r\n";
                             result += str;
                         }
 
@@ -4194,7 +4158,25 @@ namespace PoiLanguage
          */
         public override Node ExitConditionExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                PoiObject right = node.GetChildAt(1).GetValue(0) as PoiObject;
+
+                if (left.VariableType != PoiVariableType.Boolean)
+                {
+                    throw new PoiAnalyzeException("Error type of first argument of Condition expression");
+                }
+                
+                PoiObject expr = MergeChildList(node);
+                expr.VariableType = right.VariableType;
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4238,7 +4220,25 @@ namespace PoiLanguage
          */
         public override Node ExitConditionExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(1).GetValue(0) as PoiObject;
+                PoiObject right = node.GetChildAt(3).GetValue(0) as PoiObject;
+
+                if (left.VariableType != right.VariableType)
+                {
+                    throw new PoiAnalyzeException("Error type of second and third argument of Condition expression");
+                }
+
+                PoiObject expr = MergeChildList(node);
+                expr.VariableType = right.VariableType;
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4282,7 +4282,20 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalOrExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.LogicalOrExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4326,7 +4339,9 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalOrExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4370,7 +4385,20 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalAndExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.LogicalAndExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4414,7 +4442,9 @@ namespace PoiLanguage
          */
         public override Node ExitLogicalAndExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4458,7 +4488,20 @@ namespace PoiLanguage
          */
         public override Node ExitBitOrExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.BitOrExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4502,7 +4545,9 @@ namespace PoiLanguage
          */
         public override Node ExitBitOrExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4546,7 +4591,20 @@ namespace PoiLanguage
          */
         public override Node ExitBitXorExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.BitXorExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4590,7 +4648,9 @@ namespace PoiLanguage
          */
         public override Node ExitBitXorExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4634,7 +4694,20 @@ namespace PoiLanguage
          */
         public override Node ExitBitAndExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.BitAndExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4678,7 +4751,9 @@ namespace PoiLanguage
          */
         public override Node ExitBitAndExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4722,7 +4797,20 @@ namespace PoiLanguage
          */
         public override Node ExitEqualityExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.EqualityExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4766,7 +4854,9 @@ namespace PoiLanguage
          */
         public override Node ExitEqualityExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4810,7 +4900,20 @@ namespace PoiLanguage
          */
         public override Node ExitRelationalExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.RelationalExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4854,7 +4957,9 @@ namespace PoiLanguage
          */
         public override Node ExitRelationalExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4898,7 +5003,20 @@ namespace PoiLanguage
          */
         public override Node ExitShiftExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.ShiftExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -4942,7 +5060,9 @@ namespace PoiLanguage
          */
         public override Node ExitShiftExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -4986,7 +5106,20 @@ namespace PoiLanguage
          */
         public override Node ExitAddSubExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.AddSubExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -5030,7 +5163,9 @@ namespace PoiLanguage
          */
         public override Node ExitAddSubExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> { node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject };
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -5074,7 +5209,20 @@ namespace PoiLanguage
          */
         public override Node ExitMulDivModExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
+
+                PoiObject expr = left + tail[0] + tail[1];
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.MulDivModExpression, tail[0].ToString(), new List<PoiVariableType> { left.VariableType, tail[1].VariableType });
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -5118,7 +5266,9 @@ namespace PoiLanguage
          */
         public override Node ExitMulDivModExpressionT(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            List<PoiObject> tailList = new List<PoiObject> {node.GetChildAt(0).GetValue(0) as PoiObject, node.GetChildAt(1).GetValue(0) as PoiObject};
+            PoiObject tail = new PoiObject(PoiObjectType.Pair, tailList);
+            PoiInfo.AddValuePos(node, tail);
             return node;
         }
 
@@ -5162,7 +5312,20 @@ namespace PoiLanguage
          */
         public override Node ExitUnaryExpression(Production node)
         {
-            PoiInfo.AddValuePos(node, MergeChildList(node));
+            if (node.GetChildCount() == 1)
+            {
+                PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            }
+            else
+            {
+                PoiObject left = node.GetChildAt(0).GetValue(0) as PoiObject;
+                PoiObject right = node.GetChildAt(1).GetValue(0) as PoiObject;
+
+                PoiObject expr = MergeChildList(node);
+                expr.VariableType = PoiType.GetArithmeticExpressionType(PoiExpressionType.UnaryExpression, left.ToString(), new List<PoiVariableType>{right.VariableType});
+                PoiInfo.AddValuePos(node, expr);
+            }
+
             return node;
         }
 
@@ -5218,8 +5381,36 @@ namespace PoiLanguage
                     right = node.GetChildAt(1).GetValue(0) as PoiObject;
                     if (node.GetChildAt(1).GetChildAt(0).GetName() == "SYMBOL_DOT" && right.ToString().IndexOf("static") == 0)
                         left = new PoiObject(PoiObjectType.String, "// " + left.ToString() + " ");
+                    else
+                    {
+                        List<string> array = right.ToArray();
+                        switch (array[0])
+                        {
+                            case "css":
+                                string statementlist = "for (var __i in " + array[1] + "){\r\n" +
+                                     "$(\"[name = '" + left.ToString() + "']\").css(__i, " +
+                                     array[1] + "[__i])" + "\r\n}";
+                                left = new PoiObject(PoiObjectType.String, statementlist);
+                                right = new PoiObject(PoiObjectType.String, "");
+                                break;
+                            case "cssdel":
+                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
+                                    + array[1] + "\",\"\")");
+                                right = new PoiObject(PoiObjectType.String, "");
+                                break;
+                            case "cssadd":
+                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
+                                    + array[1] + "\",\"" + array[2] + "\")");
+                                right = new PoiObject(PoiObjectType.String, "");
+                                break;
+                        }
+                    }
                 }
-                PoiInfo.AddValuePos(node, left + right);
+
+                PoiObject expr = left + right;
+                expr.VariableType = left.VariableType;
+
+                PoiInfo.AddValuePos(node, expr);
             }
             else if (child0.Name == "SYMBOL_LEFT_PAREN")
             {
@@ -5253,23 +5444,24 @@ namespace PoiLanguage
             else if (child0.Name == "FunctionVariable")
             {
                 string functionVariable = (node.GetChildAt(0).GetValue(0) as PoiObject).ToString();
-
-                string[] functionParameter = (node.GetChildAt(2).GetValue(0) as PoiObject).ToString().Split(';');
                 string parameter = "";
-                for (int i = 0; i < functionParameter.Length; i++)
-                {
-                    if (parameter != "")
-                        parameter += ",";
-                    parameter += functionParameter[i].ToString();
-                }
 
+                if (node.GetChildAt(2).Name == "Expression")
+                {
+                    string[] functionParameter = (node.GetChildAt(2).GetValue(0) as PoiObject).ToString().Split(';');
+                    for (int i = 0; i < functionParameter.Length; i++)
+                    {
+                        if (parameter != "")
+                            parameter += ",";
+                        parameter += functionParameter[i].ToString();
+                    }
+                }
 
                 PoiObject left = new PoiObject(PoiObjectType.String, functionVariable + "(" + parameter + ")");
                 PoiObject right;
                 if (node.GetChildCount() > 4)
                     right = node.GetChildAt(4).GetValue(0) as PoiObject;
                 else right = new PoiObject(PoiObjectType.String, "");
-
                 PoiInfo.AddValuePos(node, left + right);
             }
             return node;
@@ -5630,43 +5822,23 @@ namespace PoiLanguage
             if (type == "PrimitiveType")
             {
                 Node identifierNode = node.GetChildAt(1);
-                Node accessNode = null;
                 Node initializerNode = null;
                 string variableType = "var";
 
                 if (node.GetChildCount() == 3)
                 {
                     Node child = node.GetChildAt(2);
-                    if (child.GetName() == "VariableAccess")
-                    {
-                        accessNode = child;
-                    }
-                    else if (child.GetName() == "VariableInitializer")
+                    if (child.GetName() == "VariableInitializer")
                     {
                         initializerNode = child;
-                    }
-                }
-                else if (node.GetChildCount() == 4)
-                {
-                    accessNode = node.GetChildAt(2);
-                    initializerNode = node.GetChildAt(3);
-                }
-
-                if (accessNode != null)
-                {
-                    Node setterGetterNode = accessNode.GetChildAt(1);
-                    if (setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter")
-                    {
-                        variableType = "const";
                     }
                 }
 
                 String identifier = (identifierNode.GetValue(0) as PoiObject).ToString();
 
                 String initializer = generateInitializer(initializerNode);
-                String access = generateGetterSetter(accessNode, identifier);
 
-                String declaration = access;
+                String declaration = "";
                 if (fromClassPub) declaration += "this.";
                 else declaration += variableType + " ";
                 declaration += identifier + initializer;
@@ -5912,254 +6084,6 @@ namespace PoiLanguage
          * discovered errors</exception>
          */
         public override void ChildUserType(Production node, Node child)
-        {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void EnterVariableAccess(Production node)
-        {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override Node ExitVariableAccess(Production node)
-        {
-            PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(0));
-            PoiInfo.AddValuePos(node, node.GetChildAt(1).GetValue(1));
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void ChildVariableAccess(Production node, Node child)
-        {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void EnterVariableGetterSetter(Production node)
-        {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override Node ExitVariableGetterSetter(Production node)
-        {
-            Node getter = null;
-            Node setter = null;
-
-            if (node.GetChildCount() == 1)
-            {
-                if (node.GetChildAt(0).GetName() == "VariableGetter")
-                {
-                    getter = node.GetChildAt(0);
-                }
-                else if (node.GetChildAt(0).GetName() == "VariableSetter")
-                {
-                    setter = node.GetChildAt(0);
-                }
-            }
-            else if (node.GetChildCount() == 3)
-            {
-                if (node.GetChildAt(0).GetName() == "VariableGetter")
-                {
-                    getter = node.GetChildAt(0);
-                    setter = node.GetChildAt(2);
-                }
-                else if (node.GetChildAt(0).GetName() == "VariableSetter")
-                {
-                    setter = node.GetChildAt(0);
-                    getter = node.GetChildAt(2);
-                }
-            }
-
-            String getterCode = "";
-            String setterCode = "";
-            if (getter != null)
-            {
-                getterCode = (getter.GetValue(0) as PoiObject).ToString();
-            }
-            if (setter != null)
-            {
-                setterCode = (setter.GetValue(0) as PoiObject).ToString();
-            }
-
-            if (!(getterCode != "" && setterCode == ""))
-            {
-                getterCode = (getterCode == "") ? POI_GETTER_DEFAULT_CODE : getterCode;
-                setterCode = (setterCode == "") ? POI_SETTER_DEFAULT_CODE : setterCode;
-            }
-
-            getterCode = POI_GETTER_PARAMETER + getterCode;
-            setterCode = POI_SETTER_PARAMETER + setterCode;
-
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, getterCode));
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, setterCode));
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void ChildVariableGetterSetter(Production node, Node child)
-        {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void EnterVariableGetter(Production node)
-        {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override Node ExitVariableGetter(Production node)
-        {
-            if (node.GetChildCount() == 2)
-            {
-                String body = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                int bodyStart = body.IndexOf("{");
-                int bodyEnd = body.LastIndexOf("}");
-                body = "{" + body.Substring(bodyStart + 1, bodyEnd - bodyStart - 1) + POI_GETTER_RETURN_CODE + "}";
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, body));
-            }
-            else
-            {
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, POI_GETTER_DEFAULT_CODE));
-            }
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void ChildVariableGetter(Production node, Node child)
-        {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void EnterVariableSetter(Production node)
-        {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override Node ExitVariableSetter(Production node)
-        {
-            if (node.GetChildCount() == 2)
-            {
-                String body = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                int bodyStart = body.IndexOf("{");
-                int bodyEnd = body.LastIndexOf("}");
-                body = "{" + body.Substring(bodyStart + 1, bodyEnd - bodyStart - 1) + POI_SETTER_RETURN_CODE + "}";
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, body));
-            }
-            else
-            {
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, POI_SETTER_DEFAULT_CODE));
-            }
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public override void ChildVariableSetter(Production node, Node child)
         {
             node.AddChild(child);
         }
@@ -7283,14 +7207,13 @@ namespace PoiLanguage
 
         #region 自定义方法
 
-        private PoiObject MergeChildList(Node node, string separator = "")
+        private PoiObject MergeChildList(Node node)
         {
             if (node.GetChildCount() == 0)
                 return new PoiObject();
             PoiObject result = node.GetChildAt(0).GetValue(0) as PoiObject;
             for (int i = 1; i < node.GetChildCount(); i++)
             {
-                result += new PoiObject(PoiObjectType.String, separator);
                 result += node.GetChildAt(i).GetValue(0) as PoiObject;
             }
             return result;
@@ -7317,27 +7240,6 @@ namespace PoiLanguage
             return initializer;
         }
 
-        private string generateGetterSetter(Node accessNode, string identifier)
-        {
-            String prefix = "function " + POI_PREFIX + identifier;
-            String getterCode = "", setterCode = "";
-            if (accessNode != null)
-            {
-                Node setterGetterNode = accessNode.GetChildAt(1);
-                getterCode = prefix + POI_GETTER_PREFIX + accessNode.GetValue(0);
-                if (!(setterGetterNode.GetChildCount() == 1 && setterGetterNode.GetChildAt(0).GetName() == "VariableGetter"))
-                {
-                    setterCode = prefix + POI_SETTER_PREFIX + accessNode.GetValue(1);
-                }
-            }
-            else
-            {
-                getterCode = prefix + POI_GETTER_PREFIX + POI_GETTER_PARAMETER + POI_GETTER_DEFAULT_CODE;
-                setterCode = prefix + POI_SETTER_PREFIX + POI_SETTER_PARAMETER + POI_SETTER_DEFAULT_CODE;
-            }
-            String access = getterCode + (getterCode != "" ? ";\r\n" : "") + setterCode + (setterCode != "" ? ";\r\n" : "");
-            return access;
-        }
         private PoiVariableType IntegerType(long number)
         {
             int length = 1;
