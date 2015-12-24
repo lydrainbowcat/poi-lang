@@ -5402,13 +5402,13 @@ namespace PoiLanguage
                                 right = new PoiObject(PoiObjectType.String, "");
                                 break;
                             case "cssdel":
-                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
-                                    + array[1] + "\",\"\")");
+                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css("
+                                    + array[1] + ",\"\")");
                                 right = new PoiObject(PoiObjectType.String, "");
                                 break;
                             case "cssadd":
-                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
-                                    + array[1] + "\",\"" + array[2] + "\")");
+                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css("
+                                    + array[1] + "," + array[2] + ")");
                                 right = new PoiObject(PoiObjectType.String, "");
                                 break;
                         }

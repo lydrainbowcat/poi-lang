@@ -15,11 +15,11 @@ struct hint as core{
 };
 cell.add(core);
 cell.add(hint);
-cell.cssdel(font-size);
+cell.cssdel("font-size");
 map s;
 s["font-size"] = 20;
 cell.css(s);
-cell.cssadd([background, black]);
+cell.cssadd(["background", "black"]);
 divide.add([cell, 0, 1]);
 divide.add([cell, 1, 2]);
 divide.add([cell, 3, 1]);
