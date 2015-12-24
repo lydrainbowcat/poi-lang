@@ -5381,6 +5381,30 @@ namespace PoiLanguage
                     right = node.GetChildAt(1).GetValue(0) as PoiObject;
                     if (node.GetChildAt(1).GetChildAt(0).GetName() == "SYMBOL_DOT" && right.ToString().IndexOf("static") == 0)
                         left = new PoiObject(PoiObjectType.String, "// " + left.ToString() + " ");
+                    else
+                    {
+                        List<string> array = right.ToArray();
+                        switch (array[0])
+                        {
+                            case "css":
+                                string statementlist = "for (var __i in " + array[1] + "){\r\n" +
+                                     "$(\"[name = '" + left.ToString() + "']\").css(__i, " +
+                                     array[1] + "[__i])" + "\r\n}";
+                                left = new PoiObject(PoiObjectType.String, statementlist);
+                                right = new PoiObject(PoiObjectType.String, "");
+                                break;
+                            case "cssdel":
+                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
+                                    + array[1] + "\",\"\")");
+                                right = new PoiObject(PoiObjectType.String, "");
+                                break;
+                            case "cssadd":
+                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
+                                    + array[1] + "\",\"" + array[2] + "\")");
+                                right = new PoiObject(PoiObjectType.String, "");
+                                break;
+                        }
+                    }
                 }
 
                 PoiObject expr = left + right;
