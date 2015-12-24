@@ -4,11 +4,11 @@ GRAMMARTYPE = "LL"
 DESCRIPTION = "Poi Language Grammar"
 CASESENSITIVE = "true"
 
-AUTHOR = "Yuanhao Li <1300012754@pku.edu.cn>"
-DATE = "09 October 2015"
-VERSION = "1.0"
+AUTHOR = "Yuanhao Li <1300012754@pku.edu.cn>, Yudong Li <1300012737@pku.edu.cn>, Jingye Tian <1300012708@pku.edu.cn>"
+DATE = "24 December 2015"
+VERSION = "1.1"
 
-COPYRIGHT = ""
+COPYRIGHT = "2015-2016 (c) <poi~ dev group> | poi_lang@pku.edu.cn"
 
 
 %tokens%
