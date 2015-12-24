@@ -483,7 +483,7 @@ namespace PoiLanguage
                     }
                     string area = string.Format("placeholder=\"{0}\" ", GetProperty("placeholder"));
                     string area_perm = GetProperty("permission");
-                    int pos_form = area_perm.IndexOf('@');
+                    pos_form = area_perm.IndexOf('@');
                     if (pos_form >= 0 && pos_form < area_perm.Length) // form
                     {
                         area += string.Format("form=\"{0}\"", area_perm.Substring(pos_form + 1));
