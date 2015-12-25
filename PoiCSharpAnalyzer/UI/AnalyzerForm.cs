@@ -28,12 +28,18 @@ namespace PoiCSharpAnalyzer.UI
 
         private void parseButton_Click(object sender, EventArgs e)
         {
+            analyzerLog.Text = "";
+            codeOutput.Text = "";
+            DeleteParseTree(parseTreeOutput);
+            DeleteVariableType(variableTypeListView);
+
             String code = codeInput.Text;
             PoiBasicAnalyzer analyzer = new PoiBasicAnalyzer();
             analyzer.InitializeAnalyzerStatus();
             PoiParser parser = new PoiParser(new StringReader(code), analyzer);
             //PoiParser arithmeticParser = new PoiParser(new StringReader(code), new PoiArithmeticAnalyzer());
             Node parseTree = null;
+
             try
             {
                 parseTree = parser.Parse();
@@ -42,45 +48,57 @@ namespace PoiCSharpAnalyzer.UI
                 else
                     codeOutput.Text = "";
 
-                parseTreeOutput.BeginUpdate();
-                DeleteParseTree(parseTreeOutput.Nodes);
-                CreateParseTree(parseTree, parseTreeOutput.Nodes);
+                CreateParseTree(parseTree, parseTreeOutput);
                 //parseTreeOutput.CollapseAll();
                 parseTreeOutput.ExpandAll();
-                parseTreeOutput.EndUpdate();
 
-                variableTypeListView.BeginUpdate();
-                DeleteVariableType(variableTypeListView.Items);
-                CreateVariableType(analyzer, variableTypeListView.Items);
-                variableTypeListView.EndUpdate();
+                CreateVariableType(analyzer, variableTypeListView);
             }
             catch (PerCederberg.Grammatica.Runtime.ParserLogException ex)
             {
-                parseTreeOutput.Nodes.Add(ex.GetMessage());
+                analyzerLog.Text += ex.GetMessage();
             }
             catch (PoiAnalyzeException ex)
             {
-                codeOutput.Text = ex.Message;
+                analyzerLog.Text += ex.Message;
             }
+            /*catch (Exception ex)
+            {
+                analyzerLog.Text += ex.Message;
+            }*/
         }
 
-        private void DeleteParseTree(TreeNodeCollection nodes)
+        private void DeleteParseTree(TreeView view)
+        {
+            view.BeginUpdate();
+            DeleteParseTreeNodes(view.Nodes);
+            view.EndUpdate();
+        }
+
+        private void DeleteParseTreeNodes(TreeNodeCollection nodes)
         {
             for (int i = 0; i < nodes.Count; i++)
             {
-                DeleteParseTree(nodes[i].Nodes);
+                DeleteParseTreeNodes(nodes[i].Nodes);
             }
             nodes.Clear();
         }
 
-        private void CreateParseTree(Node current, TreeNodeCollection nodes)
+        private void CreateParseTree(Node root, TreeView view)
+        {
+            view.BeginUpdate();
+            CreateParseTreeNodes(root, view.Nodes);
+            view.EndUpdate();
+        }
+
+        private void CreateParseTreeNodes(Node current, TreeNodeCollection nodes)
         {
             TreeNode currentNode = new TreeNode(CreateNodeString(current));
 
             int childCount = current.GetChildCount();
             for (int i = 0; i < childCount; i++)
             {
-                CreateParseTree(current.GetChildAt(i), currentNode.Nodes);
+                CreateParseTreeNodes(current.GetChildAt(i), currentNode.Nodes);
             }
 
             nodes.Add(currentNode);
@@ -96,13 +114,17 @@ namespace PoiCSharpAnalyzer.UI
             view.View = View.Details;
         }
 
-        private void DeleteVariableType(ListView.ListViewItemCollection items)
+        private void DeleteVariableType(ListView view)
         {
-            items.Clear();
+            view.BeginUpdate();
+            view.Items.Clear();
+            view.EndUpdate();
         }
 
-        private void CreateVariableType(PoiBasicAnalyzer analyzer, ListView.ListViewItemCollection items)
+        private void CreateVariableType(PoiBasicAnalyzer analyzer, ListView view)
         {
+            view.BeginUpdate();
+            ListView.ListViewItemCollection items = view.Items;
             List<KeyValuePair<String, PoiVariableType>> variables = analyzer.GetTypeInformation();
             foreach (KeyValuePair<String, PoiVariableType> pair in variables)
             {
@@ -111,6 +133,7 @@ namespace PoiCSharpAnalyzer.UI
                 
                 items.Add(lvi);
             }
+            view.EndUpdate();
         }
 
         private String CreateNodeString(Node node)

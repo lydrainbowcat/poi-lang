@@ -104,6 +104,7 @@ namespace PoiLanguage
             { "extended", PoiVariableType.Extended },
             { "boolean", PoiVariableType.Boolean },
             { "bool", PoiVariableType.Boolean },
+            { "function", PoiVariableType.Function },
             { "char", PoiVariableType.Character },
             { "string", PoiVariableType.String },
             { "array", PoiVariableType.Array },

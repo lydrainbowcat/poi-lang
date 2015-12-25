@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PerCederberg.Grammatica.Runtime;
+using System.IO;
 
 namespace PoiLanguage
 {
@@ -20,7 +21,7 @@ namespace PoiLanguage
         private const String POI_FUNCTION_BODY_LABEL = POI_PREFIX + "poi_function_body";
         private const String POI_FUNCTION_RETURN_CODE = "break " + POI_FUNCTION_BODY_LABEL + ";";
 
-        private const String POI_HEADER_CODE = "var __poi_temp_variable;\r\nvar __poi_temp_return = new Array();\r\n\r\n";
+        private const String POI_JAVASCRIPT_HEADER_PATH = "scripts/PoiJsHeader.js";
 
         /**
          * <summary>Called when entering a parse tree node.</summary>
@@ -2744,6 +2745,35 @@ namespace PoiLanguage
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
+        public override void EnterEventTrigger(Token node)
+        {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override Node ExitEventTrigger(Token node)
+        {
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "poi~", PoiVariableType.Boolean));
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
         public override void EnterLiteralBooleanTrue(Token node)
         {
         }
@@ -3085,7 +3115,21 @@ namespace PoiLanguage
          */
         public override Node ExitPoiSource(Production node)
         {
-            String code = POI_HEADER_CODE + MergeChildList(node).ToString();
+            String code = MergeChildList(node).ToString();
+
+            try
+            {
+                StreamReader sr = new StreamReader(POI_JAVASCRIPT_HEADER_PATH, System.Text.Encoding.GetEncoding("utf-8"));
+                string header = sr.ReadToEnd().ToString();
+                sr.Close();
+
+                code = header + code;
+            }
+            catch (Exception)
+            {
+                throw new PoiAnalyzeException("Can not read header of javascript. Please check " + POI_JAVASCRIPT_HEADER_PATH + " is existed and try again");
+            }
+
             PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, code));
             return node;
         }
@@ -3177,7 +3221,7 @@ namespace PoiLanguage
             if (node.GetChildCount() != 1)
                 throw new PoiAnalyzeException("Statement doesn't have 1 child");
             Node child = node.GetChildAt(0);
-            if (child.Name == "ExpressionStatement" || child.Name == "DeclarationStatement" || child.Name == "StructualStatement" || child.Name == "ReturnStatement")
+            if (child.Name == "ExpressionStatement" || child.Name == "DeclarationStatement" || child.Name == "StructualStatement" || child.Name == "ReturnStatement" || child.Name == "EventStatement")
             {
                 PoiInfo.AddValuePos(node, child.GetValue(0) as PoiObject);
             }
@@ -3963,12 +4007,36 @@ namespace PoiLanguage
                     String variableExpression = (right.GetChildAt(1).GetValue(0) as PoiObject).ToString();
 
                     String assignExpression = variable + assignOperator + variableExpression;
-                    PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, assignExpression));
 
                     // Type Check
                     PoiVariableType leftType = (left.GetValue(0) as PoiObject).VariableType;
                     PoiVariableType rightType = (right.GetChildAt(1).GetValue(0) as PoiObject).VariableType;
-                    PoiType.CheckAssign(leftType, rightType);
+
+                    if (leftType == PoiVariableType.Event &&
+                        (assignOperator == "+=" || assignOperator == "-=") &&
+                        rightType == PoiVariableType.Function)
+                    {
+                        if (assignOperator == "+=")
+                        {
+                            if (right.GetChildAt(1).GetName() == "FunctionExpression")
+                            {
+                                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, variable + ".add(\"\", " + variableExpression + ")"));
+                            }
+                            else
+                            {
+                                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, variable + ".add(\"" + variableExpression + "\", " + variableExpression + ")"));
+                            }
+                        }
+                        else if (assignOperator == "-=")
+                        {
+                            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, variable + ".remove(\"" + variableExpression + "\")"));
+                        }
+                    }
+                    else
+                    {
+                        PoiType.CheckAssign(leftType, rightType);
+                        PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, assignExpression));
+                    }
                 }
             }
             else if (child.Name == "PairExpression")
@@ -5829,10 +5897,10 @@ namespace PoiLanguage
                 else declaration += variableType + " ";
                 declaration += identifier + initializer;
 
-                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, declaration));
-
                 // Type Check
                 scopeStack.DefiniteVariable(identifier, PoiType.StringToVariableType((typeNode.GetValue(0) as PoiObject).ToString()));
+
+                PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, declaration));
             }
             else if (type == "ContainerType")
             {
@@ -5864,7 +5932,10 @@ namespace PoiLanguage
                     {
                         result += "}\r\n";
                     }
-                    PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, result));
+
+                    scopeStack.DefiniteVariable(identifier, PoiVariableType.Array);
+
+                    PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, result, PoiVariableType.Array));
                 }
                 else if (containerNode.Name == "StringContainer")
                 {
@@ -5874,11 +5945,20 @@ namespace PoiLanguage
                         PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "this.") + right);
                     else
                         PoiInfo.AddValuePos(node, left + new PoiObject(PoiObjectType.String, " ") + right);
+
+                    scopeStack.DefiniteVariable(right.ToString(), PoiVariableType.String);
                 }
                 else if (containerNode.Name == "MapContainer")
                 {
                     string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                    scopeStack.DefiniteVariable(identifier, PoiVariableType.Map);
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, (fromClassPub ? "this." : "var ") + identifier + " = new Object()"));
+                }
+                else if (containerNode.Name == "EventContainer")
+                {
+                    string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+                    scopeStack.DefiniteVariable(identifier, PoiVariableType.Event);
+                    PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "var " + identifier + " = new Event()"));
                 }
             }
             else if (type == "UserType")
@@ -6059,6 +6139,7 @@ namespace PoiLanguage
          */
         public override Node ExitUserType(Production node)
         {
+            PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
             return node;
         }
 
@@ -6291,6 +6372,7 @@ namespace PoiLanguage
          */
         public override Node ExitEventContainer(Production node)
         {
+            PoiInfo.AddValuePos(node, MergeChildList(node));
             return node;
         }
 
@@ -7189,6 +7271,109 @@ namespace PoiLanguage
          * discovered errors</exception>
          */
         public override void ChildLoopStopCondition(Production node, Node child)
+        {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void EnterEventStatement(Production node)
+        {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override Node ExitEventStatement(Production node)
+        {
+            string eventVariable = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
+            string parameter = "";
+
+            if (node.GetChildAt(3).GetName() == "Expression")
+            {
+                string[] functionParameter = (node.GetChildAt(3).GetValue(0) as PoiObject).ToString().Split(';');
+                for (int i = 0; i < functionParameter.Length; i++)
+                {
+                    if (parameter != "")
+                        parameter += ",";
+                    parameter += functionParameter[i].ToString();
+                }
+            }
+
+            PoiObject left = new PoiObject(PoiObjectType.String, eventVariable + ".execute(" + parameter + ");");
+            PoiInfo.AddValuePos(node, left);
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void ChildEventStatement(Production node, Node child)
+        {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void EnterEventVariable(Production node)
+        {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override Node ExitEventVariable(Production node)
+        {
+            PoiInfo.AddValuePos(node, node.GetChildAt(0).GetValue(0));
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public override void ChildEventVariable(Production node, Node child)
         {
             node.AddChild(child);
         }

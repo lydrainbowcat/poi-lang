@@ -39,6 +39,8 @@
             this.codeOutput = new System.Windows.Forms.TextBox();
             this.variableTypeListView = new System.Windows.Forms.ListView();
             this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.analyzerLog = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // codeInput
@@ -119,6 +121,7 @@
             this.codeOutput.Location = new System.Drawing.Point(12, 359);
             this.codeOutput.Multiline = true;
             this.codeOutput.Name = "codeOutput";
+            this.codeOutput.ReadOnly = true;
             this.codeOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.codeOutput.Size = new System.Drawing.Size(373, 218);
             this.codeOutput.TabIndex = 7;
@@ -141,12 +144,35 @@
             this.label5.TabIndex = 10;
             this.label5.Text = "Type Information";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Consolas", 9F);
+            this.label6.Location = new System.Drawing.Point(7, 585);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(168, 28);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Analyzer Log";
+            // 
+            // analyzerLog
+            // 
+            this.analyzerLog.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.analyzerLog.Location = new System.Drawing.Point(12, 619);
+            this.analyzerLog.Multiline = true;
+            this.analyzerLog.Name = "analyzerLog";
+            this.analyzerLog.ReadOnly = true;
+            this.analyzerLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.analyzerLog.Size = new System.Drawing.Size(1069, 102);
+            this.analyzerLog.TabIndex = 12;
+            // 
             // AnalyzerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1093, 589);
+            this.ClientSize = new System.Drawing.Size(1093, 731);
+            this.Controls.Add(this.analyzerLog);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.variableTypeListView);
             this.Controls.Add(this.label4);
@@ -180,5 +206,7 @@
         private System.Windows.Forms.TextBox codeOutput;
         private System.Windows.Forms.ListView variableTypeListView;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox analyzerLog;
     }
 }

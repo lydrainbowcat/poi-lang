@@ -314,6 +314,9 @@ namespace PoiLanguage {
             case (int) PoiConstants.LOOP_CONTINUE:
                 EnterLoopContinue((Token) node);
                 break;
+            case (int) PoiConstants.EVENT_TRIGGER:
+                EnterEventTrigger((Token) node);
+                break;
             case (int) PoiConstants.LITERAL_BOOLEAN_TRUE:
                 EnterLiteralBooleanTrue((Token) node);
                 break;
@@ -581,6 +584,12 @@ namespace PoiLanguage {
             case (int) PoiConstants.LOOP_STOP_CONDITION:
                 EnterLoopStopCondition((Production) node);
                 break;
+            case (int) PoiConstants.EVENT_STATEMENT:
+                EnterEventStatement((Production) node);
+                break;
+            case (int) PoiConstants.EVENT_VARIABLE:
+                EnterEventVariable((Production) node);
+                break;
             }
         }
 
@@ -788,6 +797,8 @@ namespace PoiLanguage {
                 return ExitLoopBreak((Token) node);
             case (int) PoiConstants.LOOP_CONTINUE:
                 return ExitLoopContinue((Token) node);
+            case (int) PoiConstants.EVENT_TRIGGER:
+                return ExitEventTrigger((Token) node);
             case (int) PoiConstants.LITERAL_BOOLEAN_TRUE:
                 return ExitLiteralBooleanTrue((Token) node);
             case (int) PoiConstants.LITERAL_BOOLEAN_FALSE:
@@ -966,6 +977,10 @@ namespace PoiLanguage {
                 return ExitLoopTargetStatement((Production) node);
             case (int) PoiConstants.LOOP_STOP_CONDITION:
                 return ExitLoopStopCondition((Production) node);
+            case (int) PoiConstants.EVENT_STATEMENT:
+                return ExitEventStatement((Production) node);
+            case (int) PoiConstants.EVENT_VARIABLE:
+                return ExitEventVariable((Production) node);
             }
             return node;
         }
@@ -1215,6 +1230,12 @@ namespace PoiLanguage {
                 break;
             case (int) PoiConstants.LOOP_STOP_CONDITION:
                 ChildLoopStopCondition(node, child);
+                break;
+            case (int) PoiConstants.EVENT_STATEMENT:
+                ChildEventStatement(node, child);
+                break;
+            case (int) PoiConstants.EVENT_VARIABLE:
+                ChildEventVariable(node, child);
                 break;
             }
         }
@@ -3686,6 +3707,32 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual Node ExitLoopContinue(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterEventTrigger(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitEventTrigger(Token node) {
             return node;
         }
 
@@ -7092,6 +7139,86 @@ namespace PoiLanguage {
          * discovered errors</exception>
          */
         public virtual void ChildLoopStopCondition(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterEventStatement(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitEventStatement(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildEventStatement(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterEventVariable(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitEventVariable(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildEventVariable(Production node, Node child) {
             node.AddChild(child);
         }
     }
