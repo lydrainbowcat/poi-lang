@@ -1,0 +1,11 @@
+event[int, int] e;
+function namedFunction = @[int a, int b] -> [] {
+    int c = a + b;
+};
+e += namedFunction;
+e += @[int a, int b] -> [] {
+    int c = a - b;
+};
+e -= namedFunction;
+
+poi~ e([2, 3]);
