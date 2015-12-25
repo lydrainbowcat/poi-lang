@@ -62,10 +62,10 @@ namespace PoiCSharpAnalyzer.UI
             {
                 analyzerLog.Text += ex.Message;
             }
-            /*catch (Exception ex)
+            catch (Exception ex)
             {
                 analyzerLog.Text += ex.Message;
-            }*/
+            }
         }
 
         private void DeleteParseTree(TreeView view)
