@@ -12,13 +12,18 @@ using System.IO;
 using PoiLanguage;
 using PerCederberg.Grammatica.Runtime;
 
-namespace PoiCSharpAnalyzer
+namespace PoiCSharpAnalyzer.UI
 {
     public partial class AnalyzerForm : Form
     {
+        private AutoresizeForm sizeControl = new AutoresizeForm();
+
         public AnalyzerForm()
         {
             InitializeComponent();
+            InitializeVariableTypeView(variableTypeListView);
+            sizeControl.InitializeForm(this);
+            this.WindowState = (System.Windows.Forms.FormWindowState)2;
         }
 
         private void parseButton_Click(object sender, EventArgs e)
@@ -36,11 +41,18 @@ namespace PoiCSharpAnalyzer
                     codeOutput.Text = (parseTree.GetValue(0) as PoiObject).ToString();
                 else
                     codeOutput.Text = "";
-                //parseTree = arithmeticParser.Parse();
-                deleteParseTree(parseTreeOutput.Nodes);
+
+                parseTreeOutput.BeginUpdate();
+                DeleteParseTree(parseTreeOutput.Nodes);
                 CreateParseTree(parseTree, parseTreeOutput.Nodes);
                 //parseTreeOutput.CollapseAll();
                 parseTreeOutput.ExpandAll();
+                parseTreeOutput.EndUpdate();
+
+                variableTypeListView.BeginUpdate();
+                DeleteVariableType(variableTypeListView.Items);
+                CreateVariableType(analyzer, variableTypeListView.Items);
+                variableTypeListView.EndUpdate();
             }
             catch (PerCederberg.Grammatica.Runtime.ParserLogException ex)
             {
@@ -52,11 +64,11 @@ namespace PoiCSharpAnalyzer
             }
         }
 
-        private void deleteParseTree(TreeNodeCollection nodes)
+        private void DeleteParseTree(TreeNodeCollection nodes)
         {
             for (int i = 0; i < nodes.Count; i++)
             {
-                deleteParseTree(nodes[i].Nodes);
+                DeleteParseTree(nodes[i].Nodes);
             }
             nodes.Clear();
         }
@@ -72,6 +84,33 @@ namespace PoiCSharpAnalyzer
             }
 
             nodes.Add(currentNode);
+        }
+
+        private void InitializeVariableTypeView(ListView view)
+        {
+            view.Columns.Clear();
+
+            view.Columns.Add("Variable Name", (int)(view.Width * 0.5), HorizontalAlignment.Left);
+            view.Columns.Add("Variable Type", (int)(view.Width * 0.5), HorizontalAlignment.Left);
+
+            view.View = View.Details;
+        }
+
+        private void DeleteVariableType(ListView.ListViewItemCollection items)
+        {
+            items.Clear();
+        }
+
+        private void CreateVariableType(PoiBasicAnalyzer analyzer, ListView.ListViewItemCollection items)
+        {
+            List<KeyValuePair<String, PoiVariableType>> variables = analyzer.GetTypeInformation();
+            foreach (KeyValuePair<String, PoiVariableType> pair in variables)
+            {
+                ListViewItem lvi = new ListViewItem(pair.Key);
+                lvi.SubItems.Add(pair.Value.ToString());
+                
+                items.Add(lvi);
+            }
         }
 
         private String CreateNodeString(Node node)
@@ -91,6 +130,26 @@ namespace PoiCSharpAnalyzer
             }
 
             return nodeString;
+        }
+
+        private void AnalyzerForm_Load(object sender, EventArgs e)
+        {
+            sizeControl.InitializeForm(this);
+        }
+
+        private void AnalyzerForm_SizeChanged(object sender, EventArgs e)
+        {
+            sizeControl.Resize(this);
+
+            // Resize columns in variableTypeListView
+            try
+            {
+                variableTypeListView.Columns[0].Width = (int)(variableTypeListView.Width * 0.5);
+                variableTypeListView.Columns[1].Width = (int)(variableTypeListView.Width * 0.5);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

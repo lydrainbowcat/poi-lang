@@ -3964,6 +3964,11 @@ namespace PoiLanguage
 
                     String assignExpression = variable + assignOperator + variableExpression;
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, assignExpression));
+
+                    // Type Check
+                    PoiVariableType leftType = (left.GetValue(0) as PoiObject).VariableType;
+                    PoiVariableType rightType = (right.GetChildAt(1).GetValue(0) as PoiObject).VariableType;
+                    PoiType.CheckAssign(leftType, rightType);
                 }
             }
             else if (child.Name == "PairExpression")
@@ -5800,6 +5805,7 @@ namespace PoiLanguage
                 Node identifierNode = node.GetChildAt(1);
                 Node initializerNode = null;
                 string variableType = "var";
+                PoiVariableType leftType = PoiType.StringToVariableType((typeNode.GetValue(0) as PoiObject).ToString());
 
                 if (node.GetChildCount() == 3)
                 {
@@ -5807,6 +5813,10 @@ namespace PoiLanguage
                     if (child.GetName() == "VariableInitializer")
                     {
                         initializerNode = child;
+
+                        // Type Check
+                        PoiVariableType rightType = (initializerNode.GetChildAt(1).GetValue(0) as PoiObject).VariableType;
+                        PoiType.CheckAssign(leftType, rightType);
                     }
                 }
 
@@ -5820,6 +5830,9 @@ namespace PoiLanguage
                 declaration += identifier + initializer;
 
                 PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, declaration));
+
+                // Type Check
+                scopeStack.DefiniteVariable(identifier, PoiType.StringToVariableType((typeNode.GetValue(0) as PoiObject).ToString()));
             }
             else if (type == "ContainerType")
             {
@@ -7283,6 +7296,11 @@ namespace PoiLanguage
         private Node GetParent(Node node)
         {
             return node.GetValue(2) as Node;
+        }
+
+        public List<KeyValuePair<String, PoiVariableType>> GetTypeInformation()
+        {
+            return scopeStack.GetVariableTypeInformation();
         }
 
         #endregion

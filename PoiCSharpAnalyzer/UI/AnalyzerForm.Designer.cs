@@ -1,4 +1,4 @@
-﻿namespace PoiCSharpAnalyzer
+﻿namespace PoiCSharpAnalyzer.UI
 {
     partial class AnalyzerForm
     {
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnalyzerForm));
             this.codeInput = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -36,27 +37,27 @@
             this.parseTreeOutput = new System.Windows.Forms.TreeView();
             this.label4 = new System.Windows.Forms.Label();
             this.codeOutput = new System.Windows.Forms.TextBox();
+            this.variableTypeListView = new System.Windows.Forms.ListView();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // codeInput
             // 
             this.codeInput.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.codeInput.Location = new System.Drawing.Point(9, 82);
-            this.codeInput.Margin = new System.Windows.Forms.Padding(2);
+            this.codeInput.Location = new System.Drawing.Point(12, 109);
             this.codeInput.Multiline = true;
             this.codeInput.Name = "codeInput";
             this.codeInput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.codeInput.Size = new System.Drawing.Size(430, 271);
+            this.codeInput.Size = new System.Drawing.Size(373, 216);
             this.codeInput.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Consolas", 14F);
-            this.label1.Location = new System.Drawing.Point(11, 13);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(15, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(330, 33);
+            this.label1.Size = new System.Drawing.Size(461, 45);
             this.label1.TabIndex = 2;
             this.label1.Text = "Poi Language Analyzer";
             // 
@@ -64,10 +65,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Consolas", 9F);
-            this.label2.Location = new System.Drawing.Point(9, 57);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(12, 76);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(160, 22);
+            this.label2.Size = new System.Drawing.Size(207, 28);
             this.label2.TabIndex = 3;
             this.label2.Text = "Poi Source Code";
             // 
@@ -75,10 +75,9 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Consolas", 9F);
-            this.label3.Location = new System.Drawing.Point(449, 57);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(388, 78);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 22);
+            this.label3.Size = new System.Drawing.Size(142, 28);
             this.label3.TabIndex = 4;
             this.label3.Text = "Parse Tree";
             // 
@@ -87,12 +86,11 @@
             this.parseButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.parseButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.parseButton.FlatAppearance.BorderSize = 2;
-            this.parseButton.Font = new System.Drawing.Font("Consolas", 12F);
+            this.parseButton.Font = new System.Drawing.Font("Consolas", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.parseButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.parseButton.Location = new System.Drawing.Point(970, 13);
-            this.parseButton.Margin = new System.Windows.Forms.Padding(2);
+            this.parseButton.Location = new System.Drawing.Point(871, 20);
             this.parseButton.Name = "parseButton";
-            this.parseButton.Size = new System.Drawing.Size(197, 47);
+            this.parseButton.Size = new System.Drawing.Size(210, 53);
             this.parseButton.TabIndex = 5;
             this.parseButton.Text = "Analyze Code";
             this.parseButton.UseVisualStyleBackColor = true;
@@ -100,39 +98,57 @@
             // 
             // parseTreeOutput
             // 
-            this.parseTreeOutput.Location = new System.Drawing.Point(450, 82);
-            this.parseTreeOutput.Margin = new System.Windows.Forms.Padding(2);
+            this.parseTreeOutput.Location = new System.Drawing.Point(393, 109);
             this.parseTreeOutput.Name = "parseTreeOutput";
-            this.parseTreeOutput.Size = new System.Drawing.Size(720, 594);
+            this.parseTreeOutput.Size = new System.Drawing.Size(521, 468);
             this.parseTreeOutput.TabIndex = 6;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Consolas", 9F);
-            this.label4.Location = new System.Drawing.Point(9, 368);
-            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label4.Location = new System.Drawing.Point(7, 328);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(160, 22);
+            this.label4.Size = new System.Drawing.Size(207, 28);
             this.label4.TabIndex = 8;
             this.label4.Text = "JavaScript Code";
             // 
             // codeOutput
             // 
             this.codeOutput.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.codeOutput.Location = new System.Drawing.Point(9, 393);
-            this.codeOutput.Margin = new System.Windows.Forms.Padding(2);
+            this.codeOutput.Location = new System.Drawing.Point(12, 359);
             this.codeOutput.Multiline = true;
             this.codeOutput.Name = "codeOutput";
             this.codeOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.codeOutput.Size = new System.Drawing.Size(430, 283);
+            this.codeOutput.Size = new System.Drawing.Size(373, 218);
             this.codeOutput.TabIndex = 7;
+            // 
+            // variableTypeListView
+            // 
+            this.variableTypeListView.Location = new System.Drawing.Point(922, 109);
+            this.variableTypeListView.Name = "variableTypeListView";
+            this.variableTypeListView.Size = new System.Drawing.Size(159, 468);
+            this.variableTypeListView.TabIndex = 9;
+            this.variableTypeListView.UseCompatibleStateImageBehavior = false;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Consolas", 9F);
+            this.label5.Location = new System.Drawing.Point(917, 76);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(220, 28);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Type Information";
             // 
             // AnalyzerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1178, 687);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1093, 589);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.variableTypeListView);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.codeOutput);
             this.Controls.Add(this.parseTreeOutput);
@@ -141,9 +157,12 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.codeInput);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AnalyzerForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AnalyzerForm";
+            this.Load += new System.EventHandler(this.AnalyzerForm_Load);
+            this.SizeChanged += new System.EventHandler(this.AnalyzerForm_SizeChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -159,5 +178,7 @@
         private System.Windows.Forms.TreeView parseTreeOutput;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox codeOutput;
+        private System.Windows.Forms.ListView variableTypeListView;
+        private System.Windows.Forms.Label label5;
     }
 }

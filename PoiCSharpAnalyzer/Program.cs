@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using PoiCSharpAnalyzer.UI;
+
 namespace PoiCSharpAnalyzer
 {
     static class Program
