@@ -14,7 +14,7 @@ namespace PoiLanguage
         private static int scopeNumber = 0;
         private String scopeName;
 
-        private Dictionary<String, PoiVariableType> variables;
+        private Dictionary<String, PoiVariableType> variables = new Dictionary<string,PoiVariableType>();
 
         public PoiAnalyzerScope(String name = null)
         {
@@ -23,7 +23,6 @@ namespace PoiLanguage
                 name = DEFAULT_SCOPE_PREFIX + (scopeNumber++).ToString();
             }
             scopeName = name;
-            variables = new Dictionary<string,PoiVariableType>();
         }
 
         public String GetScopeName()
@@ -53,11 +52,11 @@ namespace PoiLanguage
 
     class PoiAnalyzerScopeStack
     {
-        private List<PoiAnalyzerScope> scopeList;
+        private List<PoiAnalyzerScope> scopeList = new List<PoiAnalyzerScope>();
+        private List<KeyValuePair<String, PoiVariableType>> variablesList = new List<KeyValuePair<string, PoiVariableType>>();
 
         public PoiAnalyzerScopeStack()
         {
-            scopeList = new List<PoiAnalyzerScope>();
             Clear();
         }
 
@@ -80,6 +79,7 @@ namespace PoiLanguage
         public void DefiniteVariable(String name, PoiVariableType type)
         {
             scopeList.ElementAt(scopeList.Count - 1).AddVariable(name, type);
+            variablesList.Add(new KeyValuePair<String, PoiVariableType>(name, type));
         }
 
         public PoiVariableType GetVariableType(String name)
@@ -93,6 +93,11 @@ namespace PoiLanguage
                 }
             }
             return PoiVariableType.Undefined;
+        }
+
+        public List<KeyValuePair<String, PoiVariableType>> GetVariableTypeInformation()
+        {
+            return variablesList;
         }
     }
 }

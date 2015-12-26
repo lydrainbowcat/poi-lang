@@ -612,6 +612,12 @@ namespace PoiLanguage {
                                        "continue");
             AddPattern(pattern);
 
+            pattern = new TokenPattern((int) PoiConstants.EVENT_TRIGGER,
+                                       "EVENT_TRIGGER",
+                                       TokenPattern.PatternType.STRING,
+                                       "poi~");
+            AddPattern(pattern);
+
             pattern = new TokenPattern((int) PoiConstants.LITERAL_BOOLEAN_TRUE,
                                        "LITERAL_BOOLEAN_TRUE",
                                        TokenPattern.PatternType.STRING,

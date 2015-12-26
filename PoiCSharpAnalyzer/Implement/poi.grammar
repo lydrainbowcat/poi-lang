@@ -137,6 +137,9 @@ LOOP_UNTIL      = "until"
 LOOP_BREAK      = "break"
 LOOP_CONTINUE   = "continue"
 
+/* Event Trigger */
+EVENT_TRIGGER	= "poi~"
+
 /* Literal
  * Type: Boolean, Numeric, String, etc.
  */
@@ -174,7 +177,8 @@ Statement		        = ExpressionStatement
                         | DeclarationStatement
                         | ReturnStatement
                         | StructualStatement
-                        | EmptyStatement ;
+                        | EmptyStatement
+						| EventStatement ;
 ExpressionStatement     = Expression SYMBOL_SEMICOLON ;
 DeclarationStatement    = Declaration SYMBOL_SEMICOLON ;
 EmptyStatement          = SYMBOL_SEMICOLON ;
@@ -212,7 +216,8 @@ AssignExpression_T	= OPERATOR_ASSIGN AssignExpression
 					| OPERATOR_SHIFT_RIGHT_ASSIGN AssignExpression
 					| OPERATOR_BIT_AND_ASSIGN AssignExpression
 					| OPERATOR_BIT_OR_ASSIGN AssignExpression
-					| OPERATOR_BIT_XOR_ASSIGN AssignExpression ;
+					| OPERATOR_BIT_XOR_ASSIGN AssignExpression
+					| OPERATOR_ADD_ASSIGN FunctionExpression ;
 PairOrFunctionExpression = PairExpression
 						 | BasicExpression ;
 
@@ -401,7 +406,7 @@ VariableInitializer		= OPERATOR_ASSIGN Expression ;
 StringContainer = CONTAINER_STRING ;
 ArrayContainer  = CONTAINER_ARRAY SYMBOL_LEFT_BRACKET VariableType (SYMBOL_COMMA Expression)+ SYMBOL_RIGHT_BRACKET ;
 MapContainer    = CONTAINER_MAP ;
-EventContainer  = CONTAINER_EVENT ;
+EventContainer  = CONTAINER_EVENT SYMBOL_LEFT_BRACKET [VariableType (SYMBOL_COMMA VariableType)+] SYMBOL_RIGHT_BRACKET ;
 
 /* ClassDeclaration */
 ClassDeclaration    = CLASS_TYPE ClassName [CLASS_EXTEND SuperClassName] ClassBody ;
@@ -438,3 +443,7 @@ LoopStepStatement   = SYMBOL_LEFT_PAREN StatementList SYMBOL_RIGHT_PAREN ;
 LoopTargetStatement = Statement
                     | SYMBOL_LEFT_BRACE StatementList SYMBOL_RIGHT_BRACE ;
 LoopStopCondition   = SYMBOL_LEFT_PAREN Expression SYMBOL_RIGHT_PAREN ;
+
+/* EventStatement */
+EventStatement		= EVENT_TRIGGER EventVariable SYMBOL_LEFT_PAREN [Expression] SYMBOL_RIGHT_PAREN SYMBOL_SEMICOLON ;
+EventVariable		= IDENTIFIER ;
