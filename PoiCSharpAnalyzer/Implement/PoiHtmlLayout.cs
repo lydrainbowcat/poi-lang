@@ -96,7 +96,6 @@ namespace PoiLanguage
             else
             {
                 PoiHtmlLayout previous = Map[type];
-                this.name = previous.name;
                 this.type = previous.type;
                 this.property = new Dictionary<string, string>(previous.property);
                 this.content = new List<PoiHtmlElement>(previous.content);
@@ -146,6 +145,16 @@ namespace PoiLanguage
                                 break;
                             case "head":
                                 property["page_head"] = value;
+                                break;
+                            case "style":
+                                property["page_style"] = value;
+                                break;
+                            case "script":
+                                property["page_script"] = value;
+                                break;
+                            case "tip":
+                                if (!property.ContainsKey("page_tips")) property["page_tips"] = "";
+                                property["page_tips"] += value + "\r\n";
                                 break;
                         }
                         break;
@@ -233,12 +242,73 @@ namespace PoiLanguage
             }
         }
 
-        // 生成并保存该页
-        public void Generate(bool dynamic = false)
+        // 处理某种操作
+        public PoiObject Solve(string operation, Node dataNode)
+        {
+            List<string> array = new List<string>();
+            switch (operation) // 静态操作按照C#规则翻译，data应该为Literal构成的Pair；动态操作翻译为JS，直接生成操作data的代码。
+            {
+                case "add":
+                    List<string> data = ParseStatic(dataNode);
+                    this.Add(data);
+                    return new PoiObject(PoiObjectType.String, "static add");
+                case "generate":
+                    if (this.type != PoiLayoutType.Page)
+                        throw new PoiAnalyzeException("Warning: 只有Page才支持generate方法");
+                    this.Generate();
+                    return new PoiObject(PoiObjectType.String, "static generate");
+                case "css":
+                    array.Add("css");
+                    array.Add(dataNode.GetValue(0).ToString());
+                    return new PoiObject(PoiObjectType.Array, array);
+                case "cssdel":
+                    array.Add("cssdel");
+                    array.Add(dataNode.GetValue(0).ToString());
+                    return new PoiObject(PoiObjectType.Array, array);
+                case "cssadd":
+                    array.Add("cssadd");
+                    data = ParseStatic(dataNode);
+                    array.Add(data[0]);
+                    array.Add(data[1]);
+                    return new PoiObject(PoiObjectType.Array, array);
+                case "gappend":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, this.AppendGlobal(data));
+                case "gshow":
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").show()", name));
+                case "ghide":
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").hide()", name));
+                case "gclear":
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").html(\"\")", name));
+                case "lappend":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, this.AppendLocal(data));
+                case "lshow":
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").show()", MakeJSValue(name)));
+                case "lhide":
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").hide()", MakeJSValue(name)));
+                case "lclear":
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").html(\"\")", MakeJSValue(name)));
+                case "gtext":
+                case "ltext":
+                    return new PoiObject(PoiObjectType.String, this.OprText(ParseStatic(dataNode), operation));
+                case "gurl":
+                case "lurl":
+                    return new PoiObject(PoiObjectType.String, this.OprUrl(ParseStatic(dataNode), operation));
+                case "gperm":
+                case "lperm":
+                    return new PoiObject(PoiObjectType.String, this.UpdatePerm(ParseStatic(dataNode), operation));
+                default:
+                    return new PoiObject(PoiObjectType.String, "static");
+            }
+        }
+
+        // 生成一个元素的HTML代码
+        private void Generate(bool dynamic = false)
         {
             string prefix = "", suffix = "", title = "";
             htmlcode = "";
-            if (dynamic) title = string.Format("' + {0} + '", name);
+            if (dynamic) title = string.Format("' + ({0}) + '", name);
             switch (type)
             {
                 case PoiLayoutType.Page:
@@ -251,6 +321,9 @@ namespace PoiLanguage
                     prefix += "<script src=\"js/poi~.js\"></script>\r\n";
                     prefix += "<!-- This page was generated by poi~ languange. -->\r\n";
                     if (property.ContainsKey("page_title")) prefix += "<title>" + property["page_title"] + "</title>\r\n";
+                    if (property.ContainsKey("page_style")) prefix += string.Format("<link href=\"{0}\" rel=\"stylesheet\" type=\"text/css\">\r\n", property["page_style"]);
+                    if (property.ContainsKey("page_script")) prefix += string.Format("<script src=\"{0}\"></script>\r\n", property["page_script"]);
+                    if (property.ContainsKey("page_tips")) prefix += property["page_tips"];
                     prefix += string.Format("</head>\r\n<body name=\"{0}\" title=\"{2}\" class=\"{1}\">\r\n", name, GetProperty("class", name), title);
                     suffix = "</body>\r\n</html>\r\n";
                     if (content.Count > 0)
@@ -285,9 +358,9 @@ namespace PoiLanguage
                     {
                         string pos_size = MakeStyleAbso(100.0 / cntcol * element.rect.X, 100.0 / cntrow * element.rect.Y, 100.0 / cntcol * element.rect.Width, 100.0 / cntrow * element.rect.Height, "%");
                         element.layout.Generate();
-                        htmlcode += string.Format("<div style=\"{0}\">\r\n{1}</div>\r\n", pos_size, element.layout.htmlcode);
+                        htmlcode += string.Format("<div style=\"{0}\">{1}</div>", pos_size, element.layout.htmlcode);
                     }
-                    htmlcode = string.Format("<div name=\"{2}\" title=\"{4}\" class=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n",
+                    htmlcode = string.Format("<div name=\"{2}\" title=\"{4}\" class=\"{3}\" style=\"{0}\">{1}</div>",
                         MakeStyleAbso(0, 0, 100, 100, "%"), htmlcode, name, GetProperty("class"), title);
                     break;
 
@@ -297,16 +370,16 @@ namespace PoiLanguage
                         element.layout.Generate();
                         htmlcode += element.layout.htmlcode;
                     }
-                    htmlcode = string.Format("<div name=\"{2}\" title=\"{4}\" class=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n",
+                    htmlcode = string.Format("<div name=\"{2}\" title=\"{4}\" class=\"{3}\" style=\"{0}\">{1}</div>",
                         MakeStyleFlow(), htmlcode, name, GetProperty("class"), title);
                     break;
 
                 case PoiLayoutType.Group:
-                    prefix = "<table width=\"100%\">\r\n<colgroup>";
+                    prefix = "<table width=\"100%\"><colgroup>";
                     for (int i = 0; i < cntcol; i++)
                         prefix += string.Format("<col width=\"{0}%\"></col>", 100.0 / cntcol);
-                    prefix += "</colgroup>\r\n<tr>\r\n";
-                    suffix = "</tr>\r\n</table>\r\n";
+                    prefix += "</colgroup><tr>";
+                    suffix = "</tr></table>";
                     PoiHtmlElement[] ele_list = new PoiHtmlElement[cntcol];
                     foreach (PoiHtmlElement element in content)
                     {
@@ -317,14 +390,14 @@ namespace PoiLanguage
                     {
                         if (ele_list[i] == null)
                         {
-                            htmlcode += string.Format("<td name=\"{0}_{1}\" title=\"{2}_{3}\"></td>\r\n", name, i, title, i);
+                            htmlcode += string.Format("<td name=\"{0}_{1}\" title=\"{2}_{3}\"></td>", name, i, title, i);
                             i++; continue;
                         }
-                        htmlcode += string.Format("<td colspan=\"{0}\" name=\"{2}_{3}\" title=\"{4}_{5}\">\r\n{1}</td>\r\n", ele_list[i].rect.Width, ele_list[i].layout.htmlcode, name, i, title, i);
+                        htmlcode += string.Format("<td colspan=\"{0}\" name=\"{2}_{3}\" title=\"{4}_{5}\">{1}</td>", ele_list[i].rect.Width, ele_list[i].layout.htmlcode, name, i, title, i);
                         i += ele_list[i].rect.Width;
                     }
                     htmlcode = prefix + htmlcode + suffix;
-                    htmlcode = string.Format("<div name=\"{2}\" title=\"{4}\" class=\"{3}\" style=\"{0}\">\r\n{1}</div>\r\n",
+                    htmlcode = string.Format("<div name=\"{2}\" title=\"{4}\" class=\"{3}\" style=\"{0}\">{1}</div>",
                         MakeStyleFlow(), htmlcode, name, GetProperty("class"), title);
                     break;
 
@@ -336,11 +409,11 @@ namespace PoiLanguage
                     {
                         if (!property.ContainsKey("text_encode") || property["text_encode"] != "false")
                             textv = WebUtility.HtmlEncode(textv);
-                        // textv = string.Format("<span name=\"{0}_{1}\">{2}</span>", name, "text", textv);
+                        textv = string.Format("<span title=\"text\">{0}</span>", textv);
                         int pos = textf.IndexOf('@');
                         if (pos >= 0 && pos < textf.Length) // href
                         {
-                            prefix += string.Format("<a href=\"{0}\">", textf.Substring(pos + 1));
+                            prefix += string.Format("<a title=\"href\" href=\"{0}\">", textf.Substring(pos + 1));
                             suffix = string.Format("</a>") + suffix;
                             textf = textf.Substring(0, pos);
                         }
@@ -356,7 +429,7 @@ namespace PoiLanguage
                             textv += element.layout.htmlcode;
                         }
                         htmlcode = prefix + textv + suffix;
-                        htmlcode = string.Format("<span name=\"{1}\" title=\"{3}\" class=\"{2}\">\r\n{0}\r\n</span>\r\n", htmlcode, name, GetProperty("class"), title);
+                        htmlcode = string.Format("<span name=\"{1}\" title=\"{3}\" class=\"{2}\">{0}</span>", htmlcode, name, GetProperty("class"), title);
                     }
                     break;
 
@@ -370,40 +443,40 @@ namespace PoiLanguage
                         element.layout.Generate();
                         table[element.rect.X, element.rect.Y] = element;
                     }
-                    prefix = string.Format("<table name=\"{0}\" title=\"{2}\" class=\"{1}\">\r\n", name, GetProperty("class"), title);
+                    prefix = string.Format("<table name=\"{0}\" title=\"{2}\" class=\"{1}\">", name, GetProperty("class"), title);
                     suffix = "</table>";
-                    string thead = string.Format("<thead {0}>\r\n<tr>\r\n", GetProperty("headpos"));
+                    string thead = string.Format("<thead {0}><tr>", GetProperty("headpos"));
                     for (int i = 1; i <= cntcol;)
                     {
                         if (table[0, i] == null)
                         {
-                            thead += string.Format("<th name=\"{0}_{1}_{2}\" title=\"{3}_{1}_{2}\"></th>\r\n", name, 0, i, title);
+                            thead += string.Format("<th name=\"{0}_{1}_{2}\" title=\"{3}_{1}_{2}\"></th>", name, 0, i, title);
                             i++; continue;
                         }
-                        thead += string.Format("<th colspan=\"{0}\" name=\"{2}_{3}_{4}\" title=\"{5}_{3}_{4}\">{1}</th>\r\n", table[0, i].rect.Width, table[0, i].layout.htmlcode, name, 0, i, title);
+                        thead += string.Format("<th colspan=\"{0}\" name=\"{2}_{3}_{4}\" title=\"{5}_{3}_{4}\">{1}</th>", table[0, i].rect.Width, table[0, i].layout.htmlcode, name, 0, i, title);
                         i += table[0, i].rect.Width;
                     }
-                    thead += "</tr></thead>\r\n";
-                    string tbody = string.Format("<tbody {0}>\r\n", GetProperty("bodypos"));
+                    thead += "</tr></thead>";
+                    string tbody = string.Format("<tbody {0}>", GetProperty("bodypos"));
                     for (int i = 1; i <= cntrow; i++)
                     {
-                        tbody += "<tr>\r\n";
+                        tbody += "<tr>";
                         for (int j = 1; j <= cntcol; j++)
                         {
                             if (occupy[i, j]) continue;
                             if (table[i, j] == null)
                             {
-                                tbody += string.Format("<td name=\"{0}_{1}_{2}\" title=\"{3}_{1}_{2}\"></td>\r\n", name, i, j, title);
+                                tbody += string.Format("<td name=\"{0}_{1}_{2}\" title=\"{3}_{1}_{2}\"></td>", name, i, j, title);
                                 continue;
                             }
-                            tbody += string.Format("<td rowspan=\"{0}\" colspan=\"{1}\" name=\"{3}_{4}_{5}\" title=\"{6}_{4}_{5}\">{2}</td\r\n>", table[i, j].rect.Height, table[i, j].rect.Width, table[i, j].layout.htmlcode, name, i, j, title);
+                            tbody += string.Format("<td rowspan=\"{0}\" colspan=\"{1}\" name=\"{3}_{4}_{5}\" title=\"{6}_{4}_{5}\">{2}</td>", table[i, j].rect.Height, table[i, j].rect.Width, table[i, j].layout.htmlcode, name, i, j, title);
                             for (int x = 0; x < table[i, j].rect.Height; x++)
                                 for (int y = 0; y < table[i, j].rect.Width; y++)
                                     occupy[i + x, j + y] = true;
                         }
-                        tbody += "</tr>\r\n";
+                        tbody += "</tr>";
                     }
-                    tbody += "</tbody>\r\n";
+                    tbody += "</tbody>";
                     htmlcode = prefix + thead + tbody + suffix;
                     break;
 
@@ -445,23 +518,23 @@ namespace PoiLanguage
                     break;
 
                 case PoiLayoutType.Image:
-                    htmlcode = string.Format("<img src=\"{0}\" alt=\"{1}\" name=\"{2}\" title=\"{4}\" class=\"{3}\" />\r\n",
+                    htmlcode = string.Format("<img src=\"{0}\" alt=\"{1}\" name=\"{2}\" title=\"{4}\" class=\"{3}\" />",
                         GetProperty("url"), GetProperty("text"), name, GetProperty("class"), title);
                     break;
 
                 case PoiLayoutType.Part:
-                    htmlcode = GetProperty("text");
+                    htmlcode = string.Format("<span title=\"text\">{0}</span>", GetProperty("text"));
                     foreach (PoiHtmlElement element in content)
                     {
                         element.layout.Generate();
                         htmlcode += element.layout.htmlcode;
                     }
-                    htmlcode = string.Format("<{0} name=\"{2}\" title=\"{4}\" class=\"{3}\">\r\n{1}</{0}>\r\n",
+                    htmlcode = string.Format("<{0} name=\"{2}\" title=\"{4}\" class=\"{3}\">{1}</{0}>",
                         GetProperty("type"), htmlcode, name, GetProperty("class"), title);
                     break;
 
                 case PoiLayoutType.Single:
-                    htmlcode = string.Format("<{0} name=\"{1}\" title=\"{3}\" class=\"{2}\" />\r\n",
+                    htmlcode = string.Format("<{0} name=\"{1}\" title=\"{3}\" class=\"{2}\" />",
                         GetProperty("type"), name, GetProperty("class"), title);
                     break;
 
@@ -476,7 +549,7 @@ namespace PoiLanguage
                     break;
 
                 case PoiLayoutType.Button:
-                    htmlcode = GetProperty("text");
+                    htmlcode = string.Format("<span title=\"text\">{0}</span>", GetProperty("text"));
                     foreach (PoiHtmlElement element in content)
                     {
                         element.layout.Generate();
@@ -497,7 +570,7 @@ namespace PoiLanguage
                     }
                     if (property.ContainsKey("type"))
                         btn += string.Format("type=\"{0}\" ", GetProperty("type"));
-                    htmlcode = string.Format("<button name=\"{1}\" title=\"{4}\" class=\"{2}\" {3}>\r\n{0}</button>\r\n",
+                    htmlcode = string.Format("<button name=\"{1}\" title=\"{4}\" class=\"{2}\" {3}>{0}</button>",
                     htmlcode, name, GetProperty("class"), btn, title);
                     break;
 
@@ -521,7 +594,7 @@ namespace PoiLanguage
                         if (!PermMap.ContainsKey(area_perm[i].ToString())) continue;
                         area += PermMap[area_perm[i].ToString()];
                     }
-                    htmlcode = string.Format("<textarea name=\"{1}\" title=\"{3}\" class=\"{2}\" {3}>\r\n{0}</textarea>\r\n",
+                    htmlcode = string.Format("<textarea name=\"{1}\" title=\"{3}\" class=\"{2}\" {3}>{0}</textarea>",
                     htmlcode, name, GetProperty("class"), area, title);
                     break;
                 default:
@@ -530,7 +603,7 @@ namespace PoiLanguage
         }
 
         // 静态添加子元素
-        public void Add(List<string> data)
+        private void Add(List<string> data)
         {
             if (!Map.ContainsKey(data[0]))
                 throw new PoiAnalyzeException("Struct.add: adding not existing element " + data[0]);
@@ -602,19 +675,19 @@ namespace PoiLanguage
         }
 
         // 动态添加全局子元素（根据name）
-        public string AppendGlobal(List<string> data)
+        private string AppendGlobal(List<string> data)
         {
             if (!Map.ContainsKey(data[0]))
                 throw new PoiAnalyzeException("Struct.add: adding not existing element " + data[0]);
             PoiHtmlLayout child = Map[data[0]];
             int x, y, w, h;
-            child.Generate();
+            child.Generate(true);
             switch (this.type)
             {
                 case PoiLayoutType.Page:
                     if (child.type != PoiLayoutType.Panel && child.type != PoiLayoutType.Grid)
                         throw new PoiAnalyzeException("Warning: Page只能包含Panel或Grid");
-                    return string.Format("$(\"name = ['{0}']\").append('{1}');\r\n", name, child.htmlcode);
+                    return string.Format("$(\"[name = '{0}']\").append('{1}')", name, child.htmlcode);
 
                 case PoiLayoutType.Grid:
                     try
@@ -629,18 +702,18 @@ namespace PoiLanguage
                         throw new PoiAnalyzeException("Warning: " + name + "对象append方法参数不合法");
                     }
                     string pos_size = MakeStyleAbso(100.0 / cntcol * x, 100.0 / cntrow * y, 100.0 / cntcol * w, 100.0 / cntrow * h, "%");
-                    return string.Format("$(\"name = ['{2}']\").append('<div style=\"{0}\">\r\n{1}</div>');\r\n", pos_size, child.htmlcode, name);
+                    return string.Format("$(\"[name = '{2}']\").append('<div style=\"{0}\">{1}</div>')", pos_size, child.htmlcode, name);
 
                 case PoiLayoutType.Panel:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
                         throw new PoiAnalyzeException("Warning: Panel只能包含Panel, Group或HTML DOM类元素");
-                    return string.Format("$(\"name = ['{0}']\").append('{1}');\r\n", name, child.htmlcode);
+                    return string.Format("$(\"[name = '{0}']\").append('{1}')", name, child.htmlcode);
 
                 case PoiLayoutType.Group:
                     if (child.type != PoiLayoutType.Panel)
                         throw new PoiAnalyzeException("Warning: Group只能包含Panel");
                     x = Convert.ToInt32(data[1]);
-                    return string.Format("$(\"name = ['{0}_{1}']\").append('{2}');\r\n", name, x, child.htmlcode);
+                    return string.Format("$(\"[name = '{0}_{1}']\").append('{2}')", name, x, child.htmlcode);
 
                 case PoiLayoutType.Text:
                 case PoiLayoutType.Form:
@@ -650,15 +723,14 @@ namespace PoiLanguage
                 case PoiLayoutType.Textarea:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
                         throw new PoiAnalyzeException("Warning: " + type + "只能包含HTML DOM类元素");
-                    child.Generate();
-                    return string.Format("$(\"name = ['{0}']\").append('{1}');\r\n", name, child.htmlcode);
+                    return string.Format("$(\"[name = '{0}']\").append('{1}')", name, child.htmlcode);
 
                 case PoiLayoutType.Table:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
                         throw new PoiAnalyzeException("Warning: " + type + "只能包含HTML DOM类元素");
                     x = Convert.ToInt32(data[1]);
                     y = Convert.ToInt32(data[2]);
-                    return string.Format("$(\"name = ['{0}_{1}_{2}']\").append('{3}');\r\n", name, x, y, child.htmlcode);
+                    return string.Format("$(\"[name = '{0}_{1}_{2}']\").append('{3}')", name, x, y, child.htmlcode);
 
                 default:
                     throw new PoiAnalyzeException("Warning: Struct in type " + this.type + " doesn't have Append method.");
@@ -666,18 +738,18 @@ namespace PoiLanguage
         }
 
         // 动态添加局部子元素（根据title）
-        public string AppendLocal(List<string> data)
+        private string AppendLocal(List<string> data)
         {
             if (!Map.ContainsKey(data[0]))
                 throw new PoiAnalyzeException("Struct.add: adding not existing element " + data[0]);
             PoiHtmlLayout child = Map[data[0]];
-            child.Generate();
+            child.Generate(true);
             switch (this.type)
             {
                 case PoiLayoutType.Page:
                     if (child.type != PoiLayoutType.Panel && child.type != PoiLayoutType.Grid)
                         throw new PoiAnalyzeException("Warning: Page只能包含Panel或Grid");
-                    return string.Format("$(\"title = ['{0}']\").append('{1}');\r\n", MakeJSValue(name), child.htmlcode);
+                    return string.Format("$(\"[title = '{0}']\").append('{1}')", MakeJSValue(name), child.htmlcode);
 
                 case PoiLayoutType.Grid:
                     string pos_x = string.Format("100.0/{0}*({1})", cntcol, data[1]);
@@ -685,17 +757,17 @@ namespace PoiLanguage
                     string pos_w = string.Format("100.0/{0}*({1})", cntcol, data[3]);
                     string pos_h = string.Format("100.0/{0}*({1})", cntrow, data[4]);
                     string pos_size = string.Format("position:absolute; left:\"+{0}+\"%; top:\"+{1}+\"%; width:\"+{2}+\"%; height:\"+{3}+\"%", pos_x, pos_y, pos_w, pos_h);
-                    return string.Format("$(\"title = ['{2}']\").append('<div style=\"{0}\">\r\n{1}</div>');\r\n", pos_size, child.htmlcode, MakeJSValue(name));
+                    return string.Format("$(\"[title = '{2}']\").append('<div style=\"{0}\">{1}</div>')", pos_size, child.htmlcode, MakeJSValue(name));
 
                 case PoiLayoutType.Panel:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
                         throw new PoiAnalyzeException("Warning: Panel只能包含Panel, Group或HTML DOM类元素");
-                    return string.Format("$(\"title = ['{0}']\").append('{1}');\r\n", MakeJSValue(name), child.htmlcode);
+                    return string.Format("$(\"[title = '{0}']\").append('{1}')", MakeJSValue(name), child.htmlcode);
 
                 case PoiLayoutType.Group:
                     if (child.type != PoiLayoutType.Panel)
                         throw new PoiAnalyzeException("Warning: Group只能包含Panel");
-                    return string.Format("$(\"title = ['{0}_{1}']\").append('{2}');\r\n", MakeJSValue(name), MakeJSValue(data[1]), child.htmlcode);
+                    return string.Format("$(\"[title = '{0}_{1}']\").append('{2}')", MakeJSValue(name), MakeJSValue(data[1]), child.htmlcode);
 
                 case PoiLayoutType.Text:
                 case PoiLayoutType.Form:
@@ -705,69 +777,62 @@ namespace PoiLanguage
                 case PoiLayoutType.Textarea:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
                         throw new PoiAnalyzeException("Warning: " + type + "只能包含HTML DOM类元素");
-                    child.Generate();
-                    return string.Format("$(\"title = ['{0}']\").append('{1}');\r\n", MakeJSValue(name), child.htmlcode);
+                    return string.Format("$(\"[title = '{0}']\").append('{1}')", MakeJSValue(name), child.htmlcode);
 
                 case PoiLayoutType.Table:
                     if (Convert.ToInt32(child.type) < Convert.ToInt32(PoiLayoutType.Panel))
                         throw new PoiAnalyzeException("Warning: " + type + "只能包含HTML DOM类元素");
-                    return string.Format("$(\"title = ['{0}_{1}_{2}']\").append('{3}');\r\n", MakeJSValue(name), MakeJSValue(data[1]), MakeJSValue(data[2]), child.htmlcode);
+                    return string.Format("$(\"[title = '{0}_{1}_{2}']\").append('{3}')", MakeJSValue(name), MakeJSValue(data[1]), MakeJSValue(data[2]), child.htmlcode);
 
                 default:
                     throw new PoiAnalyzeException("Warning: Struct in type " + this.type + " doesn't have Append method.");
             }
         }
 
-        // 处理某种操作
-        public PoiObject Solve(string operation, Node dataNode)
+        // 动态查询或修改元素包含的文本
+        private string OprText(List<string> data, string op)
         {
-            List<string> array = new List<string>();
-            switch (operation) // 静态操作按照C#规则翻译，data应该为Literal构成的Pair；动态操作翻译为JS，直接生成操作data的代码。
+            string selector = GetSelector(op), text = GetOprData(data);
+            switch (this.type)
             {
-                case "add":
-                    List<string> data = ParseStatic(dataNode);
-                    this.Add(data);
-                    return new PoiObject(PoiObjectType.String, "static add");
-                case "generate":
-                    if (this.type != PoiLayoutType.Page)
-                        throw new PoiAnalyzeException("Warning: 只有Page才支持generate方法");
-                    this.Generate();
-                    return new PoiObject(PoiObjectType.String, "static generate");
-                case "css":
-                    array.Add("css");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
-                case "cssdel":
-                    array.Add("cssdel");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
-                case "cssadd":
-                    array.Add("cssadd");
-                    data = ParseStatic(dataNode);
-                    array.Add(data[0]);
-                    array.Add(data[1]);
-                    return new PoiObject(PoiObjectType.Array, array);
-                case "gappend":
-                    data = ParseStatic(dataNode);
-                    return new PoiObject(PoiObjectType.String, this.AppendGlobal(data));
-                case "gshow":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"name = ['{0}']\").show();\r\n", name));
-                case "ghide":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"name = ['{0}']\").hide();\r\n", name));
-                case "gclear":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"name = ['{0}']\").html(\"\");\r\n", name));
-                case "lappend":
-                    data = ParseStatic(dataNode);
-                    return new PoiObject(PoiObjectType.String, this.AppendLocal(data));
-                case "lshow":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"title = ['{0}']\").show();\r\n", MakeJSValue(name)));
-                case "lhide":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"title = ['{0}']\").hide();\r\n", MakeJSValue(name)));
-                case "lclear":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"title = ['{0}']\").html(\"\");\r\n", MakeJSValue(name)));
+                case PoiLayoutType.Input:
+                    return string.Format("$(\"{0}\").val({1})", selector, text);
+                case PoiLayoutType.Text:
+                case PoiLayoutType.Part:
+                case PoiLayoutType.Button:
+                    return string.Format("$(\"{0} [title='text']\").text({1})", selector, text);
+                case PoiLayoutType.Textarea:
+                    return string.Format("$(\"{0}\").text({1})", selector, text);
                 default:
-                    return new PoiObject(PoiObjectType.String, "static");
+                    throw new PoiAnalyzeException("Warning: " + type + "类型不支持" + op + "方法");
             }
+        }
+
+        // 动态查询或修改Text的href, Image的src
+        private string OprUrl(List<string> data, string op)
+        {
+            string attr;
+            if (type == PoiLayoutType.Image) attr = "src";
+            else if (type == PoiLayoutType.Text) attr = "href";
+            else throw new PoiAnalyzeException("Warning: 只有Image和Text类型支持" + op + "方法");
+            string selector = GetSelector(op), url = GetOprData(data);
+            if (data.Count > 0) url = "," + url;
+            return string.Format("$(\"{0}\").attr(\"{1}\"{2})", selector, attr, url);
+        }
+
+        // 动态更新Input, Button, Textarea的permission
+        private string UpdatePerm(List<string> data, string op)
+        {
+            if (type != PoiLayoutType.Input && type != PoiLayoutType.Button && type != PoiLayoutType.Textarea)
+                throw new PoiAnalyzeException("Warning: 只有Input,Button和Textarea类型支持" + op + "方法");
+            string selector = GetSelector(op), perm = data.Count > 0 ? data[0] : "";
+            string result = "";
+            result += perm.Contains('x') ? string.Format("$(\"{0}\").attr('disabled','disabled')", selector) : string.Format("$(\"{0}\").removeAttr('disabled')", selector);
+            result += perm.Contains('r') ? string.Format("$(\"{0}\").attr('readonly','readonly')", selector) : string.Format("$(\"{0}\").removeAttr('readonly')", selector);
+            result += perm.Contains('q') ? string.Format("$(\"{0}\").attr('required',true)", selector) : string.Format("$(\"{0}\").removeAttr('required')", selector);
+            result += perm.Contains('a') ? string.Format("$(\"{0}\").attr('autofocus',true)", selector) : string.Format("$(\"{0}\").removeAttr('autofocus')", selector);
+            result += perm.Contains('c') ? string.Format("$(\"{0}\").attr('checked','checked')", selector) : string.Format("$(\"{0}\").removeAttr('checked')", selector);
+            return result;
         }
 
         // 按照静态操作规则解析参数
@@ -811,6 +876,19 @@ namespace PoiLanguage
                 default_str += "_";
             }*/
             return property.ContainsKey(key) ? property[key] : default_str;
+        }
+
+        private string GetSelector(string op)
+        {
+            string selector;
+            if (op.StartsWith("g")) selector = string.Format("[name = '{0}']", name);
+            else selector = string.Format("[title = '{0}']", MakeJSValue(name));
+            return selector;
+        }
+
+        private string GetOprData(List<string> data)
+        {
+            return data.Count > 0 ? data[0] : "\"\"";
         }
     }
 

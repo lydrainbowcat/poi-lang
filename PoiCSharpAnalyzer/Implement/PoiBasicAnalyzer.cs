@@ -5484,6 +5484,7 @@ namespace PoiLanguage
                                     break;
                             }
                         }
+                        else left = new PoiObject(PoiObjectType.String, "");
                     }
                 }
 
@@ -6453,7 +6454,7 @@ namespace PoiLanguage
             string type = (node.GetChildAt(3).GetValue(0) as PoiObject).ToString();
             PoiHtmlLayout layout = new PoiHtmlLayout(name, type, (node.GetChildAt(4).GetValue(0) as PoiObject).ToStruct());
             PoiHtmlLayout.Map[name] = layout;
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, string.Format("var {0} = \"__poi_layout\"+(++__poi_cnt); // {1} created.", name, type)));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, string.Format("var {0} = \"__poi_layout\" + (++__poi_cnt); // {1} created", name, type)));
             return node;
         }
 

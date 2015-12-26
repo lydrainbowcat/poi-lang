@@ -27,3 +27,7 @@ content.add(cell);
 content.add(divide);
 index.add(content);
 index.generate();
+cell.gclear();
+struct dynamic as core{};
+cell.gappend(dynamic);
+dynamic.ltext(s["font-size"]);
