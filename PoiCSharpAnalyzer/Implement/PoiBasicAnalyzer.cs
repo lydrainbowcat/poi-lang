@@ -5387,30 +5387,34 @@ namespace PoiLanguage
                 if (node.GetChildCount() > 1)
                 {
                     right = node.GetChildAt(1).GetValue(0) as PoiObject;
-                    if (node.GetChildAt(1).GetChildAt(0).GetName() == "SYMBOL_DOT" && right.ToString().IndexOf("static") == 0)
-                        left = new PoiObject(PoiObjectType.String, "// " + left.ToString() + " ");
-                    else
+                    if (node.GetChildAt(1).GetChildAt(0).GetName() == "SYMBOL_DOT")
                     {
-                        List<string> array = right.ToArray();
-                        switch (array[0])
+                        string function = (node.GetChildAt(1).GetChildAt(1).GetChildAt(0).GetValue(0) as PoiObject).ToString();
+                        if (function == "add" || function == "generate") // 静态操作翻译为JS注释
+                            left = new PoiObject(PoiObjectType.String, "// " + left.ToString() + " ");
+                        else if (function.StartsWith("css")) // css采用array翻译方法
                         {
-                            case "css":
-                                string statementlist = "for (var __i in " + array[1] + "){\r\n" +
-                                     "$(\"[name = '" + left.ToString() + "']\").css(__i, " +
-                                     array[1] + "[__i])" + "\r\n}";
-                                left = new PoiObject(PoiObjectType.String, statementlist);
-                                right = new PoiObject(PoiObjectType.String, "");
-                                break;
-                            case "cssdel":
-                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
-                                    + array[1] + "\",\"\")");
-                                right = new PoiObject(PoiObjectType.String, "");
-                                break;
-                            case "cssadd":
-                                left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
-                                    + array[1] + "\",\"" + array[2] + "\")");
-                                right = new PoiObject(PoiObjectType.String, "");
-                                break;
+                            List<string> array = right.ToArray();
+                            switch (array[0])
+                            {
+                                case "css":
+                                    string statementlist = "for (var __i in " + array[1] + "){\r\n" +
+                                         "$(\"[name = '" + left.ToString() + "']\").css(__i, " +
+                                         array[1] + "[__i])" + "\r\n}";
+                                    left = new PoiObject(PoiObjectType.String, statementlist);
+                                    right = new PoiObject(PoiObjectType.String, "");
+                                    break;
+                                case "cssdel":
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
+                                        + array[1] + "\",\"\")");
+                                    right = new PoiObject(PoiObjectType.String, "");
+                                    break;
+                                case "cssadd":
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
+                                        + array[1] + "\",\"" + array[2] + "\")");
+                                    right = new PoiObject(PoiObjectType.String, "");
+                                    break;
+                            }
                         }
                     }
                 }
