@@ -5473,13 +5473,35 @@ namespace PoiLanguage
                                     right = new PoiObject(PoiObjectType.String, "");
                                     break;
                                 case "cssdel":
-                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
-                                        + array[1] + "\",\"\")");
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css("
+                                        + array[1] + ",\"\")");
                                     right = new PoiObject(PoiObjectType.String, "");
                                     break;
                                 case "cssadd":
-                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css(\""
-                                        + array[1] + "\",\"" + array[2] + "\")");
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").css("
+                                        + array[1] + "," + array[2] + ")");
+                                    right = new PoiObject(PoiObjectType.String, "");
+                                    break;
+                            }
+                        }
+                        else if (function.StartsWith("class"))
+                        {
+                            List<string> array = right.ToArray();
+                            switch (array[0])
+                            {
+                                case "classadd":
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").addClass("
+                                        + array[1] + ")");
+                                    right = new PoiObject(PoiObjectType.String, "");
+                                    break;
+                                case "classdel":
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").removeClass("
+                                        + array[1] + ")");
+                                    right = new PoiObject(PoiObjectType.String, "");
+                                    break;
+                                case "classtoggle":
+                                    left = new PoiObject(PoiObjectType.String, "$(\"[name = '" + left.ToString() + "']\").toggleClass("
+                                        + array[1] + ")");
                                     right = new PoiObject(PoiObjectType.String, "");
                                     break;
                             }
