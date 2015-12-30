@@ -724,6 +724,29 @@ namespace PoiLanguage
             }
         };
 
+        private static Dictionary<PoiVariableType, String> variableDefaultInitializer = new Dictionary<PoiVariableType,string>
+        {
+            { PoiVariableType.Undefined, "" },
+            { PoiVariableType.Integer8, "= 0" },
+            { PoiVariableType.Integer16, "= 0" },
+            { PoiVariableType.Integer32, "= 0" },
+            { PoiVariableType.Integer64, "= 0" },
+            { PoiVariableType.UInteger8, "= 0" },
+            { PoiVariableType.UInteger16, "= 0" },
+            { PoiVariableType.UInteger32, "= 0" },
+            { PoiVariableType.UInteger64, "= 0" },
+            { PoiVariableType.Single, "= 0.0" },
+            { PoiVariableType.Double, "= 0.0" },
+            { PoiVariableType.Extended, "= 0.0" },
+            { PoiVariableType.Boolean, "= false" },
+            { PoiVariableType.Function, "= @[] -> [] {}" },
+            { PoiVariableType.Character, "= 'a'" },
+            { PoiVariableType.String, "= \"\"" },
+            { PoiVariableType.Array, "" },
+            { PoiVariableType.Map, "= new Object()" },
+            { PoiVariableType.Event, "= new Event()" }
+        };
+
         public static PoiVariableType StringToVariableType(String type)
         {
             if (stringVariableTypeMap.ContainsKey(type))
@@ -811,6 +834,11 @@ namespace PoiLanguage
 
             //throw new PoiTypeException("Can not cast from type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
             return false;
+        }
+
+        public static String GetDefaultInitializer(PoiVariableType type)
+        {
+            return variableDefaultInitializer[type];
         }
     };
 
