@@ -80,6 +80,39 @@ namespace PoiLanguage
 
     public class PoiType
     {
+        private PoiVariableType basicType;
+        private object additionalType;
+
+        public PoiType(PoiVariableType variableType, object additional = null)
+        {
+            basicType = variableType;
+            additionalType = additional;
+        }
+
+        public PoiVariableType GetBasicType()
+        {
+            return basicType;
+        }
+
+        public static bool operator ==(PoiType variable, PoiVariableType type)
+        {
+            return variable.basicType == type;
+        }
+
+        public static bool operator !=(PoiType variable, PoiVariableType type)
+        {
+            return variable.basicType == type;
+        }
+
+        public override string ToString()
+        {
+            string typeString = basicType.ToString();
+            return typeString;
+        }
+    }
+
+    public class PoiTypeChecker
+    {
         private static Dictionary<String, PoiVariableType> stringVariableTypeMap = new Dictionary<string, PoiVariableType>
         {
             { "int8", PoiVariableType.Integer8 },
@@ -747,7 +780,7 @@ namespace PoiLanguage
             { PoiVariableType.Event, "= new Event()" }
         };
 
-        public static PoiVariableType StringToVariableType(String type)
+        public static PoiVariableType StringToPoiVariableType(String type)
         {
             if (stringVariableTypeMap.ContainsKey(type))
             {
@@ -756,11 +789,16 @@ namespace PoiLanguage
             return PoiVariableType.Undefined;
         }
 
-        public static PoiVariableType GetArithmeticExpressionType(PoiExpressionType expr, String op, List<PoiVariableType> variables)
+        public static PoiVariableType GetArithmeticExpressionType(PoiExpressionType expr, String op, List<PoiType> variablesList)
         {
             try
             {
                 PoiOperationType operation = expressionOperationMap[expr][op];
+                List<PoiVariableType> variables = variablesList.ConvertAll(
+                    new Converter<PoiType, PoiVariableType>(delegate(PoiType variable)
+                        {
+                            return variable.GetBasicType();
+                        }));
 
                 Dictionary<List<PoiVariableType>, PoiVariableType> availableOperations = arithmeticOperationMap[operation];
                 // try direct matching
@@ -790,9 +828,9 @@ namespace PoiLanguage
             return PoiVariableType.Undefined;
         }
 
-        public static bool CheckAssign(PoiVariableType left, PoiVariableType right)
+        public static bool CheckAssign(PoiType left, PoiType right)
         {
-            return AvailableCast(right, left);
+            return AvailableCast(right.GetBasicType(), left.GetBasicType());
         }
 
         private static bool DirectMatch(List<PoiVariableType> from, List<PoiVariableType> to)
@@ -836,9 +874,9 @@ namespace PoiLanguage
             return false;
         }
 
-        public static String GetDefaultInitializer(PoiVariableType type)
+        public static String GetDefaultInitializer(PoiType type)
         {
-            return variableDefaultInitializer[type];
+            return variableDefaultInitializer[type.GetBasicType()];
         }
     };
 

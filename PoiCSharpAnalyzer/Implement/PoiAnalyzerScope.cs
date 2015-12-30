@@ -52,6 +52,11 @@ namespace PoiLanguage
 
     class PoiAnalyzerScopeStack
     {
+        private static Dictionary<String, PoiVariableType> reservedVariables = new Dictionary<String, PoiVariableType>()
+        {
+            { "ajax_request", PoiVariableType.Event }
+        };
+
         private List<PoiAnalyzerScope> scopeList = new List<PoiAnalyzerScope>();
         private List<KeyValuePair<String, PoiVariableType>> variablesList = new List<KeyValuePair<string, PoiVariableType>>();
 
@@ -63,7 +68,12 @@ namespace PoiLanguage
         public void Clear()
         {
             scopeList.Clear();
+            variablesList.Clear();
             scopeList.Add(new PoiAnalyzerScope("__global"));
+            foreach (var item in reservedVariables)
+            {
+                DefiniteVariable(item.Key, item.Value);
+            }
         }
 
         public void EnterScope(String name = null)
