@@ -3162,6 +3162,7 @@ namespace PoiLanguage
          */
         public override void EnterStatementList(Production node)
         {
+            scopeStack.EnterScope();
         }
 
         /**
@@ -3178,6 +3179,7 @@ namespace PoiLanguage
         public override Node ExitStatementList(Production node)
         {
             PoiInfo.AddValuePos(node, MergeChildList(node));
+            scopeStack.LeaveScope();
             return node;
         }
 
@@ -3447,6 +3449,7 @@ namespace PoiLanguage
          */
         public override void EnterFunctionExpression(Production node)
         {
+            scopeStack.EnterScope();
         }
 
         /**
@@ -3525,7 +3528,12 @@ namespace PoiLanguage
             body = "{" + variableAccess + variablesDeclaration + bodyLabel + body + returnAssignCode + "}";
 
             String function = "function(" + variables + ")" + body;
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, function, PoiVariableType.Function));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, function, PoiVariableType.Function, 
+                parameterList.ConvertAll(new Converter<PoiObject, PoiType>(delegate(PoiObject obj)
+                    {
+                        return obj.VariableType;
+                    }))));
+            scopeStack.LeaveScope();
             return node;
         }
 
@@ -5952,7 +5960,12 @@ namespace PoiLanguage
                 declaration += identifier + initializer;
 
                 // Type Check
-                scopeStack.DefiniteVariable(identifier, PoiTypeChecker.StringToPoiVariableType((typeNode.GetValue(0) as PoiObject).ToString()));
+                PoiType poiType = (typeNode.GetValue(0) as PoiObject).VariableType;
+                scopeStack.DefiniteVariable(identifier, poiType);
+
+                if (poiType == PoiVariableType.Function)
+                {
+                }
 
                 PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, declaration));
             }
@@ -5991,9 +6004,15 @@ namespace PoiLanguage
                         result += "}\r\n";
                     }
 
-                    scopeStack.DefiniteVariable(identifier, PoiVariableType.Array);
-
-                    PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, result, PoiVariableType.Array));
+                    PoiType contentType = (containerNode.GetChildAt(2).GetValue(0) as PoiObject).VariableType;
+                    List<int> arraySizes = array.GetRange(1, num).ConvertAll(
+                        new Converter<string, int>(delegate(string numString)
+                        {
+                            return Convert.ToInt32(numString);
+                        }));
+                    PoiType arrayType = new PoiType(PoiVariableType.Array, new KeyValuePair<PoiType, List<int>>(contentType, arraySizes));
+                    scopeStack.DefiniteVariable(identifier, arrayType);
+                    PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, result, arrayType));
                 }
                 else if (containerNode.Name == "StringContainer")
                 {
@@ -6004,18 +6023,18 @@ namespace PoiLanguage
                     else
                         PoiInfo.AddValuePos(node, left + new PoiObject(PoiObjectType.String, " ") + right);
 
-                    scopeStack.DefiniteVariable(right.ToString(), PoiVariableType.String);
+                    scopeStack.DefiniteVariable(right.ToString(), new PoiType(PoiVariableType.String));
                 }
                 else if (containerNode.Name == "MapContainer")
                 {
                     string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                    scopeStack.DefiniteVariable(identifier, PoiVariableType.Map);
+                    scopeStack.DefiniteVariable(identifier, new PoiType(PoiVariableType.Map));
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, (fromClassPub ? "this." : "var ") + identifier + " = new Object()"));
                 }
                 else if (containerNode.Name == "EventContainer")
                 {
                     string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                    scopeStack.DefiniteVariable(identifier, PoiVariableType.Event);
+                    scopeStack.DefiniteVariable(identifier, new PoiType(PoiVariableType.Event));
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "var " + identifier + " = new Event()"));
                 }
             }
@@ -7456,6 +7475,7 @@ namespace PoiLanguage
         public void InitializeAnalyzerStatus()
         {
             InitScopeStack();
+            PoiTypeChecker.ClearWarnings();
         }
 
         public void InitScopeStack()
@@ -7543,7 +7563,7 @@ namespace PoiLanguage
             return node.GetValue(2) as Node;
         }
 
-        public List<KeyValuePair<String, PoiVariableType>> GetTypeInformation()
+        public List<KeyValuePair<String, PoiType>> GetTypeInformation()
         {
             return scopeStack.GetVariableTypeInformation();
         }

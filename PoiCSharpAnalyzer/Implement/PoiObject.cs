@@ -43,6 +43,13 @@ namespace PoiLanguage
             Data = data;
         }
 
+        public PoiObject(PoiObjectType type, object data, PoiType variableType)
+        {
+            Type = type;
+            VariableType = variableType;
+            Data = data;
+        }
+
         public override string ToString()
         {
             if (Type == PoiObjectType.String)

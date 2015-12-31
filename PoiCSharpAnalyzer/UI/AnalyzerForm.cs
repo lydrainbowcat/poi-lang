@@ -17,6 +17,7 @@ namespace PoiCSharpAnalyzer.UI
     public partial class AnalyzerForm : Form
     {
         private AutoresizeForm sizeControl = new AutoresizeForm();
+        private bool collapsed = false;
 
         public AnalyzerForm()
         {
@@ -49,8 +50,9 @@ namespace PoiCSharpAnalyzer.UI
                     codeOutput.Text = "";
 
                 CreateParseTree(parseTree, parseTreeOutput);
-                //parseTreeOutput.CollapseAll();
-                parseTreeOutput.ExpandAll();
+                parseTreeOutput.CollapseAll();
+                collapsed = true;
+                //parseTreeOutput.ExpandAll();
 
                 CreateVariableType(analyzer, variableTypeListView);
             }
@@ -66,6 +68,11 @@ namespace PoiCSharpAnalyzer.UI
             {
                 analyzerLog.Text += ex.Message;
             }
+
+            PoiTypeChecker.GetWarnings().ForEach(delegate(string warning)
+            {
+                analyzerLog.Text += warning + "\r\n";
+            });
         }
 
         private void DeleteParseTree(TreeView view)
@@ -108,8 +115,8 @@ namespace PoiCSharpAnalyzer.UI
         {
             view.Columns.Clear();
 
-            view.Columns.Add("Variable Name", (int)(view.Width * 0.5), HorizontalAlignment.Left);
-            view.Columns.Add("Variable Type", (int)(view.Width * 0.5), HorizontalAlignment.Left);
+            view.Columns.Add("Variable Name", (int)(view.Width * 0.4), HorizontalAlignment.Left);
+            view.Columns.Add("Variable Type", (int)(view.Width * 0.6), HorizontalAlignment.Left);
 
             view.View = View.Details;
         }
@@ -125,8 +132,8 @@ namespace PoiCSharpAnalyzer.UI
         {
             view.BeginUpdate();
             ListView.ListViewItemCollection items = view.Items;
-            List<KeyValuePair<String, PoiVariableType>> variables = analyzer.GetTypeInformation();
-            foreach (KeyValuePair<String, PoiVariableType> pair in variables)
+            List<KeyValuePair<String, PoiType>> variables = analyzer.GetTypeInformation();
+            foreach (KeyValuePair<String, PoiType> pair in variables)
             {
                 ListViewItem lvi = new ListViewItem(pair.Key);
                 lvi.SubItems.Add(pair.Value.ToString());
@@ -167,12 +174,28 @@ namespace PoiCSharpAnalyzer.UI
             // Resize columns in variableTypeListView
             try
             {
-                variableTypeListView.Columns[0].Width = (int)(variableTypeListView.Width * 0.5);
-                variableTypeListView.Columns[1].Width = (int)(variableTypeListView.Width * 0.5);
+                variableTypeListView.Columns[0].Width = (int)(variableTypeListView.Width * 0.4);
+                variableTypeListView.Columns[1].Width = (int)(variableTypeListView.Width * 0.6);
             }
             catch (Exception)
             {
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            parseTreeOutput.BeginUpdate();
+            if (collapsed)
+            {
+                parseTreeOutput.ExpandAll();
+                collapsed = false;
+            }
+            else
+            {
+                parseTreeOutput.CollapseAll();
+                collapsed = true;
+            }
+            parseTreeOutput.EndUpdate();
         }
     }
 }

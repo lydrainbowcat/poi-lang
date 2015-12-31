@@ -81,17 +81,53 @@ namespace PoiLanguage
     public class PoiType
     {
         private PoiVariableType basicType;
-        private object additionalType;
+        private object additionalInfo;
 
         public PoiType(PoiVariableType variableType, object additional = null)
         {
             basicType = variableType;
-            additionalType = additional;
+            additionalInfo = additional;
         }
 
         public PoiVariableType GetBasicType()
         {
             return basicType;
+        }
+
+        public PoiType GetArrayType()
+        {
+            if (basicType != PoiVariableType.Array || additionalInfo == null)
+            {
+                return new PoiType(PoiVariableType.Undefined);
+            }
+            return ((KeyValuePair<PoiType, List<int>>)additionalInfo).Key;
+        }
+
+        public List<int> GetArraySizes()
+        {
+            if (basicType != PoiVariableType.Array || additionalInfo == null)
+            {
+                return new List<int>();
+            }
+            return ((KeyValuePair<PoiType, List<int>>)additionalInfo).Value;
+        }
+
+        public List<PoiType> GetFunctionParameters()
+        {
+            if (basicType != PoiVariableType.Function || additionalInfo == null)
+            {
+                return new List<PoiType>();
+            }
+            return (List<PoiType>)additionalInfo;
+        }
+
+        public List<PoiType> GetEventParameters()
+        {
+            if (basicType != PoiVariableType.Event || additionalInfo == null)
+            {
+                return new List<PoiType>();
+            }
+            return (List<PoiType>)additionalInfo;
         }
 
         public static bool operator ==(PoiType variable, PoiVariableType type)
@@ -101,12 +137,24 @@ namespace PoiLanguage
 
         public static bool operator !=(PoiType variable, PoiVariableType type)
         {
-            return variable.basicType == type;
+            return variable.basicType != type;
         }
 
         public override string ToString()
         {
             string typeString = basicType.ToString();
+            switch (basicType)
+            {
+                case PoiVariableType.Array:
+                    typeString += "[" + GetArrayType().ToString() + "," + string.Join(",", GetArraySizes()) + "]";
+                    break;
+                case PoiVariableType.Function:
+                    break;
+                case PoiVariableType.Event:
+                    break;
+                default:
+                    break;
+            }
             return typeString;
         }
     }
@@ -780,6 +828,8 @@ namespace PoiLanguage
             { PoiVariableType.Event, "= new Event()" }
         };
 
+        private static List<string> warnings = new List<string>();
+
         public static PoiVariableType StringToPoiVariableType(String type)
         {
             if (stringVariableTypeMap.ContainsKey(type))
@@ -791,10 +841,11 @@ namespace PoiLanguage
 
         public static PoiVariableType GetArithmeticExpressionType(PoiExpressionType expr, String op, List<PoiType> variablesList)
         {
+            List<PoiVariableType> variables;
             try
             {
                 PoiOperationType operation = expressionOperationMap[expr][op];
-                List<PoiVariableType> variables = variablesList.ConvertAll(
+                variables = variablesList.ConvertAll(
                     new Converter<PoiType, PoiVariableType>(delegate(PoiType variable)
                         {
                             return variable.GetBasicType();
@@ -824,7 +875,7 @@ namespace PoiLanguage
                 return PoiVariableType.Undefined;
             }
 
-            //throw new PoiTypeException("Operation not defined: [" + op + "] with parameters [" + variables.ToString() + "]");
+            warnings.Add("Warning: Operation not defined: [" + op + "] with parameters [" + variables.ToString() + "]");
             return PoiVariableType.Undefined;
         }
 
@@ -870,13 +921,28 @@ namespace PoiLanguage
                 return false;
             }
 
-            //throw new PoiTypeException("Can not cast from type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
+            warnings.Add("Warning: trying cast from type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
             return false;
         }
 
         public static String GetDefaultInitializer(PoiType type)
         {
             return variableDefaultInitializer[type.GetBasicType()];
+        }
+
+        public static void AddWarning(string warn)
+        {
+            warnings.Add(warn);
+        }
+
+        public static void ClearWarnings()
+        {
+            warnings.Clear();
+        }
+
+        public static List<string> GetWarnings()
+        {
+            return warnings;
         }
     };
 

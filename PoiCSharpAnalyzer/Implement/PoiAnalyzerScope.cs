@@ -14,7 +14,7 @@ namespace PoiLanguage
         private static int scopeNumber = 0;
         private String scopeName;
 
-        private Dictionary<String, PoiVariableType> variables = new Dictionary<string,PoiVariableType>();
+        private Dictionary<String, PoiType> variables = new Dictionary<string, PoiType>();
 
         public PoiAnalyzerScope(String name = null)
         {
@@ -30,20 +30,20 @@ namespace PoiLanguage
             return scopeName;
         }
 
-        public PoiVariableType GetVariableType(String name)
+        public PoiType GetVariableType(String name)
         {
             if (variables.ContainsKey(name))
             {
                 return variables[name];
             }
-            return PoiVariableType.Undefined;
+            return new PoiType(PoiVariableType.Undefined);
         }
 
-        public void AddVariable(String name, PoiVariableType type)
+        public void AddVariable(String name, PoiType type)
         {
             if (variables.ContainsKey(name))
             {
-                // throw "Variable redefinition" exception
+                PoiTypeChecker.AddWarning("Warning: Variable redefinition of variable: " + name + " and type: " + type.ToString());
                 return;
             }
             variables.Add(name, type);
@@ -52,13 +52,13 @@ namespace PoiLanguage
 
     class PoiAnalyzerScopeStack
     {
-        private static Dictionary<String, PoiVariableType> reservedVariables = new Dictionary<String, PoiVariableType>()
+        private static Dictionary<String, PoiType> reservedVariables = new Dictionary<String, PoiType>()
         {
-            { "ajax_request", PoiVariableType.Event }
+            { "ajax_request", new PoiType(PoiVariableType.Event) }
         };
 
         private List<PoiAnalyzerScope> scopeList = new List<PoiAnalyzerScope>();
-        private List<KeyValuePair<String, PoiVariableType>> variablesList = new List<KeyValuePair<string, PoiVariableType>>();
+        private List<KeyValuePair<String, PoiType>> variablesList = new List<KeyValuePair<string, PoiType>>();
 
         public PoiAnalyzerScopeStack()
         {
@@ -86,26 +86,26 @@ namespace PoiLanguage
             scopeList.RemoveAt(scopeList.Count - 1);
         }
 
-        public void DefiniteVariable(String name, PoiVariableType type)
+        public void DefiniteVariable(String name, PoiType type)
         {
             scopeList.ElementAt(scopeList.Count - 1).AddVariable(name, type);
-            variablesList.Add(new KeyValuePair<String, PoiVariableType>(name, type));
+            variablesList.Add(new KeyValuePair<String, PoiType>(name, type));
         }
 
-        public PoiVariableType GetVariableType(String name)
+        public PoiType GetVariableType(String name)
         {
             for (int i = scopeList.Count - 1; i >= 0; i--)
             {
-                PoiVariableType type = scopeList[i].GetVariableType(name);
+                PoiType type = scopeList[i].GetVariableType(name);
                 if (type != PoiVariableType.Undefined)
                 {
                     return type;
                 }
             }
-            return PoiVariableType.Undefined;
+            return new PoiType(PoiVariableType.Undefined);
         }
 
-        public List<KeyValuePair<String, PoiVariableType>> GetVariableTypeInformation()
+        public List<KeyValuePair<String, PoiType>> GetVariableTypeInformation()
         {
             return variablesList;
         }
