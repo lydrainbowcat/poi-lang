@@ -7382,6 +7382,8 @@ namespace PoiLanguage
             string eventVariable = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
             string parameter = "";
 
+            if (eventVariable == "ajax_request")
+                eventVariable = "__poi_ajax";
             if (node.GetChildAt(3).GetName() == "Expression")
             {
                 string[] functionParameter = (node.GetChildAt(3).GetValue(0) as PoiObject).ToString().Split(';');
