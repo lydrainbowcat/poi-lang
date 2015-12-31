@@ -29,11 +29,27 @@ function Event() {
     this.execute = function () {
         var paraNumber = arguments.length;
         for (i = 0; i < this.NamedFunctions.length; i++) {
-            this.NamedFunctions[i].apply(this, arguments);
+            this.NamedFunctions[i].apply(null, arguments);
         }
         for (i = 0; i < this.AnonymousFunctions.length; i++) {
-            this.AnonymousFunctions[i].apply(this, arguments);
+            this.AnonymousFunctions[i].apply(null, arguments);
         }
     }
 };
 
+function __poi_ajax_request(method, url, data, cors, resp_succ, resp_err, extra_config) {
+    var config = {
+        method: method,
+        url: url,
+        data: data,
+        success: function (data) { resp_succ.execute(data); },
+        error: function (xhr, err) { resp_err.execute.call(xhr, err); }
+    };
+    for (var key in extra_config) {
+        config[key] = extra_config[key];
+    }
+    if (cors) config.xhrFields.withCredentials = true;
+    $.ajax(config);
+}
+var __poi_ajax = new Event();
+__poi_ajax.add('', __poi_ajax_request);
