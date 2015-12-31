@@ -245,7 +245,6 @@ namespace PoiLanguage
         // 处理某种操作
         public PoiObject Solve(string operation, Node dataNode)
         {
-            List<string> array = new List<string>();
             switch (operation) // 静态操作按照C#规则翻译，data应该为Literal构成的Pair；动态操作翻译为JS，直接生成操作data的代码。
             {
                 case "add":
@@ -258,31 +257,48 @@ namespace PoiLanguage
                     this.Generate();
                     return new PoiObject(PoiObjectType.String, "static generate");
                 case "css":
-                    array.Add("css");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
-                case "cssdel":
-                    array.Add("cssdel");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
-                case "cssadd":
-                    array.Add("cssadd");
+                case "gcss":
                     data = ParseStatic(dataNode);
-                    array.Add(data[0]);
-                    array.Add(data[1]);
-                    return new PoiObject(PoiObjectType.Array, array);
+                    return new PoiObject(PoiObjectType.String, string.Format("for (var __i in {1}){{\r\n$(\"[name = '{0}']\").css(__i, {1}[__i])\r\n}}", name, data[0]));
+                case "cssdel":
+                case "gcssdel":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").css({1},\"\")", name, data[0]));
+                case "cssadd":
+                case "gcssadd":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").css({1},{2})", name, data[0], data[1]));
+                case "lcss":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("for (var __i in {1}){{\r\n" +
+                                         "$(\"[title = '{0}']\").css(__i, {1}[__i])" + "\r\n}}", MakeJSValue(name), data[0]));
+                case "lcssdel":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").css({1},\"\")", MakeJSValue(name), data[0]));
+                case "lcssadd":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").css({1},{2})", MakeJSValue(name), data[0], data[1]));
                 case "classadd":
-                    array.Add("classadd");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
+                case "gclassadd":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").addClass({1})", name, data[0]));
                 case "classdel":
-                    array.Add("classdel");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
+                case "gclassdel":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").removeClass({1})", name, data[0]));
                 case "classtoggle":
-                    array.Add("classtoggle");
-                    array.Add(dataNode.GetValue(0).ToString());
-                    return new PoiObject(PoiObjectType.Array, array);
+                case "gclasstoggle":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").toggleClass({1})", name, data[0]));
+                case "lclassadd":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").addClass({1})", MakeJSValue(name), data[0]));
+                case "lclassdel":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").removeClass({1})", MakeJSValue(name), data[0]));
+                case "lclasstoggle":
+                    data = ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").toggleClass({1})", MakeJSValue(name), data[0]));
                 case "gready":
                     string value;
                     data = ParseStatic(dataNode);
