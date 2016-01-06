@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using PerCederberg.Grammatica.Runtime;
 
 namespace PoiLanguage
 {
@@ -28,7 +29,8 @@ namespace PoiLanguage
         Map,
         Event,
         Function,
-        Pair
+        Pair,
+        Struct
     }
 
     public enum PoiExpressionType
@@ -376,6 +378,54 @@ namespace PoiLanguage
                     { new List<PoiVariableType> { PoiVariableType.Double }, PoiVariableType.Double },
                     { new List<PoiVariableType> { PoiVariableType.Extended }, PoiVariableType.Extended },
                     { new List<PoiVariableType> { PoiVariableType.Character }, PoiVariableType.Integer8 }
+                }
+            },  
+            { PoiOperationType.MulDivModMul,
+                new Dictionary<List<PoiVariableType>, PoiVariableType>
+                {
+                    { new List<PoiVariableType> { PoiVariableType.Integer8, PoiVariableType.Integer8 }, PoiVariableType.Integer8 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer16, PoiVariableType.Integer16 }, PoiVariableType.Integer16 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer32, PoiVariableType.Integer32 }, PoiVariableType.Integer32 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer64, PoiVariableType.Integer64 }, PoiVariableType.Integer64 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger8, PoiVariableType.UInteger8 }, PoiVariableType.UInteger8 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger16, PoiVariableType.UInteger16 }, PoiVariableType.UInteger16 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger32, PoiVariableType.UInteger32 }, PoiVariableType.UInteger32 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger64, PoiVariableType.UInteger64 }, PoiVariableType.UInteger64 },
+                    { new List<PoiVariableType> { PoiVariableType.Single, PoiVariableType.Single }, PoiVariableType.Single },
+                    { new List<PoiVariableType> { PoiVariableType.Double, PoiVariableType.Double }, PoiVariableType.Double },
+                    { new List<PoiVariableType> { PoiVariableType.Extended, PoiVariableType.Extended }, PoiVariableType.Extended }
+                }
+            },  
+            { PoiOperationType.MulDivModDiv,
+                new Dictionary<List<PoiVariableType>, PoiVariableType>
+                {
+                    { new List<PoiVariableType> { PoiVariableType.Integer8, PoiVariableType.Integer8 }, PoiVariableType.Integer8 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer16, PoiVariableType.Integer16 }, PoiVariableType.Integer16 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer32, PoiVariableType.Integer32 }, PoiVariableType.Integer32 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer64, PoiVariableType.Integer64 }, PoiVariableType.Integer64 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger8, PoiVariableType.UInteger8 }, PoiVariableType.UInteger8 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger16, PoiVariableType.UInteger16 }, PoiVariableType.UInteger16 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger32, PoiVariableType.UInteger32 }, PoiVariableType.UInteger32 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger64, PoiVariableType.UInteger64 }, PoiVariableType.UInteger64 },
+                    { new List<PoiVariableType> { PoiVariableType.Single, PoiVariableType.Single }, PoiVariableType.Single },
+                    { new List<PoiVariableType> { PoiVariableType.Double, PoiVariableType.Double }, PoiVariableType.Double },
+                    { new List<PoiVariableType> { PoiVariableType.Extended, PoiVariableType.Extended }, PoiVariableType.Extended }
+                }
+            },  
+            { PoiOperationType.MulDivModMod,
+                new Dictionary<List<PoiVariableType>, PoiVariableType>
+                {
+                    { new List<PoiVariableType> { PoiVariableType.Integer8, PoiVariableType.Integer8 }, PoiVariableType.Integer8 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer16, PoiVariableType.Integer16 }, PoiVariableType.Integer16 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer32, PoiVariableType.Integer32 }, PoiVariableType.Integer32 },
+                    { new List<PoiVariableType> { PoiVariableType.Integer64, PoiVariableType.Integer64 }, PoiVariableType.Integer64 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger8, PoiVariableType.UInteger8 }, PoiVariableType.UInteger8 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger16, PoiVariableType.UInteger16 }, PoiVariableType.UInteger16 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger32, PoiVariableType.UInteger32 }, PoiVariableType.UInteger32 },
+                    { new List<PoiVariableType> { PoiVariableType.UInteger64, PoiVariableType.UInteger64 }, PoiVariableType.UInteger64 },
+                    { new List<PoiVariableType> { PoiVariableType.Single, PoiVariableType.Single }, PoiVariableType.Single },
+                    { new List<PoiVariableType> { PoiVariableType.Double, PoiVariableType.Double }, PoiVariableType.Double },
+                    { new List<PoiVariableType> { PoiVariableType.Extended, PoiVariableType.Extended }, PoiVariableType.Extended }
                 }
             },  
             { PoiOperationType.AddSubAdd,
@@ -830,7 +880,7 @@ namespace PoiLanguage
 
         private static List<string> warnings = new List<string>();
 
-        public static PoiVariableType StringToPoiVariableType(String type)
+        public static PoiVariableType StringToPoiVariableType(Node node, String type)
         {
             if (stringVariableTypeMap.ContainsKey(type))
             {
@@ -839,7 +889,7 @@ namespace PoiLanguage
             return PoiVariableType.Undefined;
         }
 
-        public static PoiVariableType GetArithmeticExpressionType(PoiExpressionType expr, String op, List<PoiType> variablesList)
+        public static PoiVariableType GetArithmeticExpressionType(Node node, PoiExpressionType expr, String op, List<PoiType> variablesList)
         {
             List<PoiVariableType> variables;
             try
@@ -855,7 +905,7 @@ namespace PoiLanguage
                 // try direct matching
                 foreach (var item in availableOperations)
                 {
-                    if (DirectMatch(variables, item.Key))
+                    if (DirectMatch(node, variables, item.Key))
                     {
                         return item.Value;
                     }
@@ -864,7 +914,7 @@ namespace PoiLanguage
                 // try cast matching
                 foreach (var item in availableOperations)
                 {
-                    if (CastMatch(variables, item.Key))
+                    if (CastMatch(node, variables, item.Key))
                     {
                         return item.Value;
                     }
@@ -875,21 +925,26 @@ namespace PoiLanguage
                 return PoiVariableType.Undefined;
             }
 
-            warnings.Add("Warning: Operation not defined: [" + op + "] with parameters [" + variables.ToString() + "]");
+            AddWarning(node, "Operation not defined: [" + op + "] with parameters [" + string.Join(",", variables) + "]");
             return PoiVariableType.Undefined;
         }
 
-        public static bool CheckAssign(PoiType left, PoiType right)
+        public static bool CheckAssign(Node node, PoiType left, PoiType right)
         {
-            return AvailableCast(right.GetBasicType(), left.GetBasicType());
+            if (!AvailableCastNoWarnings(right.GetBasicType(), left.GetBasicType()))
+            {
+                AddWarning(node, "Can't assign type: " + left.ToString() + " to type: " + right.ToString());
+                return false;
+            }
+            return true;
         }
 
-        private static bool DirectMatch(List<PoiVariableType> from, List<PoiVariableType> to)
+        private static bool DirectMatch(Node node, List<PoiVariableType> from, List<PoiVariableType> to)
         {
             return from.SequenceEqual(to);
         }
 
-        private static bool CastMatch(List<PoiVariableType> from, List<PoiVariableType> to)
+        private static bool CastMatch(Node node, List<PoiVariableType> from, List<PoiVariableType> to)
         {
             if (from.Count != to.Count)
             {
@@ -899,7 +954,7 @@ namespace PoiLanguage
             int matchNum = 0;
             for (int i = 0; i < from.Count; i++, matchNum++)
             {
-                if (!AvailableCast(from[i], to[i]))
+                if (!AvailableCastNoWarnings(from[i], to[i]))
                 {
                     return false;
                 }
@@ -907,7 +962,7 @@ namespace PoiLanguage
             return true;
         }
 
-        private static bool AvailableCast(PoiVariableType from, PoiVariableType to)
+        private static bool AvailableCast(Node node, PoiVariableType from, PoiVariableType to)
         {
             try
             {
@@ -921,18 +976,39 @@ namespace PoiLanguage
                 return false;
             }
 
-            warnings.Add("Warning: trying cast from type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
+            AddWarning(node, "Trying cast from type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
             return false;
         }
 
-        public static String GetDefaultInitializer(PoiType type)
+        private static bool AvailableCastNoWarnings(PoiVariableType from, PoiVariableType to)
+        {
+            try
+            {
+                if (variableCastMap[from].Contains(to))
+                {
+                    return true;
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public static String GetDefaultInitializer(Node node, PoiType type)
         {
             return variableDefaultInitializer[type.GetBasicType()];
         }
 
-        public static void AddWarning(string warn)
+        public static void AddWarning(Node node, string warn)
         {
-            warnings.Add(warn);
+            string warningStr = "WARNING: " +
+                (node != null ? "From [Line " + node.GetStartLine() + ", Column " + node.GetStartColumn() + "] to [Line " +
+                node.GetEndLine() + ", Column " + node.GetEndColumn() + "]: " : "") +
+                warn;
+            warnings.Add(warningStr);
         }
 
         public static void ClearWarnings()

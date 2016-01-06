@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PerCederberg.Grammatica.Runtime;
 using System.Collections;
 
 namespace PoiLanguage
@@ -30,7 +31,7 @@ namespace PoiLanguage
             return scopeName;
         }
 
-        public PoiType GetVariableType(String name)
+        public PoiType GetVariableType(Node node, String name)
         {
             if (variables.ContainsKey(name))
             {
@@ -39,11 +40,11 @@ namespace PoiLanguage
             return new PoiType(PoiVariableType.Undefined);
         }
 
-        public void AddVariable(String name, PoiType type)
+        public void AddVariable(Node node, String name, PoiType type)
         {
             if (variables.ContainsKey(name))
             {
-                PoiTypeChecker.AddWarning("Warning: Variable redefinition of variable: " + name + " and type: " + type.ToString());
+                PoiTypeChecker.AddWarning(node, "Variable redefinition of variable: " + name + " and type: " + type.ToString());
                 return;
             }
             variables.Add(name, type);
@@ -72,7 +73,7 @@ namespace PoiLanguage
             scopeList.Add(new PoiAnalyzerScope("__global"));
             foreach (var item in reservedVariables)
             {
-                DefiniteVariable(item.Key, item.Value);
+                DefiniteVariable(null, item.Key, item.Value);
             }
         }
 
@@ -86,22 +87,24 @@ namespace PoiLanguage
             scopeList.RemoveAt(scopeList.Count - 1);
         }
 
-        public void DefiniteVariable(String name, PoiType type)
+        public void DefiniteVariable(Node node, String name, PoiType type)
         {
-            scopeList.ElementAt(scopeList.Count - 1).AddVariable(name, type);
+            scopeList.ElementAt(scopeList.Count - 1).AddVariable(node, name, type);
             variablesList.Add(new KeyValuePair<String, PoiType>(name, type));
         }
 
-        public PoiType GetVariableType(String name)
+        public PoiType GetVariableType(Node node, String name)
         {
             for (int i = scopeList.Count - 1; i >= 0; i--)
             {
-                PoiType type = scopeList[i].GetVariableType(name);
+                PoiType type = scopeList[i].GetVariableType(node, name);
                 if (type != PoiVariableType.Undefined)
                 {
                     return type;
                 }
             }
+
+            //PoiTypeChecker.AddWarning(node, "Variable not defined: " + name);
             return new PoiType(PoiVariableType.Undefined);
         }
 

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnalyzerForm));
-            this.codeInput = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -42,17 +41,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.analyzerLog = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.codeInput = new System.Windows.Forms.RichTextBox();
+            this.codeInputLineNumbers = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
-            // 
-            // codeInput
-            // 
-            this.codeInput.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.codeInput.Location = new System.Drawing.Point(12, 109);
-            this.codeInput.Multiline = true;
-            this.codeInput.Name = "codeInput";
-            this.codeInput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.codeInput.Size = new System.Drawing.Size(373, 216);
-            this.codeInput.TabIndex = 0;
             // 
             // label1
             // 
@@ -68,7 +59,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Consolas", 9F);
-            this.label2.Location = new System.Drawing.Point(12, 76);
+            this.label2.Location = new System.Drawing.Point(7, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(207, 28);
             this.label2.TabIndex = 3;
@@ -176,12 +167,38 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // codeInput
+            // 
+            this.codeInput.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.codeInput.Location = new System.Drawing.Point(40, 109);
+            this.codeInput.Name = "codeInput";
+            this.codeInput.Size = new System.Drawing.Size(345, 218);
+            this.codeInput.TabIndex = 17;
+            this.codeInput.Text = "";
+            this.codeInput.VScroll += new System.EventHandler(this.codeInput_VScroll);
+            this.codeInput.FontChanged += new System.EventHandler(this.codeInput_FontChanged);
+            this.codeInput.TextChanged += new System.EventHandler(this.codeInput_TextChanged);
+            this.codeInput.Resize += new System.EventHandler(this.codeInput_Resize);
+            // 
+            // codeInputLineNumbers
+            // 
+            this.codeInputLineNumbers.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.codeInputLineNumbers.Location = new System.Drawing.Point(12, 109);
+            this.codeInputLineNumbers.Name = "codeInputLineNumbers";
+            this.codeInputLineNumbers.ReadOnly = true;
+            this.codeInputLineNumbers.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.codeInputLineNumbers.Size = new System.Drawing.Size(28, 218);
+            this.codeInputLineNumbers.TabIndex = 18;
+            this.codeInputLineNumbers.Text = "";
+            // 
             // AnalyzerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1093, 731);
+            this.Controls.Add(this.codeInputLineNumbers);
+            this.Controls.Add(this.codeInput);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.analyzerLog);
             this.Controls.Add(this.label6);
@@ -194,7 +211,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.codeInput);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AnalyzerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -208,7 +224,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox codeInput;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -221,5 +236,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox analyzerLog;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.RichTextBox codeInput;
+        private System.Windows.Forms.RichTextBox codeInputLineNumbers;
     }
 }

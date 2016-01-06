@@ -62,6 +62,7 @@
     <Compile Include="Analyzer\PoiParser.cs" />
     <Compile Include="Analyzer\PoiTokenizer.cs" />
     <Compile Include="UI\AutosizeForm.cs" />
+    <Compile Include="UI\TextBoxLineNumbers.cs" />
     <None Include="Implement\poi.grammar" />
     <None Include="Implement\PoiArithmeticAnalyzer.cs" />
     <Compile Include="Implement\PoiAnalyzerScope.cs" />

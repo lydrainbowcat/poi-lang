@@ -1381,7 +1381,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger8(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1410,7 +1410,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger8Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1439,7 +1439,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger16(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1468,7 +1468,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger16Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1497,7 +1497,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger32(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1526,7 +1526,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger32Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1555,7 +1555,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger64(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1584,7 +1584,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveInteger64Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1613,7 +1613,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger8(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1642,7 +1642,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger8Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1671,7 +1671,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger16(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1700,7 +1700,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger16Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1729,7 +1729,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger32(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1758,7 +1758,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger32Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1787,7 +1787,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger64(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1816,7 +1816,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveUinteger64Alias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1845,7 +1845,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveSingle(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1874,7 +1874,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveSingleAlias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1903,7 +1903,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveDouble(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1932,7 +1932,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveExtended(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1961,7 +1961,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveBoolean(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -1990,7 +1990,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveBooleanAlias(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -2019,7 +2019,7 @@ namespace PoiLanguage
          */
         public override Node ExitPrimitiveCharacter(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -2077,7 +2077,7 @@ namespace PoiLanguage
          */
         public override Node ExitContainerArray(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -2106,7 +2106,7 @@ namespace PoiLanguage
          */
         public override Node ExitContainerMap(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -2135,7 +2135,7 @@ namespace PoiLanguage
          */
         public override Node ExitContainerEvent(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -2164,7 +2164,7 @@ namespace PoiLanguage
          */
         public override Node ExitFunctionType(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiTypeChecker.StringToPoiVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -2393,7 +2393,7 @@ namespace PoiLanguage
          */
         public override Node ExitClassType(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiVariableType.Undefined));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), PoiVariableType.Struct));
             return node;
         }
 
@@ -3058,7 +3058,7 @@ namespace PoiLanguage
          */
         public override Node ExitIdentifier(Token node)
         {
-            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), scopeStack.GetVariableType(node.GetImage())));
+            PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, node.GetImage(), scopeStack.GetVariableType(node, node.GetImage())));
             return node;
         }
 
@@ -3162,7 +3162,6 @@ namespace PoiLanguage
          */
         public override void EnterStatementList(Production node)
         {
-            scopeStack.EnterScope();
         }
 
         /**
@@ -3179,7 +3178,6 @@ namespace PoiLanguage
         public override Node ExitStatementList(Production node)
         {
             PoiInfo.AddValuePos(node, MergeChildList(node));
-            scopeStack.LeaveScope();
             return node;
         }
 
@@ -3898,6 +3896,7 @@ namespace PoiLanguage
          */
         public override void EnterStatementBlock(Production node)
         {
+            scopeStack.EnterScope();
         }
 
         /**
@@ -3914,6 +3913,7 @@ namespace PoiLanguage
         public override Node ExitStatementBlock(Production node)
         {
             PoiInfo.AddValuePos(node, MergeChildList(node));
+            scopeStack.LeaveScope();
             return node;
         }
 
@@ -4045,7 +4045,7 @@ namespace PoiLanguage
                     }
                     else
                     {
-                        PoiTypeChecker.CheckAssign(leftType, rightType);
+                        PoiTypeChecker.CheckAssign(node, leftType, rightType);
                         PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, assignExpression));
                     }
                 }
@@ -4376,7 +4376,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.LogicalOrExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.LogicalOrExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -4479,7 +4479,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.LogicalAndExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.LogicalAndExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -4582,7 +4582,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.BitOrExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.BitOrExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -4685,7 +4685,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.BitXorExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.BitXorExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -4788,7 +4788,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.BitAndExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.BitAndExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -4891,7 +4891,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.EqualityExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.EqualityExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -4994,7 +4994,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.RelationalExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.RelationalExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -5097,7 +5097,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.ShiftExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.ShiftExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -5200,7 +5200,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.AddSubExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.AddSubExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -5303,7 +5303,7 @@ namespace PoiLanguage
                 List<PoiObject> tail = (node.GetChildAt(1).GetValue(0) as PoiObject).ToPair();
 
                 PoiObject expr = left + tail[0] + tail[1];
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.MulDivModExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.MulDivModExpression, tail[0].ToString(), new List<PoiType> { left.VariableType, tail[1].VariableType }));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -5406,7 +5406,7 @@ namespace PoiLanguage
                 PoiObject right = node.GetChildAt(1).GetValue(0) as PoiObject;
 
                 PoiObject expr = MergeChildList(node);
-                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(PoiExpressionType.UnaryExpression, left.ToString(), new List<PoiType>{right.VariableType}));
+                expr.VariableType = new PoiType(PoiTypeChecker.GetArithmeticExpressionType(node, PoiExpressionType.UnaryExpression, left.ToString(), new List<PoiType>{right.VariableType}));
                 PoiInfo.AddValuePos(node, expr);
             }
 
@@ -5532,7 +5532,9 @@ namespace PoiLanguage
                     right = node.GetChildAt(3).GetValue(0) as PoiObject;
                 else
                     right = new PoiObject(PoiObjectType.String, "");
-                PoiInfo.AddValuePos(node, left + right);
+                PoiObject expr = left + right;
+                expr.VariableType = (node.GetChildAt(1).GetValue(0) as PoiObject).VariableType;
+                PoiInfo.AddValuePos(node, expr);
             }
             else if (child0.Name == "ArrayVariable")
             {
@@ -5946,7 +5948,7 @@ namespace PoiLanguage
 
                         // Type Check
                         PoiType rightType = (initializerNode.GetChildAt(1).GetValue(0) as PoiObject).VariableType;
-                        PoiTypeChecker.CheckAssign(leftType, rightType);
+                        PoiTypeChecker.CheckAssign(node, leftType, rightType);
                     }
                 }
 
@@ -5961,7 +5963,7 @@ namespace PoiLanguage
 
                 // Type Check
                 PoiType poiType = (typeNode.GetValue(0) as PoiObject).VariableType;
-                scopeStack.DefiniteVariable(identifier, poiType);
+                scopeStack.DefiniteVariable(node, identifier, poiType);
 
                 if (poiType == PoiVariableType.Function)
                 {
@@ -5995,7 +5997,7 @@ namespace PoiLanguage
                         }
 
                         if (i == num)
-                            result += " " + PoiTypeChecker.GetDefaultInitializer((containerNode.GetChildAt(2).GetValue(0) as PoiObject).VariableType) + ";\r\n";
+                            result += " " + PoiTypeChecker.GetDefaultInitializer(node, (containerNode.GetChildAt(2).GetValue(0) as PoiObject).VariableType) + ";\r\n";
                         else
                             result += " = new Array(__num[" + (i + 1).ToString() + "]);\r\n";
                     }
@@ -6011,7 +6013,7 @@ namespace PoiLanguage
                             return Convert.ToInt32(numString);
                         }));
                     PoiType arrayType = new PoiType(PoiVariableType.Array, new KeyValuePair<PoiType, List<int>>(contentType, arraySizes));
-                    scopeStack.DefiniteVariable(identifier, arrayType);
+                    scopeStack.DefiniteVariable(node, identifier, arrayType);
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, result, arrayType));
                 }
                 else if (containerNode.Name == "StringContainer")
@@ -6023,18 +6025,18 @@ namespace PoiLanguage
                     else
                         PoiInfo.AddValuePos(node, left + new PoiObject(PoiObjectType.String, " ") + right);
 
-                    scopeStack.DefiniteVariable(right.ToString(), new PoiType(PoiVariableType.String));
+                    scopeStack.DefiniteVariable(node, right.ToString(), new PoiType(PoiVariableType.String));
                 }
                 else if (containerNode.Name == "MapContainer")
                 {
                     string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                    scopeStack.DefiniteVariable(identifier, new PoiType(PoiVariableType.Map));
+                    scopeStack.DefiniteVariable(node, identifier, new PoiType(PoiVariableType.Map));
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, (fromClassPub ? "this." : "var ") + identifier + " = new Object()"));
                 }
                 else if (containerNode.Name == "EventContainer")
                 {
                     string identifier = (node.GetChildAt(1).GetValue(0) as PoiObject).ToString();
-                    scopeStack.DefiniteVariable(identifier, new PoiType(PoiVariableType.Event));
+                    scopeStack.DefiniteVariable(node, identifier, new PoiType(PoiVariableType.Event));
                     PoiInfo.AddValuePos(node, new PoiObject(PoiObjectType.String, "var " + identifier + " = new Event()"));
                 }
             }
@@ -7054,6 +7056,7 @@ namespace PoiLanguage
          */
         public override void EnterLoopStatement(Production node)
         {
+            scopeStack.EnterScope();
         }
 
         /**
@@ -7100,6 +7103,7 @@ namespace PoiLanguage
             else value = new PoiObject(PoiObjectType.String, value + a3 + "}\r\n}\r\n");
 
             PoiInfo.AddValuePos(node, value);
+            scopeStack.LeaveScope();
             return node;
         }
 

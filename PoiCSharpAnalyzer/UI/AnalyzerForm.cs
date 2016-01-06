@@ -64,10 +64,10 @@ namespace PoiCSharpAnalyzer.UI
             {
                 analyzerLog.Text += ex.Message;
             }
-            catch (Exception ex)
+            /*catch (Exception ex)
             {
                 analyzerLog.Text += ex.Message;
-            }
+            }*/
 
             PoiTypeChecker.GetWarnings().ForEach(delegate(string warning)
             {
@@ -150,13 +150,19 @@ namespace PoiCSharpAnalyzer.UI
 
             if (valueCount != 0)
             {
-                nodeString += " [Values:";
-                nodeString += " " + (node.GetValue(0) as PoiObject).ToString();
-                nodeString += "]";
+                try
+                {
+                    nodeString += " [Values:";
+                    nodeString += " " + (node.GetValue(0) as PoiObject).ToString();
+                    nodeString += "]";
 
-                nodeString += " [Types:";
-                nodeString += " " + (node.GetValue(0) as PoiObject).VariableType.ToString();
-                nodeString += "]";
+                    nodeString += " [Types:";
+                    nodeString += " " + (node.GetValue(0) as PoiObject).VariableType.ToString();
+                    nodeString += "]";
+                }
+                catch (Exception)
+                {
+                }
             }
 
             return nodeString;
@@ -196,6 +202,27 @@ namespace PoiCSharpAnalyzer.UI
                 collapsed = true;
             }
             parseTreeOutput.EndUpdate();
+        }
+
+        private void codeInput_TextChanged(object sender, EventArgs e)
+        {
+            TextBoxLineNumbers.UpdateLabelRowIndex(codeInputLineNumbers, codeInput);
+        }
+
+        private void codeInput_FontChanged(object sender, EventArgs e)
+        {
+            TextBoxLineNumbers.UpdateLabelRowIndex(codeInputLineNumbers, codeInput);
+            codeInput_VScroll(null, null);
+        }
+
+        private void codeInput_Resize(object sender, EventArgs e)
+        {
+            codeInput_VScroll(null, null);
+        }
+
+        private void codeInput_VScroll(object sender, EventArgs e)
+        {
+            TextBoxLineNumbers.UpdateLabelRowIndex(codeInputLineNumbers, codeInput);
         }
     }
 }
