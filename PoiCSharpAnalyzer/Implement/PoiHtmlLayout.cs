@@ -304,7 +304,6 @@ namespace PoiLanguage
                 case "gbind":
                     string value;
                     data = ParseStatic(dataNode);
-                    data = ParseStatic(dataNode);
                     value = "$(\"[name = '" + name + "']\").bind(" + data[0] + ", {";
                     if (data.Count > 2) value += "__key1:" + data[2];
                     for (int i = 3; i < data.Count; i++) value += ", __key" + (i - 1) + ":" + data[i];
