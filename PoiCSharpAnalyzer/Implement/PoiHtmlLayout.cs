@@ -27,6 +27,7 @@ namespace PoiLanguage
         Part = 12, // <*>...</*>, with div, span, p, pre, label, h1~h6, li, ol, ul
         Button = 13,
         Textarea = 14, // permission=("rxqa@...")
+        Dynamic = 15,
 
         #region NOT_SUPPORTED_YET
         audio = 100,
@@ -75,7 +76,8 @@ namespace PoiLanguage
             { "Single", PoiLayoutType.Single },
             { "Part", PoiLayoutType.Part },
             { "Button", PoiLayoutType.Button },
-            { "Textarea", PoiLayoutType.Textarea }
+            { "Textarea", PoiLayoutType.Textarea },
+            { "Dynamic", PoiLayoutType.Dynamic }
         };
         private static Dictionary<string, string> TextFormatMap = new Dictionary<string, string>
         { {"b","b"}, {"i","i"}, {"u","u"}, {"-","del"}, {"+","ins"}, {"_","sub"}, {"^","sup"}, {">","big"}, {"<","small"} };
@@ -376,7 +378,8 @@ namespace PoiLanguage
                 case "ghide":
                     return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").hide()", name));
                 case "gclear":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").html(\"\")", name));
+                    data = dataNode.GetName() == "SYMBOL_RIGHT_PAREN" ? null : ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, this.ClearGlobal(data));
                 case "lappend":
                     data = ParseStatic(dataNode);
                     return new PoiObject(PoiObjectType.String, this.AppendLocal(data));
@@ -385,7 +388,8 @@ namespace PoiLanguage
                 case "lhide":
                     return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").hide()", MakeJSValue(name)));
                 case "lclear":
-                    return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").html(\"\")", MakeJSValue(name)));
+                    data = dataNode.GetName() == "SYMBOL_RIGHT_PAREN" ? null : ParseStatic(dataNode);
+                    return new PoiObject(PoiObjectType.String, this.ClearLocal(data));
                 case "gtext":
                 case "ltext":
                     return new PoiObject(PoiObjectType.String, this.OprText(ParseStatic(dataNode), operation));
@@ -884,6 +888,34 @@ namespace PoiLanguage
 
                 default:
                     throw new PoiAnalyzeException("Warning: Struct in type " + this.type + " doesn't have Append method.");
+            }
+        }
+
+        // 动态清空全局子元素（根据name）
+        private string ClearGlobal(List<string> data)
+        {
+            switch (this.type)
+            {
+                case PoiLayoutType.Group:
+                    return string.Format("$(\"[name = '{0}_{1}']\").html('')", name, data[0]);
+                case PoiLayoutType.Table:
+                    return string.Format("$(\"[name = '{0}_{1}_{2}']\").html('')", name, data[0], data[1]);
+                default:
+                    return string.Format("$(\"[name = '{0}']\").html('')", name);
+            }
+        }
+
+        // 动态清空局部子元素（根据title）
+        private string ClearLocal(List<string> data)
+        {
+            switch (this.type)
+            {
+                case PoiLayoutType.Group:
+                    return string.Format("$(\"[title = '{0}_{1}']\").html('')", MakeJSValue(name), MakeJSValue(data[0]));
+                case PoiLayoutType.Table:
+                    return string.Format("$(\"[title = '{0}_{1}_{2}']\").html('')", MakeJSValue(name), MakeJSValue(data[0]), MakeJSValue(data[1]));
+                default:
+                    return string.Format("$(\"[title = '{0}']\").html('')", MakeJSValue(name));
             }
         }
 

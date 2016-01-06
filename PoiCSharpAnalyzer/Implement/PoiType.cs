@@ -28,7 +28,8 @@ namespace PoiLanguage
         Map,
         Event,
         Function,
-        Pair
+        Pair,
+        Struct
     }
 
     public enum PoiExpressionType
