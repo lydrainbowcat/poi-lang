@@ -41,6 +41,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.analyzerLog = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // codeInput
@@ -102,7 +103,7 @@
             // 
             this.parseTreeOutput.Location = new System.Drawing.Point(393, 109);
             this.parseTreeOutput.Name = "parseTreeOutput";
-            this.parseTreeOutput.Size = new System.Drawing.Size(521, 468);
+            this.parseTreeOutput.Size = new System.Drawing.Size(445, 468);
             this.parseTreeOutput.TabIndex = 6;
             // 
             // label4
@@ -128,9 +129,9 @@
             // 
             // variableTypeListView
             // 
-            this.variableTypeListView.Location = new System.Drawing.Point(922, 109);
+            this.variableTypeListView.Location = new System.Drawing.Point(844, 109);
             this.variableTypeListView.Name = "variableTypeListView";
-            this.variableTypeListView.Size = new System.Drawing.Size(159, 468);
+            this.variableTypeListView.Size = new System.Drawing.Size(237, 468);
             this.variableTypeListView.TabIndex = 9;
             this.variableTypeListView.UseCompatibleStateImageBehavior = false;
             // 
@@ -138,7 +139,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Consolas", 9F);
-            this.label5.Location = new System.Drawing.Point(917, 76);
+            this.label5.Location = new System.Drawing.Point(839, 76);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(220, 28);
             this.label5.TabIndex = 10;
@@ -165,12 +166,23 @@
             this.analyzerLog.Size = new System.Drawing.Size(1069, 102);
             this.analyzerLog.TabIndex = 12;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(638, 73);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(200, 30);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Expand/Collapse";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // AnalyzerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1093, 731);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.analyzerLog);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -208,5 +220,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox analyzerLog;
+        private System.Windows.Forms.Button button1;
     }
 }
