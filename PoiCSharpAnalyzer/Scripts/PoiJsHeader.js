@@ -53,3 +53,4 @@ function __poi_ajax_request(method, url, data, cors, resp_succ, resp_err, extra_
 }
 var __poi_ajax = new Event();
 __poi_ajax.add('', __poi_ajax_request);
+
