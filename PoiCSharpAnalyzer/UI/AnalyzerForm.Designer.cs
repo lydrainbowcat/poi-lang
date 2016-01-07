@@ -53,9 +53,9 @@
             this.label1.Font = new System.Drawing.Font("Consolas", 14F);
             this.label1.Location = new System.Drawing.Point(15, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(461, 45);
+            this.label1.Size = new System.Drawing.Size(377, 45);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Poi Language Analyzer";
+            this.label1.Text = "Poi Language Tool";
             // 
             // label2
             // 
@@ -241,7 +241,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AnalyzerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "AnalyzerForm";
+            this.Text = "Poi Language Tool";
             this.Load += new System.EventHandler(this.AnalyzerForm_Load);
             this.SizeChanged += new System.EventHandler(this.AnalyzerForm_SizeChanged);
             this.ResumeLayout(false);
