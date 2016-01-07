@@ -399,7 +399,7 @@ PrimitiveType			= PRIMITIVE_INTEGER8
 ContainerType           = StringContainer
 						| ArrayContainer
 						| MapContainer
-						| EventContainer ;
+						| EventContainer;
 UserType				= IDENTIFIER ;
 VariableInitializer		= OPERATOR_ASSIGN Expression ;
 

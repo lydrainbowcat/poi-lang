@@ -5504,7 +5504,11 @@ namespace PoiLanguage
                 }
                 PoiObject right;
                 if (node.GetChildCount() > current)
-                    right = node.GetChildAt(4).GetValue(0) as PoiObject;
+                {
+                    right = node.GetChildAt(current).GetValue(0) as PoiObject;
+                    if (node.GetChildAt(current).GetChildAt(0).GetName() == "SYMBOL_DOT")
+                        left = new PoiObject(PoiObjectType.String, "__poi_temp_struct=") + left + new PoiObject(PoiObjectType.String, ";\r\n");
+                }
                 else right = new PoiObject(PoiObjectType.String, "");
                 PoiInfo.AddValuePos(node, left + right);
             }
@@ -5527,7 +5531,11 @@ namespace PoiLanguage
                 PoiObject left = new PoiObject(PoiObjectType.String, functionVariable + "(" + parameter + ")");
                 PoiObject right;
                 if (node.GetChildCount() > 4)
+                {
                     right = node.GetChildAt(4).GetValue(0) as PoiObject;
+                    if (node.GetChildAt(4).GetChildAt(0).GetName() == "SYMBOL_DOT")
+                        left = new PoiObject(PoiObjectType.String, "__poi_temp_struct=") + left + new PoiObject(PoiObjectType.String, ";\r\n");
+                }
                 else right = new PoiObject(PoiObjectType.String, "");
                 PoiInfo.AddValuePos(node, left + right);
             }
@@ -5590,13 +5598,17 @@ namespace PoiLanguage
             else if (child0.Name == "SYMBOL_DOT")
             {
                 Node fa = GetParent(node);
-                if (fa.GetChildCount() < 1 || fa.GetChildAt(0).GetName() != "PrimaryExpression")
+                if (fa.GetChildCount() < 1 || fa.GetChildAt(0).GetName() == "SYMBOL_LEFT_PAREN")
                     throw new PoiAnalyzeException("BasicExpressionT, DOT: " + fa.GetChildCount() + " children not supported.");
                 if (node.GetChildAt(1).GetChildAt(0).GetName() != "FunctionVariable")
                     throw new PoiAnalyzeException("BasicExpressionT, DOT: FunctionVariable expected, " + node.GetChildAt(1).GetChildAt(0).GetName() + " found.");
                 string name = (fa.GetChildAt(0).GetValue(0) as PoiObject).ToString();
                 if (!PoiHtmlLayout.Map.ContainsKey(name))
-                    throw new PoiAnalyzeException("Not an existing struct: " + name);
+                {
+                    name = "__poi_temp_struct";
+                    if (!PoiHtmlLayout.Map.ContainsKey(name))
+                        PoiHtmlLayout.Map[name] = new PoiHtmlLayout(name, "Dynamic", new List<KeyValuePair<string, string>>());
+                }
                 PoiHtmlLayout handle = PoiHtmlLayout.Map[name];
                 string function = (node.GetChildAt(1).GetChildAt(0).GetValue(0) as PoiObject).ToString();
                 Node expression = node.GetChildAt(1).GetChildAt(2);
@@ -7311,7 +7323,7 @@ namespace PoiLanguage
         {
             node.AddChild(child);
         }
-
+        
         /**
          * <summary>Called when entering a parse tree node.</summary>
          *
