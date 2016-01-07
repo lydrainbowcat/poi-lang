@@ -303,6 +303,7 @@ namespace PoiLanguage
                 case "lclasstoggle":
                     data = ParseStatic(dataNode);
                     return new PoiObject(PoiObjectType.String, string.Format("$(\"[title = '{0}']\").toggleClass({1})", MakeJSValue(name), data[0]));
+                case "bind":
                 case "gbind":
                     string value;
                     data = ParseStatic(dataNode);
@@ -324,6 +325,7 @@ namespace PoiLanguage
                     for (int i = 3; i < data.Count; i++) value += ", __args.data.__key" + (i - 1);
                     value += ")})";
                     return new PoiObject(PoiObjectType.String, value);
+                case "erase":
                 case "gerase":
                     data = ParseStatic(dataNode);
                     value = "$(\"[name = '" + name + "']\").unbind(" + data[0] + ");\r\n";
@@ -332,15 +334,7 @@ namespace PoiLanguage
                     data = ParseStatic(dataNode);
                     value = "$(\"[title = '" + MakeJSValue(name) + "']\").unbind(" + data[0] + ");\r\n";
                     return new PoiObject(PoiObjectType.String, value);
-                case "gready": 
-                    data = ParseStatic(dataNode);
-                    value = "$(\"[name = '" + name + "']\").unbind('ready');\r\n" +
-                        "$(\"[name = '" + name + "']\").ready(function(){" + data[0] + ".execute(";
-                    if (data.Count > 1) value += data[1];
-                    for (int i = 2; i < data.Count; i++) value += "," + data[i];
-                    value += ")})";
-                    value = "{" + value + "}";
-                    return new PoiObject(PoiObjectType.String, value);
+                case "click":
                 case "gclick":
                     data = ParseStatic(dataNode);
                     value = "$(\"[name = '" + name + "']\").unbind('click');\r\n" +
@@ -350,6 +344,7 @@ namespace PoiLanguage
                     value += ")})";
                     value = "{" + value + "}";
                     return new PoiObject(PoiObjectType.String, value);
+                case "dblclick":
                 case "gdblclick":
                     data = ParseStatic(dataNode);
                     value = "$(\"[name = '" + name + "']\").unbind('dblclick');\r\n" +
@@ -359,6 +354,7 @@ namespace PoiLanguage
                     value += ")})";
                     value = "{" + value + "}";
                     return new PoiObject(PoiObjectType.String, value);
+                case "focus":
                 case "gfocus":
                     data = ParseStatic(dataNode);
                     value = "$(\"[name = '" + name + "']\").unbind('focus');\r\n" +
@@ -368,20 +364,12 @@ namespace PoiLanguage
                     value += ")})";
                     value = "{" + value + "}";
                     return new PoiObject(PoiObjectType.String, value);
+                case "mouseover":
                 case "gmouseover":
                 case "gmo":
                     data = ParseStatic(dataNode);
                     value = "$(\"[name = '" + name + "']\").unbind('mouseover');\r\n" +
                         "$(\"[name = '" + name + "']\").mouseover(function(){" + data[0] + ".execute(";
-                    if (data.Count > 1) value += data[1];
-                    for (int i = 2; i < data.Count; i++) value += "," + data[i];
-                    value += ")})";
-                    value = "{" + value + "}";
-                    return new PoiObject(PoiObjectType.String, value);
-                case "lready":
-                    data = ParseStatic(dataNode);
-                    value = "$(\"[title = '" + MakeJSValue(name) + "']\").unbind('ready');\r\n" +
-                        "$(\"[title = '" + MakeJSValue(name) + "']\").ready(function(){" + data[0] + ".execute(";
                     if (data.Count > 1) value += data[1];
                     for (int i = 2; i < data.Count; i++) value += "," + data[i];
                     value += ")})";
@@ -424,13 +412,17 @@ namespace PoiLanguage
                     value += ")})";
                     value = "{" + value + "}";
                     return new PoiObject(PoiObjectType.String, value);
+                case "append":
                 case "gappend":
                     data = ParseStatic(dataNode);
                     return new PoiObject(PoiObjectType.String, this.AppendGlobal(data));
+                case "show":
                 case "gshow":
                     return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").show()", name));
+                case "hide":
                 case "ghide":
                     return new PoiObject(PoiObjectType.String, string.Format("$(\"[name = '{0}']\").hide()", name));
+                case "clear":
                 case "gclear":
                     data = dataNode.GetName() == "SYMBOL_RIGHT_PAREN" ? null : ParseStatic(dataNode);
                     return new PoiObject(PoiObjectType.String, this.ClearGlobal(data));
@@ -444,12 +436,15 @@ namespace PoiLanguage
                 case "lclear":
                     data = dataNode.GetName() == "SYMBOL_RIGHT_PAREN" ? null : ParseStatic(dataNode);
                     return new PoiObject(PoiObjectType.String, this.ClearLocal(data));
+                case "text":
                 case "gtext":
                 case "ltext":
                     return new PoiObject(PoiObjectType.String, this.OprText(ParseStatic(dataNode), operation));
+                case "url":
                 case "gurl":
                 case "lurl":
                     return new PoiObject(PoiObjectType.String, this.OprUrl(ParseStatic(dataNode), operation));
+                case "perm":
                 case "gperm":
                 case "lperm":
                     return new PoiObject(PoiObjectType.String, this.UpdatePerm(ParseStatic(dataNode), operation));
