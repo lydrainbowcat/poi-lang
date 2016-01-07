@@ -40,9 +40,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.analyzerLog = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonExpandCollapse = new System.Windows.Forms.Button();
             this.codeInput = new System.Windows.Forms.RichTextBox();
             this.codeInputLineNumbers = new System.Windows.Forms.RichTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.options = new System.Windows.Forms.CheckedListBox();
             this.SuspendLayout();
             // 
             // label1
@@ -82,7 +84,7 @@
             this.parseButton.FlatAppearance.BorderSize = 2;
             this.parseButton.Font = new System.Drawing.Font("Consolas", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.parseButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.parseButton.Location = new System.Drawing.Point(871, 20);
+            this.parseButton.Location = new System.Drawing.Point(1059, 17);
             this.parseButton.Name = "parseButton";
             this.parseButton.Size = new System.Drawing.Size(210, 53);
             this.parseButton.TabIndex = 5;
@@ -120,7 +122,7 @@
             // 
             // variableTypeListView
             // 
-            this.variableTypeListView.Location = new System.Drawing.Point(844, 109);
+            this.variableTypeListView.Location = new System.Drawing.Point(846, 109);
             this.variableTypeListView.Name = "variableTypeListView";
             this.variableTypeListView.Size = new System.Drawing.Size(237, 468);
             this.variableTypeListView.TabIndex = 9;
@@ -130,7 +132,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Consolas", 9F);
-            this.label5.Location = new System.Drawing.Point(839, 76);
+            this.label5.Location = new System.Drawing.Point(846, 75);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(220, 28);
             this.label5.TabIndex = 10;
@@ -154,18 +156,20 @@
             this.analyzerLog.Name = "analyzerLog";
             this.analyzerLog.ReadOnly = true;
             this.analyzerLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.analyzerLog.Size = new System.Drawing.Size(1069, 102);
+            this.analyzerLog.Size = new System.Drawing.Size(1257, 102);
             this.analyzerLog.TabIndex = 12;
             // 
-            // button1
+            // buttonExpandCollapse
             // 
-            this.button1.Location = new System.Drawing.Point(638, 73);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(200, 30);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Expand/Collapse";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonExpandCollapse.Enabled = false;
+            this.buttonExpandCollapse.Font = new System.Drawing.Font("Consolas", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonExpandCollapse.Location = new System.Drawing.Point(638, 73);
+            this.buttonExpandCollapse.Name = "buttonExpandCollapse";
+            this.buttonExpandCollapse.Size = new System.Drawing.Size(200, 30);
+            this.buttonExpandCollapse.TabIndex = 13;
+            this.buttonExpandCollapse.Text = "Expand/Collapse";
+            this.buttonExpandCollapse.UseVisualStyleBackColor = true;
+            this.buttonExpandCollapse.Click += new System.EventHandler(this.buttonExpandCollapse_Click);
             // 
             // codeInput
             // 
@@ -191,15 +195,38 @@
             this.codeInputLineNumbers.TabIndex = 18;
             this.codeInputLineNumbers.Text = "";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Consolas", 9F);
+            this.label7.Location = new System.Drawing.Point(1098, 76);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(103, 28);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "Options";
+            // 
+            // options
+            // 
+            this.options.FormattingEnabled = true;
+            this.options.Items.AddRange(new object[] {
+            "Generate Parsetree",
+            "Enable TypeChecking"});
+            this.options.Location = new System.Drawing.Point(1103, 109);
+            this.options.Name = "options";
+            this.options.Size = new System.Drawing.Size(166, 484);
+            this.options.TabIndex = 20;
+            // 
             // AnalyzerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1093, 731);
+            this.ClientSize = new System.Drawing.Size(1312, 731);
+            this.Controls.Add(this.options);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.codeInputLineNumbers);
             this.Controls.Add(this.codeInput);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonExpandCollapse);
             this.Controls.Add(this.analyzerLog);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -235,8 +262,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox analyzerLog;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonExpandCollapse;
         private System.Windows.Forms.RichTextBox codeInput;
         private System.Windows.Forms.RichTextBox codeInputLineNumbers;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckedListBox options;
     }
 }

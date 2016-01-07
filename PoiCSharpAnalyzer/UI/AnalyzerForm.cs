@@ -16,6 +16,9 @@ namespace PoiCSharpAnalyzer.UI
 {
     public partial class AnalyzerForm : Form
     {
+        private const int OPTIONS_GENERATE_PARSETREE = 0;
+        private const int OPTIONS_ENABLE_TYPECHECKING = 1;
+
         private AutoresizeForm sizeControl = new AutoresizeForm();
         private bool collapsed = false;
 
@@ -33,6 +36,7 @@ namespace PoiCSharpAnalyzer.UI
             codeOutput.Text = "";
             DeleteParseTree(parseTreeOutput);
             DeleteVariableType(variableTypeListView);
+            buttonExpandCollapse.Enabled = false;
 
             String code = codeInput.Text;
             PoiBasicAnalyzer analyzer = new PoiBasicAnalyzer();
@@ -49,30 +53,40 @@ namespace PoiCSharpAnalyzer.UI
                 else
                     codeOutput.Text = "";
 
-                CreateParseTree(parseTree, parseTreeOutput);
-                parseTreeOutput.CollapseAll();
-                collapsed = true;
-                //parseTreeOutput.ExpandAll();
+                if (options.GetItemChecked(OPTIONS_GENERATE_PARSETREE))
+                {
+                    CreateParseTree(parseTree, parseTreeOutput);
+                    parseTreeOutput.CollapseAll();
+                    collapsed = true;
+                    //parseTreeOutput.ExpandAll();
+                    buttonExpandCollapse.Enabled = true;
+                }
 
-                CreateVariableType(analyzer, variableTypeListView);
+                if (options.GetItemChecked(OPTIONS_ENABLE_TYPECHECKING))
+                {
+                    CreateVariableType(analyzer, variableTypeListView);
+                }
             }
             catch (PerCederberg.Grammatica.Runtime.ParserLogException ex)
             {
-                analyzerLog.Text += ex.GetMessage();
+                analyzerLog.Text += "[ParserLogException] " + ex.GetMessage() + "\r\n";
             }
             catch (PoiAnalyzeException ex)
             {
-                analyzerLog.Text += ex.Message;
+                analyzerLog.Text += "[PoiAnalyzeException] " + ex.Message + "\r\n";
             }
-            /*catch (Exception ex)
+            catch (Exception ex)
             {
-                analyzerLog.Text += ex.Message;
-            }*/
+                analyzerLog.Text += "[Exception] " + ex.Message + "\r\n";
+            }
 
-            PoiTypeChecker.GetWarnings().ForEach(delegate(string warning)
+            if (options.GetItemChecked(OPTIONS_ENABLE_TYPECHECKING))
             {
-                analyzerLog.Text += warning + "\r\n";
-            });
+                PoiTypeChecker.GetWarnings().ForEach(delegate(string warning)
+                {
+                    analyzerLog.Text += "[TypeChecking Warning] " + warning + "\r\n";
+                });
+            }
         }
 
         private void DeleteParseTree(TreeView view)
@@ -156,9 +170,12 @@ namespace PoiCSharpAnalyzer.UI
                     nodeString += " " + (node.GetValue(0) as PoiObject).ToString();
                     nodeString += "]";
 
-                    nodeString += " [Types:";
-                    nodeString += " " + (node.GetValue(0) as PoiObject).VariableType.ToString();
-                    nodeString += "]";
+                    if (options.GetItemChecked(OPTIONS_ENABLE_TYPECHECKING))
+                    {
+                        nodeString += " [Types:";
+                        nodeString += " " + (node.GetValue(0) as PoiObject).VariableType.ToString();
+                        nodeString += "]";
+                    }
                 }
                 catch (Exception)
                 {
@@ -188,7 +205,7 @@ namespace PoiCSharpAnalyzer.UI
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonExpandCollapse_Click(object sender, EventArgs e)
         {
             parseTreeOutput.BeginUpdate();
             if (collapsed)

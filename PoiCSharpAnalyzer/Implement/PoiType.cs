@@ -925,7 +925,7 @@ namespace PoiLanguage
                 return PoiVariableType.Undefined;
             }
 
-            AddWarning(node, "Operation not defined: [" + op + "] with parameters [" + string.Join(",", variables) + "]");
+            AddWarning(node, "Potentially undefined operation: [" + op + "] with parameters [" + string.Join(",", variables) + "]");
             return PoiVariableType.Undefined;
         }
 
@@ -933,7 +933,7 @@ namespace PoiLanguage
         {
             if (!AvailableCastNoWarnings(right.GetBasicType(), left.GetBasicType()))
             {
-                AddWarning(node, "Can't assign type: " + left.ToString() + " to type: " + right.ToString());
+                AddWarning(node, "Potentially unproper assign: From type: " + left.ToString() + " to type: " + right.ToString());
                 return false;
             }
             return true;
@@ -976,7 +976,7 @@ namespace PoiLanguage
                 return false;
             }
 
-            AddWarning(node, "Trying cast from type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
+            AddWarning(node, "Potentially unproper cast: From type: [" + from.ToString() + "] to type: [" + to.ToString() + "]");
             return false;
         }
 
@@ -1004,7 +1004,7 @@ namespace PoiLanguage
 
         public static void AddWarning(Node node, string warn)
         {
-            string warningStr = "WARNING: " +
+            string warningStr =
                 (node != null ? "From [Line " + node.GetStartLine() + ", Column " + node.GetStartColumn() + "] to [Line " +
                 node.GetEndLine() + ", Column " + node.GetEndColumn() + "]: " : "") +
                 warn;
